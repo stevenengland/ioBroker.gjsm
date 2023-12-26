@@ -1,0 +1,82 @@
+{
+    "common": {
+        "name": "gjsm",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Generic JSON State Manager",
+        "titleLang": {
+            "en": "Generic JSON State Manager",
+            "de": "Allgemeiner JSON-Statusmanager",
+            "ru": "Универсальный менеджер состояний JSON",
+            "pt": "Gerenciador de estado JSON genérico",
+            "nl": "Generieke JSON-statusmanager",
+            "fr": "Gestionnaire d'état JSON générique",
+            "it": "Gestore stato JSON generico",
+            "es": "Administrador de estado JSON genérico",
+            "pl": "Ogólny menedżer stanu JSON",
+            "uk": "Загальний менеджер стану JSON",
+            "zh-cn": "通用 JSON 状态管理器"
+        },
+        "desc": {
+            "en": "Handle JSON states in a generic and configurative way without programming knowledge",
+            "de": "Behandeln Sie JSON-Zustände auf generische und konfigurative Weise ohne Programmierkenntnisse",
+            "ru": "Обработка состояний JSON общим и конфигурационным способом без знаний программирования.",
+            "pt": "Lidar com estados JSON de forma genérica e configurativa sem conhecimento de programação",
+            "nl": "Behandel JSON-statussen op een generieke en configuratieve manier zonder programmeerkennis",
+            "fr": "Gérer les états JSON de manière générique et configurative sans connaissances en programmation",
+            "it": "Gestisci gli stati JSON in modo generico e configurativo senza conoscenze di programmazione",
+            "es": "Manejar estados JSON de forma genérica y configurativa sin conocimientos de programación.",
+            "pl": "Obsługuj stany JSON w sposób ogólny i konfiguracyjny bez wiedzy programistycznej",
+            "uk": "Обробляйте стани JSON загальним і конфігураційним способом без знань програмування",
+            "zh-cn": "以通用和配置的方式处理 JSON 状态，无需编程知识"
+        },
+        "authors": ["StEn <github@steven-england.info>"],
+        "keywords": ["json", "state"],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "build/main.js",
+        "icon": "gjsm.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/stevenengland/ioBroker.gjsm/main/admin/gjsm.png",
+        "readme": "https://github.com/stevenengland/ioBroker.gjsm/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "misc-data",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "materialize"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=3.3.22"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=5.0.0"
+            }
+        ]
+    },
+    "native": {
+        "option1": true,
+        "option2": "42"
+    },
+    "objects": [],
+    "instanceObjects": []
+}
