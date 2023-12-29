@@ -7,6 +7,9 @@
 node_modules
 nbproject
 
+# ioBroker artifacts
+build/
+
 # npm package files
 iobroker.*.tgz
 
