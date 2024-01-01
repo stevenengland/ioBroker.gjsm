@@ -7,11 +7,12 @@ module.exports = {
     project: './tsconfig.json',
   },
   extends: [
-    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'plugin:@typescript-eslint/strict-type-checked', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
   plugins: [],
   rules: {
+    '@typescript-eslint/naming-convention': 'error',
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-use-before-define': [
@@ -48,6 +49,13 @@ module.exports = {
       files: ['*.test.ts'],
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
+      },
+    },
+    {
+      files: ['src/**/*.test.ts'],
+      rules: {
+        // you should turn the original rule off *only* for test files
+        '@typescript-eslint/unbound-method': 'off',
       },
     },
   ],

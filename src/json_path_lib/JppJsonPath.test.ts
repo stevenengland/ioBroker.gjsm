@@ -21,6 +21,7 @@ describe('JsonPathLib', () => {
         [[], '$.notexisting', -1],
       ] as Array<[unknown, string, number]>
     ).forEach(([expected, input, testIndex]) => {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       it(`should return ${expected} when ${input} is given`, () => {
         // GIVEN
         // WHEN
