@@ -8,8 +8,11 @@ import * as utils from '@iobroker/adapter-core';
 
 // Load your modules here, e.g.:
 // import * as fs from "fs";
+import { GenericJsonStateManager } from './gjsm/GenericJsonStateManager';
+import { IobAdapterLogger } from './logger_lib/IobAdapterLogger';
 
 class Gjsm extends utils.Adapter {
+    private _gjsm: GenericJsonStateManager | undefined;
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({
             ...options,
@@ -27,6 +30,7 @@ class Gjsm extends utils.Adapter {
      */
     private async onReady(): Promise<void> {
         // Initialize your adapter here
+        this._gjsm = new GenericJsonStateManager(new IobAdapterLogger(this));
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:
