@@ -1,30 +1,30 @@
 version: 2
 updates:
-    - package-ecosystem: npm
-      directory: '/'
-      schedule:
-          interval: monthly
-          time: '04:00'
-          timezone: Europe/Berlin
-      open-pull-requests-limit: 5
-      assignees:
-          - stevenengland
-      versioning-strategy: increase
-      commit-message:
-          prefix: 'fix'
-          prefix-development: 'chore'
-          include: 'scope'
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: monthly
+      time: '04:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    assignees:
+      - stevenengland
+    versioning-strategy: increase
+    commit-message:
+      prefix: 'fix'
+      prefix-development: 'chore'
+      include: 'scope'
 
-    - package-ecosystem: github-actions
-      directory: '/'
-      schedule:
-          interval: monthly
-          time: '04:00'
-          timezone: Europe/Berlin
-      open-pull-requests-limit: 5
-      assignees:
-          - stevenengland
-      commit-message:
-          prefix: 'fix'
-          prefix-development: 'chore'
-          include: 'scope'
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: monthly
+      time: '04:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    assignees:
+      - stevenengland
+    commit-message:
+      prefix: 'fix'
+      prefix-development: 'chore'
+      include: 'scope'
