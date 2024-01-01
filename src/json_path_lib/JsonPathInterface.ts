@@ -1,3 +1,3 @@
 export interface JsonPathInterface {
-    getValues(jsonPath: string, json: string): unknown[];
+  getValues(jsonPath: string, json: string): unknown[];
 }
