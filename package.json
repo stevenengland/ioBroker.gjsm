@@ -72,17 +72,18 @@
     "prebuild:ts": "rimraf build",
     "build:ts": "build-adapter ts",
     "watch:ts": "build-adapter ts --watch",
-    "test:ts": "mocha --config .mocharc.json",
-    "test:package": "mocha --no-config test/package --exit",
-    "test:integration": "mocha --no-config test/integration --exit",
-    "test": "npm run test:ts && npm run test:package",
     "check": "tsc --noEmit",
     "coverage": "nyc npm run test:ts",
     "lint:src": "eslint --ext .ts src/",
     "lint:test": "eslint --ext .ts --ext .js test/",
     "lint": "npm run lint:src && npm run lint:test",
-    "translate": "translate-adapter",
-    "release": "release-script"
+    "prettier-format": "prettier --config .prettierrc.js 'src/**/*.ts' --write",
+    "release": "release-script",
+    "test:ts": "mocha --config .mocharc.json",
+    "test:package": "mocha --no-config test/package --exit",
+    "test:integration": "mocha --no-config test/integration --exit",
+    "test": "npm run test:ts && npm run test:package",
+    "translate": "translate-adapter"
   },
   "nyc": {
     "include": [
