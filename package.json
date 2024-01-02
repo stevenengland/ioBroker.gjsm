@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.4",
+    "c8": "^8.0.1",
     "jsonpath-plus": "^7.2.0"
   },
   "devDependencies": {
@@ -73,7 +74,7 @@
     "build:ts": "build-adapter ts",
     "watch:ts": "build-adapter ts --watch",
     "check": "tsc --noEmit",
-    "coverage": "nyc npm run test:ts",
+    "coverage": "c8 npm run test:ts",
     "lint:src": "eslint --ext .ts,.js src/",
     "lint:test": "eslint --ext .ts,.js test/",
     "lint": "npm run lint:src && npm run lint:test",
@@ -84,26 +85,6 @@
     "test:integration": "mocha --no-config test/integration --exit",
     "test": "npm run test:ts && npm run test:package",
     "translate": "translate-adapter"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.test.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true
   },
   "bugs": {
     "url": "https://github.com/stevenengland/ioBroker.gjsm/issues"
