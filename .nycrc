@@ -1,0 +1,25 @@
+{
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "src/**/*.test.ts"
+    ],
+    "extension": [
+        ".ts"
+    ],
+    "require": [
+        "ts-node/register"
+    ],
+    "reporter": [
+        "text",
+        "html"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "check-coverage": true,
+    "branches": 95,
+    "lines": 95,
+    "functions": 95,
+    "statements": 95
+}
