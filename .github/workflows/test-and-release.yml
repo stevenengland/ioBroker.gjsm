@@ -26,13 +26,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Load environment vars
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.4
+        with:
+          path: .github/workflows/env_vars.txt
+          log-variables: true
+
       - uses: ioBroker/testing-action-check@v1
         with:
-          node-version: '18.x'
+          node-version: ${{ steps.dotenv.outputs.NODE_VERSION }}
           # Uncomment the following line if your adapter cannot be installed using 'npm ci'
           # install-command: 'npm install'
           type-checking: true
           lint: true
+          lint-command: 'npm run lint'
 
   # Runs adapter tests on all supported node versions and OSes
   adapter-tests:
@@ -52,6 +63,7 @@ jobs:
           # Uncomment the following line if your adapter cannot be installed using 'npm ci'
           # install-command: 'npm install'
           build: true
+          extra-tests: 'npm run test'
 # TODO: To enable automatic npm releases, create a token on npmjs.org
 # Enter this token as a GitHub secret (with name NPM_TOKEN) in the repository options
 # Then uncomment the following block:
@@ -73,9 +85,19 @@ jobs:
 #      contents: write
 #
 #    steps:
+#      - name: Check out the repository
+#        uses: actions/checkout@v4
+#
+#      - name: Load environment vars
+#        id: dotenv
+#        uses: falti/dotenv-action@v1.0.4
+#        with:
+#          path: .github/workflows/env_vars.txt
+#          log-variables: true
+#
 #      - uses: ioBroker/testing-action-deploy@v1
 #        with:
-#          node-version: '18.x'
+#          node-version: ${{ steps.dotenv.outputs.NODE_VERSION }}
 #          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
 #          # install-command: 'npm install'
 #          build: true
