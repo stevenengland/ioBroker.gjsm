@@ -10,6 +10,9 @@ nbproject
 # ioBroker artifacts
 build/
 
+# special to this repo
+news.txt
+
 # npm package files
 iobroker.*.tgz
 
