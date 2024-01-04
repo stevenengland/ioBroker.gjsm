@@ -14,6 +14,8 @@ describe('JSON', () => {
         [false, 3],
         [true, '{"x":true}'],
         [true, '[1, false, null]'],
+        [true, [1, false, null]],
+        [true, { x: true, y: false }],
         [false, '-'], // Invalid JSON
       ] as Array<[boolean, string]>
     ).forEach(([expected, input]) => {

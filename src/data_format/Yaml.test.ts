@@ -14,6 +14,7 @@ describe('YAML', () => {
         [false, 3],
         [true, '{"x":true}'],
         [true, '[1, false, null]'],
+        [true, [1, false, null]],
         [false, ','], // Invalid YAML
       ] as Array<[boolean, string]>
     ).forEach(([expected, input]) => {
@@ -31,6 +32,7 @@ describe('YAML', () => {
     (
       [
         [true, 'true'],
+        [3, 3],
         [{ x: true }, '{"x":true}'],
         [[1, false, null], '[1, false, null]'],
       ] as Array<[boolean, string]>

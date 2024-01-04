@@ -3,22 +3,37 @@ import { DataFormatError } from './DataFormatError';
 import { DataFormatInterface } from './DataFormatInterface';
 
 export class Yaml implements DataFormatInterface {
-  parse(data: string): unknown {
+  parse(data: unknown): unknown {
     try {
-      const yamlObject: unknown = YAML.parse(data);
+      if (typeof data !== 'string') {
+        data = YAML.stringify(data);
+      }
+      const yamlObject: unknown = YAML.parse(data as string);
       return yamlObject;
     } catch (error) {
       throw new DataFormatError('Invalid YAML content: ' + (error as Error).message);
     }
   }
   hasCorrectDataFormat(data: unknown): boolean {
-    if (typeof data !== 'string') return false;
     try {
-      const result = YAML.parse(data) as unknown;
+      if (typeof data !== 'string') {
+        data = YAML.stringify(data);
+      }
+      const result = YAML.parse(data as string) as unknown;
       const type = Object.prototype.toString.call(result);
       return type === '[object Object]' || type === '[object Array]';
     } catch (err) {
       return false;
     }
   }
+
+  //validateAgainstSchema(data: unknown, schema: object): boolean {
+  //  const ajv = new Ajv();
+  //  data = data as string;
+  //  const isValid = ajv.validate(schema, data);
+  //  if (ajv.errors?.length ?? 0 > 0) {
+  //    throw new DataFormatError('Invalid YAML content: ' + ajv.errorsText());
+  //  }
+  //  return isValid;
+  //}
 }

@@ -1,3 +1,3 @@
 export interface DataFormatParserInterface {
-  parse(data: string): unknown;
+  parse(data: unknown): unknown;
 }

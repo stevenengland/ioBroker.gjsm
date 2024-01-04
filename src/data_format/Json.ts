@@ -2,9 +2,12 @@ import { DataFormatError } from './DataFormatError';
 import { DataFormatInterface } from './DataFormatInterface';
 
 export class Json implements DataFormatInterface {
-  parse(data: string): unknown {
+  parse(data: unknown): unknown {
     try {
-      const jsonObject: unknown = JSON.parse(data);
+      if (typeof data !== 'string') {
+        data = JSON.stringify(data);
+      }
+      const jsonObject: unknown = JSON.parse(data as string);
       return jsonObject;
     } catch (error) {
       if (error instanceof SyntaxError) {
@@ -14,9 +17,11 @@ export class Json implements DataFormatInterface {
   }
 
   hasCorrectDataFormat(data: unknown): boolean {
-    if (typeof data !== 'string') return false;
     try {
-      const result = JSON.parse(data) as unknown;
+      if (typeof data !== 'string') {
+        data = JSON.stringify(data);
+      }
+      const result = JSON.parse(data as string) as unknown;
       const type = Object.prototype.toString.call(result);
       return type === '[object Object]' || type === '[object Array]';
     } catch (err) {
