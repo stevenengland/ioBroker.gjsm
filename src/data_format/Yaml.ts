@@ -1,3 +1,4 @@
+import Ajv from 'ajv';
 import YAML from 'yaml';
 import { DataFormatError } from './DataFormatError';
 import { DataFormatInterface } from './DataFormatInterface';
@@ -27,13 +28,12 @@ export class Yaml implements DataFormatInterface {
     }
   }
 
-  //validateAgainstSchema(data: unknown, schema: object): boolean {
-  //  const ajv = new Ajv();
-  //  data = data as string;
-  //  const isValid = ajv.validate(schema, data);
-  //  if (ajv.errors?.length ?? 0 > 0) {
-  //    throw new DataFormatError('Invalid YAML content: ' + ajv.errorsText());
-  //  }
-  //  return isValid;
-  //}
+  async validateAgainstSchema(data: unknown, schema: object | string): Promise<void> {
+    const ajv = new Ajv();
+    data = data as string;
+    await ajv.validate(schema, data);
+    if (ajv.errors?.length) {
+      throw new DataFormatError('Invalid YAML content: ' + ajv.errorsText());
+    }
+  }
 }

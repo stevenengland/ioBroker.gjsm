@@ -58,4 +58,69 @@ describe('JSON', () => {
       expect(when).to.throw(DataFormatError, /Invalid \(JSON\) syntax/);
     });
   });
+  describe('validateAgainstSchema', () => {
+    (
+      [
+        [
+          {
+            foo: 1,
+            bar: 'abc',
+          },
+        ],
+      ] as Array<[object | string]>
+    ).forEach(([input]) => {
+      it(`should succeed when ${JSON.stringify(input)} is given`, () => {
+        // GIVEN
+        const schema = {
+          type: 'object',
+          properties: {
+            foo: { type: 'integer' },
+            bar: { type: 'string' },
+          },
+          required: ['foo'],
+          additionalProperties: false,
+        };
+        // WHEN
+        async function when() {
+          await sut.validateAgainstSchema(input, schema);
+        }
+        // THEN
+        expect(when).to.not.throw();
+      });
+    });
+    (
+      [
+        [
+          {
+            foo: 'one',
+            bar: 'abc',
+          },
+        ],
+        [
+          {
+            bar: 'abc',
+          },
+        ],
+      ] as Array<[object | string]>
+    ).forEach(([input]) => {
+      it(`should throw when ${JSON.stringify(input)} as invalid data is given`, async () => {
+        // GIVEN
+        const schema = {
+          type: 'object',
+          properties: {
+            foo: { type: 'integer' },
+            bar: { type: 'string' },
+          },
+          required: ['foo'],
+          additionalProperties: false,
+        };
+        // WHEN
+        async function when() {
+          return sut.validateAgainstSchema(input, schema);
+        }
+        // THEN
+        await expect(when()).to.be.rejectedWith(DataFormatError);
+      });
+    });
+  });
 });

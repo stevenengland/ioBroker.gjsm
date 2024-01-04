@@ -1,3 +1,4 @@
+import Ajv from 'ajv';
 import { DataFormatError } from './DataFormatError';
 import { DataFormatInterface } from './DataFormatInterface';
 
@@ -26,6 +27,15 @@ export class Json implements DataFormatInterface {
       return type === '[object Object]' || type === '[object Array]';
     } catch (err) {
       return false;
+    }
+  }
+
+  async validateAgainstSchema(data: unknown, schema: object | string): Promise<void> {
+    const ajv = new Ajv();
+    data = data as string;
+    await ajv.validate(schema, data);
+    if (ajv.errors?.length) {
+      throw new DataFormatError('Invalid YAML content: ' + ajv.errorsText());
     }
   }
 }
