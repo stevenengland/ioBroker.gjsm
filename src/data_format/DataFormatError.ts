@@ -1,5 +1,5 @@
 export class DataFormatError extends Error {
-  constructor(msg: string) {
+  public constructor(msg: string) {
     super(msg);
 
     // Set the prototype explicitly.

@@ -3,7 +3,7 @@ import { DataFormatError } from './DataFormatError';
 import { DataFormatInterface } from './DataFormatInterface';
 
 export class Json implements DataFormatInterface {
-  parse(data: unknown): unknown {
+  public parse(data: unknown): unknown {
     try {
       if (typeof data !== 'string') {
         data = JSON.stringify(data);
@@ -17,7 +17,7 @@ export class Json implements DataFormatInterface {
     }
   }
 
-  hasCorrectDataFormat(data: unknown): boolean {
+  public hasCorrectDataFormat(data: unknown): boolean {
     try {
       if (typeof data !== 'string') {
         data = JSON.stringify(data);
@@ -30,7 +30,7 @@ export class Json implements DataFormatInterface {
     }
   }
 
-  async validateAgainstSchema(data: unknown, schema: object | string): Promise<void> {
+  public async validateAgainstSchema(data: unknown, schema: object | string): Promise<void> {
     const ajv = new Ajv();
     data = data as string;
     await ajv.validate(schema, data);

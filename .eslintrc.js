@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/naming-convention': 'error',
     '@typescript-eslint/no-non-null-assertion': 'off', // This is necessary for Map.has()/get()!
+    '@typescript-eslint/explicit-member-accessibility': 'error',
   },
   overrides: [
     {
