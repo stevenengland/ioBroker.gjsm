@@ -44,8 +44,13 @@
             "uk": "Обробляйте стани JSON загальним і конфігураційним способом без знань програмування",
             "zh-cn": "以通用和配置的方式处理 JSON 状态，无需编程知识"
         },
-        "authors": ["StEn <github@steven-england.info>"],
-        "keywords": ["json", "state"],
+        "authors": [
+            "StEn <github@steven-england.info>"
+        ],
+        "keywords": [
+            "json",
+            "state"
+        ],
         "license": "MIT",
         "platform": "Javascript/Node.js",
         "main": "build/main.js",
@@ -74,8 +79,7 @@
         ]
     },
     "native": {
-        "option1": true,
-        "option2": "42"
+        "createTargetStatesIfNotExist": false
     },
     "objects": [],
     "instanceObjects": []

@@ -1,14 +1,15 @@
+import { StateInterface } from './StateInterface';
+
 export type StateValueType = boolean | number | string | null;
 
-export class State {
-  public id!: string;
+export class State implements StateInterface {
+  public id?: string;
   public val: StateValueType = null;
-  public ts?: number;
+  public ts: number = Math.floor(Date.now() / 1000);
   public ack: boolean = false;
-  public readonly exists: boolean = false;
 
-  public constructor(init?: Partial<State>) {
-    Object.assign(this, init);
+  public constructor(state?: StateInterface | Partial<StateInterface>) {
+    Object.assign(this, state);
   }
 
   public setTimeStamp(time: unknown): void {

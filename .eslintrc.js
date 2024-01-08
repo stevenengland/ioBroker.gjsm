@@ -23,6 +23,7 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': 'off',
         // you should turn the original rule off *only* for test files
         '@typescript-eslint/unbound-method': 'off',
+        '@typescript-eslint/no-extraneous-class': ['error', { allowStaticOnly: true }],
       },
     },
   ],
