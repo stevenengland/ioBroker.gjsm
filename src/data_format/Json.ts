@@ -35,7 +35,7 @@ export class Json implements DataFormatInterface {
     data = data as string;
     await ajv.validate(schema, data);
     if (ajv.errors?.length) {
-      throw new DataFormatError('Invalid YAML content: ' + ajv.errorsText());
+      throw new DataFormatError('Invalid JSON content: ' + ajv.errorsText());
     }
   }
 }

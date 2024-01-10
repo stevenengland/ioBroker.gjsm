@@ -14,7 +14,7 @@ export class SpecificationProvider implements SpecificationProviderInterface {
   private _yaml: DataFormatInterface;
   private _json: DataFormatInterface;
   public constructor(
-    config: ConfigProviderInterface,
+    configProvider: ConfigProviderInterface,
     stateManager: StateManagerInterface,
     yaml: DataFormatInterface,
     json: DataFormatInterface,
@@ -23,7 +23,7 @@ export class SpecificationProvider implements SpecificationProviderInterface {
     this._yaml = yaml;
     this._json = json;
     this._specifications = [];
-    this._configProvider = config;
+    this._configProvider = configProvider;
 
     this.loadSchema();
   }
@@ -42,19 +42,21 @@ export class SpecificationProvider implements SpecificationProviderInterface {
       this._configProvider.config.instructionSetStatesPattern,
     );
     try {
-      instructionSetStates.forEach((state) => {
-        if (this._yaml.hasCorrectDataFormat(state.val)) {
-          this._yaml.validateAgainstSchema(state.val, this._schema);
-          const instructionSet = this._yaml.parse(state.val) as InstructionSetInterface;
-          this._specifications.push(instructionSet);
-        } else if (this._json.hasCorrectDataFormat(state.val)) {
-          this._json.validateAgainstSchema(state.val, this._schema);
-          const instructionSet = this._json.parse(state.val) as InstructionSetInterface;
-          this._specifications.push(instructionSet);
-        } else {
-          throw new DataFormatError(`The data format of ${state.id} is not supported`);
-        }
-      });
+      await Promise.all(
+        instructionSetStates.map(async (state) => {
+          if (this._yaml.hasCorrectDataFormat(state.val)) {
+            await this._yaml.validateAgainstSchema(state.val, this._schema);
+            const instructionSet = this._yaml.parse(state.val) as InstructionSetInterface;
+            this._specifications.push(instructionSet);
+          } else if (this._json.hasCorrectDataFormat(state.val)) {
+            await this._json.validateAgainstSchema(state.val, this._schema);
+            const instructionSet = this._json.parse(state.val) as InstructionSetInterface;
+            this._specifications.push(instructionSet);
+          } else {
+            throw new DataFormatError(`The data format of ${state.id} is not supported`);
+          }
+        }),
+      );
     } catch (error) {
       this._specifications.push({ errors: [(error as Error).message] });
     }

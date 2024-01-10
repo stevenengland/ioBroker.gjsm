@@ -1,1 +1,1 @@
-export interface PublicConfigInterface {}
+export interface PublicConfigInterface extends ioBroker.AdapterConfig {}

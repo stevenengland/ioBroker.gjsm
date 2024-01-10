@@ -8,11 +8,41 @@ import * as utils from '@iobroker/adapter-core';
 
 // Load your modules here, e.g.:
 // import * as fs from "fs";
+import { Json } from './data_format/Json';
+import { Yaml } from './data_format/Yaml';
 import { GenericJsonStateManager } from './gjsm/GenericJsonStateManager';
+import { ConfigProvider } from './gjsm/configuration/ConfigProvider';
+import { SpecificationProvider } from './gjsm/specification/SpecificationProvider';
+import { StateManager } from './iob/StateManager';
 import { IobAdapterLogger } from './logger_lib/IobAdapterLogger';
 
+import { AwilixContainer, InjectionMode, asClass, asValue, createContainer } from 'awilix';
+import { DataFormatInterface } from './data_format/DataFormatInterface';
+import { GenericJsonStateManagerInterface } from './gjsm/GenericJsonStateManagerInterface';
+import { ConfigProviderInterface } from './gjsm/configuration/ConfigProviderInterface';
+import { InstanceConfigInterface } from './gjsm/configuration/InstanceConfigInterface';
+import { PublicConfigInterface } from './gjsm/configuration/PublicConfigInterface';
+import { SpecificationProviderInterface } from './gjsm/specification/SpecificationProviderInterface';
+import { StateManagerInterface } from './iob/StateManagerInterface';
+import { LoggerInterface } from './logger_lib/LoggerInterface';
+
+interface IocContainerInterface {
+  adapter: utils.AdapterInstance;
+  publicConfig: PublicConfigInterface;
+  instanceConfig: InstanceConfigInterface;
+  stateManager: StateManagerInterface;
+  logger: LoggerInterface;
+  yaml: DataFormatInterface;
+  json: DataFormatInterface;
+  configProvider: ConfigProviderInterface;
+  specProvider: SpecificationProviderInterface;
+  gjsm: GenericJsonStateManagerInterface;
+}
+
+let iocContainer: AwilixContainer<IocContainerInterface>;
+
 class Gjsm extends utils.Adapter {
-  private _gjsm: GenericJsonStateManager | undefined;
+  private _gjsm: GenericJsonStateManagerInterface | undefined;
   public constructor(options: Partial<utils.AdapterOptions> = {}) {
     super({
       ...options,
@@ -30,57 +60,16 @@ class Gjsm extends utils.Adapter {
    */
   private async onReady(): Promise<void> {
     // Initialize your adapter here
-    this._gjsm = new GenericJsonStateManager(new IobAdapterLogger(this));
-
-    // The adapters config (in the instance object everything under the attribute "native") is accessible via
-    // this.config:
-    this.log.info('config option1: ' + this.config.option1);
-    this.log.info('config option2: ' + this.config.option2);
-
-    /*
-		For every state in the system there has to be also an object of type state
-		Here a simple template for a boolean variable named "testVariable"
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-		*/
-    await this.setObjectNotExistsAsync('testVariable', {
-      type: 'state',
-      common: {
-        name: 'testVariable',
-        type: 'boolean',
-        role: 'indicator',
-        read: true,
-        write: true,
-      },
-      native: {},
-    });
-
-    // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-    this.subscribeStates('testVariable');
-    // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-    // this.subscribeStates('lights.*');
-    // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-    // this.subscribeStates('*');
-
-    /*
-			setState examples
-			you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-		*/
-    // the variable testVariable is set to true as command (ack=false)
-    await this.setStateAsync('testVariable', true);
-
-    // same thing, but the value is flagged "ack"
-    // ack should be always set to true if the value is received from or acknowledged from the target system
-    await this.setStateAsync('testVariable', { val: true, ack: true });
-
-    // same thing, but the state is deleted after 30s (getState will return null afterwards)
-    await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
-
-    // examples for the checkPassword/checkGroup functions
-    let result = await this.checkPasswordAsync('admin', 'iobroker');
-    this.log.info('check user admin pw iobroker: ' + result);
-
-    result = await this.checkGroupAsync('admin', 'admin');
-    this.log.info('check group user admin group admin: ' + result);
+    try {
+      this.log.info(JSON.stringify(this.config)); // Convert this.config to a string
+      this.prepareIocContainer();
+      this._gjsm = iocContainer.cradle.gjsm;
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      this.log.error(`[onReady] Startup error: ${error}`);
+      this.terminate('Adapter could not be initialized successfully', utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+    }
+    await this.getStateAsync('info.connection');
   }
 
   /**
@@ -144,6 +133,33 @@ class Gjsm extends utils.Adapter {
   //         }
   //     }
   // }
+
+  private prepareIocContainer(): void {
+    const instanceConfig: InstanceConfigInterface = {
+      instanceId: this.instance,
+      instanceName: this.name,
+    } as InstanceConfigInterface;
+
+    iocContainer = createContainer<IocContainerInterface>({
+      injectionMode: InjectionMode.CLASSIC,
+      strict: false,
+    });
+
+    iocContainer.register({
+      // ioB natives
+      adapter: asValue(this),
+      publicConfig: asValue(this.config),
+      instanceConfig: asValue(instanceConfig),
+      // gjsm
+      stateManager: asClass(StateManager).transient(),
+      logger: asClass(IobAdapterLogger).singleton(),
+      yaml: asClass(Yaml).transient(),
+      json: asClass(Json).transient(),
+      configProvider: asClass(ConfigProvider).singleton(),
+      specProvider: asClass(SpecificationProvider).singleton(),
+      gjsm: asClass(GenericJsonStateManager).singleton(),
+    });
+  }
 }
 
 if (require.main !== module) {

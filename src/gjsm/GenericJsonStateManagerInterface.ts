@@ -1,1 +1,3 @@
-export interface GenericJsonStateManagerInterface {}
+export interface GenericJsonStateManagerInterface {
+  initialize(): Promise<void>;
+}
