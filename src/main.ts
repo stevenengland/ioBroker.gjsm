@@ -61,9 +61,9 @@ class Gjsm extends utils.Adapter {
   private async onReady(): Promise<void> {
     // Initialize your adapter here
     try {
-      this.log.info(JSON.stringify(this.config)); // Convert this.config to a string
       this.prepareIocContainer();
       this._gjsm = iocContainer.cradle.gjsm;
+      await this._gjsm.initialize();
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.log.error(`[onReady] Startup error: ${error}`);
