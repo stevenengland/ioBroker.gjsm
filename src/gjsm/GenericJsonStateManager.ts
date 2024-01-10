@@ -17,10 +17,11 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._configProvider = configProvider;
     this._specProvider = specProvider;
 
-    this._logger.debug('Manager initialized.');
+    this._logger.debug('GSJ Manager initialized.');
   }
 
   public async initialize(): Promise<void> {
     await this._configProvider.loadConfig();
+    await this._specProvider.loadSpecifications();
   }
 }
