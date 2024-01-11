@@ -67,7 +67,10 @@ class Gjsm extends utils.Adapter {
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.log.error(`[onReady] Startup error: ${error}`);
-      this.terminate('Adapter could not be initialized successfully', utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+      this.terminate(
+        'Adapter could not be initialized successfully, see the log for corresponding errors.',
+        utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,
+      );
     }
     await this.getStateAsync('info.connection');
   }
