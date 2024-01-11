@@ -59,7 +59,7 @@ class Gjsm extends utils.Adapter {
    * Is called when databases are connected and adapter received configuration.
    */
   private async onReady(): Promise<void> {
-    // Initialize your adapter here
+    // Try to initialize the adapter, terminate if it fails.
     try {
       this.prepareIocContainer();
       this._gjsm = iocContainer.cradle.gjsm;
@@ -72,7 +72,6 @@ class Gjsm extends utils.Adapter {
         utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,
       );
     }
-    await this.getStateAsync('info.connection');
   }
 
   /**

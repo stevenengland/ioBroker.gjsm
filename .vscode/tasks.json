@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "devserver:debug",
+      "label": "preLaunchTask_startDevServer",
+      "detail": "dev-server debug --wait",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": {
+        "pattern": {
+          // This is not needed but, required by the problemMatcher Object
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "devserver:debug",
+          // Ensures that browser is only opened after the task is completed.
+          "endsPattern": "Debugger is now waiting on process id"
+        }
+      }
+    },
+    {
+      "label": "postDebug_KillChoice",
+      "type": "process",
+      "command": [
+        "${command:workbench.action.tasks.terminate}",
+        "${command:workbench.action.acceptSelectedQuickOpenItem}"
+      ]
+    },
+    {
+      "label": "postDebug_KillAll",
+      "command": "echo ${input:terminate}",
+      "type": "shell",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "terminate",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "terminateAll"
+    }
+  ]
+}
