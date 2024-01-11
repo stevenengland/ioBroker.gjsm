@@ -1,7 +1,7 @@
 import { JSONPath } from 'jsonpath-plus';
 import { JsonPathInterface } from './JsonPathInterface';
 
-export class JppJsonPath implements JsonPathInterface {
+export class JsonPath implements JsonPathInterface {
   public getValues(jsonPath: string, json: string): unknown[] {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const jsonObject = JSON.parse(json);

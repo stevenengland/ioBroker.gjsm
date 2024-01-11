@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { JppJsonPath } from './JppJsonPath';
+import { JsonPath } from './JsonPath';
 
 describe('JsonPathLib', () => {
   const testobject = {
@@ -7,10 +7,10 @@ describe('JsonPathLib', () => {
     key2: 'string',
   };
   const testJson = JSON.stringify(testobject);
-  let sut: JppJsonPath;
+  let sut: JsonPath;
 
   beforeEach(() => {
-    sut = new JppJsonPath();
+    sut = new JsonPath();
   });
   describe('getValues', () => {
     (
