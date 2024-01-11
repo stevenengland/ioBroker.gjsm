@@ -19,7 +19,6 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": "devserver:debug",
-          // Ensures that browser is only opened after the task is completed.
           "endsPattern": "Debugger is now waiting on process id"
         }
       }

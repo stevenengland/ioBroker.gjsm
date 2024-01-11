@@ -7,10 +7,10 @@ import { StateFactory } from '../../iob/State.Factory.test';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterface } from '../configuration/ConfigInterface';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
-import { SpecificationProvider } from './SpecificationProvider';
+import { AutomationSpecProvider } from './AutomationSpecProvider';
 
-describe(nameof(SpecificationProvider), () => {
-  let sut: SpecificationProvider;
+describe(nameof(AutomationSpecProvider), () => {
+  let sut: AutomationSpecProvider;
   const yamlStub = sinon.createStubInstance(Yaml);
   const jsonStub = sinon.createStubInstance(Json);
   const objectClientStub = sinon.createStubInstance(ObjectClient);
@@ -18,7 +18,7 @@ describe(nameof(SpecificationProvider), () => {
   const configProviderStub = { config: {} as ConfigInterface } as ConfigProviderInterface;
 
   beforeEach(() => {
-    sut = new SpecificationProvider(configProviderStub, objectClientStub, yamlStub, jsonStub);
+    sut = new AutomationSpecProvider(configProviderStub, objectClientStub, yamlStub, jsonStub);
   });
   afterEach(() => {
     sinon.reset();
@@ -32,7 +32,7 @@ describe(nameof(SpecificationProvider), () => {
     });
   });
   describe(
-    nameof<SpecificationProvider>((s) => s.loadSpecifications),
+    nameof<AutomationSpecProvider>((s) => s.loadSpecifications),
     () => {
       it(`Should load an item with error field filled given a invalid state value`, async () => {
         // GIVEN

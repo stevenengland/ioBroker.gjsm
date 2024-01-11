@@ -1,13 +1,13 @@
 import { DataFormatError } from '../../data_format/DataFormatError';
 import { DataFormatInterface } from '../../data_format/DataFormatInterface';
 import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
-import { schema } from '../InstructionSchema';
+import { schema } from '../AutomationSpecSchema';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
-import { InstructionSetInterface } from './InstructionSetInterface';
-import { SpecificationProviderInterface } from './SpecificationProviderInterface';
+import { AutomationSpecInterface } from './AutomationSpecInterface';
+import { AutomationSpecProviderInterface } from './AutomationSpecProviderInterface';
 
-export class SpecificationProvider implements SpecificationProviderInterface {
-  private _specifications: Array<InstructionSetInterface>;
+export class AutomationSpecProvider implements AutomationSpecProviderInterface {
+  private _specifications: Array<AutomationSpecInterface>;
   private _schema!: object;
   private _objectClient: ObjectClientInterface;
   private _configProvider: ConfigProviderInterface;
@@ -28,7 +28,7 @@ export class SpecificationProvider implements SpecificationProviderInterface {
     this.loadSchema();
   }
 
-  public get specifications(): InstructionSetInterface[] {
+  public get specifications(): AutomationSpecInterface[] {
     return this._specifications;
   }
 
@@ -39,18 +39,18 @@ export class SpecificationProvider implements SpecificationProviderInterface {
   public async loadSpecifications(): Promise<void> {
     this._specifications = []; // empty array
     const instructionSetStates = await this._objectClient.getStatesAsync(
-      this._configProvider.config.instructionSetStatesPattern,
+      this._configProvider.config.automationStatesPattern,
     );
     try {
       await Promise.all(
         instructionSetStates.map(async (state) => {
           if (this._yaml.hasCorrectDataFormat(state.val)) {
             await this._yaml.validateAgainstSchema(state.val, this._schema);
-            const instructionSet = this._yaml.parse(state.val) as InstructionSetInterface;
+            const instructionSet = this._yaml.parse(state.val) as AutomationSpecInterface;
             this._specifications.push(instructionSet);
           } else if (this._json.hasCorrectDataFormat(state.val)) {
             await this._json.validateAgainstSchema(state.val, this._schema);
-            const instructionSet = this._json.parse(state.val) as InstructionSetInterface;
+            const instructionSet = this._json.parse(state.val) as AutomationSpecInterface;
             this._specifications.push(instructionSet);
           } else {
             throw new DataFormatError(`The data format of ${state.id} is not supported`);

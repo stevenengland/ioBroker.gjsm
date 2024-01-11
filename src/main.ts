@@ -12,7 +12,7 @@ import { Json } from './data_format/Json';
 import { Yaml } from './data_format/Yaml';
 import { GenericJsonStateManager } from './gjsm/GenericJsonStateManager';
 import { ConfigProvider } from './gjsm/configuration/ConfigProvider';
-import { SpecificationProvider } from './gjsm/specification/SpecificationProvider';
+import { AutomationSpecProvider } from './gjsm/specification/AutomationSpecProvider';
 import { ObjectClient } from './iob/ObjectClient';
 import { Logger } from './logger/Logger';
 
@@ -22,7 +22,7 @@ import { GenericJsonStateManagerInterface } from './gjsm/GenericJsonStateManager
 import { ConfigProviderInterface } from './gjsm/configuration/ConfigProviderInterface';
 import { InstanceConfigInterface } from './gjsm/configuration/InstanceConfigInterface';
 import { PublicConfigInterface } from './gjsm/configuration/PublicConfigInterface';
-import { SpecificationProviderInterface } from './gjsm/specification/SpecificationProviderInterface';
+import { AutomationSpecProviderInterface } from './gjsm/specification/AutomationSpecProviderInterface';
 import { ObjectClientInterface } from './iob/ObjectClientInterface';
 import { LoggerInterface } from './logger/LoggerInterface';
 
@@ -35,7 +35,7 @@ interface IocContainerInterface {
   yaml: DataFormatInterface;
   json: DataFormatInterface;
   configProvider: ConfigProviderInterface;
-  specProvider: SpecificationProviderInterface;
+  specProvider: AutomationSpecProviderInterface;
   gjsm: GenericJsonStateManagerInterface;
 }
 
@@ -50,8 +50,8 @@ class Gjsm extends utils.Adapter {
     });
     this.on('ready', this.onReady.bind(this));
     this.on('stateChange', this.onStateChange.bind(this));
-    // this.on('objectChange', this.onObjectChange.bind(this));
-    // this.on('message', this.onMessage.bind(this));
+    this.on('objectChange', this.onObjectChange.bind(this));
+    this.on('message', this.onMessage.bind(this));
     this.on('unload', this.onUnload.bind(this));
   }
 
@@ -72,6 +72,8 @@ class Gjsm extends utils.Adapter {
         utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,
       );
     }
+
+    await this._gjsm.loadAutomationDefinitions();
   }
 
   /**
@@ -91,20 +93,18 @@ class Gjsm extends utils.Adapter {
     }
   }
 
-  // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-  // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-  // /**
-  //  * Is called if a subscribed object changes
-  //  */
-  // private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
-  //     if (obj) {
-  //         // The object was changed
-  //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-  //     } else {
-  //         // The object was deleted
-  //         this.log.info(`object ${id} deleted`);
-  //     }
-  // }
+  /**
+   * Is called if a subscribed object changes
+   */
+  private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
+    if (obj) {
+      // The object was changed
+      this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
+    } else {
+      // The object was deleted
+      this.log.info(`object ${id} deleted`);
+    }
+  }
 
   /**
    * Is called if a subscribed state changes
@@ -119,22 +119,20 @@ class Gjsm extends utils.Adapter {
     }
   }
 
-  // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-  // /**
-  //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-  //  * Using this method requires "common.messagebox" property to be set to true in io-package.json
-  //  */
-  // private onMessage(obj: ioBroker.Message): void {
-  //     if (typeof obj === 'object' && obj.message) {
-  //         if (obj.command === 'send') {
-  //             // e.g. send email or pushover or whatever
-  //             this.log.info('send command');
-
-  //             // Send response in callback if required
-  //             if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-  //         }
-  //     }
-  // }
+  /**
+   * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
+   * Using this method requires "common.messagebox" property to be set to true in io-package.json
+   */
+  private onMessage(obj: ioBroker.Message): void {
+    if (typeof obj === 'object' && obj.message) {
+      if (obj.command === 'send') {
+        // e.g. send email or pushover or whatever
+        this.log.info('send command');
+        // Send response in callback if required
+        if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+      }
+    }
+  }
 
   private prepareIocContainer(): void {
     const instanceConfig: InstanceConfigInterface = {
@@ -158,7 +156,7 @@ class Gjsm extends utils.Adapter {
       yaml: asClass(Yaml).transient(),
       json: asClass(Json).transient(),
       configProvider: asClass(ConfigProvider).singleton(),
-      specProvider: asClass(SpecificationProvider).singleton(),
+      specProvider: asClass(AutomationSpecProvider).singleton(),
       gjsm: asClass(GenericJsonStateManager).singleton(),
     });
   }
