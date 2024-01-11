@@ -2,16 +2,16 @@
 import { AdapterInstance } from '@iobroker/adapter-core';
 import { MockAdapter, utils } from '@iobroker/testing';
 import { expect } from 'chai';
-import { IobAdapterLogger } from './IobAdapterLogger';
+import { Logger } from './Logger';
 
 describe('IobLogger', () => {
-  let sut: IobAdapterLogger;
+  let sut: Logger;
   let adapter: MockAdapter;
   // let adapter2: AdapterInstance;
 
   beforeEach(() => {
     adapter = utils.unit.createMocks({ name: 'gsjm' }).adapter;
-    sut = new IobAdapterLogger(adapter as unknown as AdapterInstance);
+    sut = new Logger(adapter as unknown as AdapterInstance);
   });
 
   afterEach(() => {

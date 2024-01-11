@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { Json } from '../../data_format/Json';
 import { Yaml } from '../../data_format/Yaml';
+import { ObjectClient } from '../../iob/ObjectClient';
 import { StateFactory } from '../../iob/State.Factory.test';
-import { StateManager } from '../../iob/StateManager';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterface } from '../configuration/ConfigInterface';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
@@ -13,12 +13,12 @@ describe(nameof(SpecificationProvider), () => {
   let sut: SpecificationProvider;
   const yamlStub = sinon.createStubInstance(Yaml);
   const jsonStub = sinon.createStubInstance(Json);
-  const stateManagerStub = sinon.createStubInstance(StateManager);
+  const objectClientStub = sinon.createStubInstance(ObjectClient);
   //const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations"
   const configProviderStub = { config: {} as ConfigInterface } as ConfigProviderInterface;
 
   beforeEach(() => {
-    sut = new SpecificationProvider(configProviderStub, stateManagerStub, yamlStub, jsonStub);
+    sut = new SpecificationProvider(configProviderStub, objectClientStub, yamlStub, jsonStub);
   });
   afterEach(() => {
     sinon.reset();
@@ -36,7 +36,7 @@ describe(nameof(SpecificationProvider), () => {
     () => {
       it(`Should load an item with error field filled given a invalid state value`, async () => {
         // GIVEN
-        stateManagerStub.getStatesAsync.resolves([StateFactory.createWithVal('invalid')]);
+        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal('invalid')]);
         // WHEN
         await sut.loadSpecifications();
         const result = sut.specifications[0]!.errors![0];
@@ -45,7 +45,7 @@ describe(nameof(SpecificationProvider), () => {
       });
       it(`Should load a config given a JSON document`, async () => {
         // GIVEN
-        stateManagerStub.getStatesAsync.resolves([StateFactory.createWithVal("{ 'isJson': true }")]);
+        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal("{ 'isJson': true }")]);
         jsonStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();
@@ -55,7 +55,7 @@ describe(nameof(SpecificationProvider), () => {
       });
       it(`Should load a config given a YAML document`, async () => {
         // GIVEN
-        stateManagerStub.getStatesAsync.resolves([StateFactory.createWithVal('isYaml: true ')]);
+        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal('isYaml: true ')]);
         yamlStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();

@@ -1,4 +1,4 @@
-import { LoggerInterface } from '../logger_lib/LoggerInterface';
+import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
 import { SpecificationProviderInterface } from './specification/SpecificationProviderInterface';

@@ -2,22 +2,22 @@ import { AdapterInstance } from '@iobroker/adapter-core';
 import { MockAdapter, utils } from '@iobroker/testing';
 import { expect } from 'chai';
 import { nameof } from '../utils/NameOf';
-import { StateManager } from './StateManager';
+import { ObjectClient } from './ObjectClient';
 
-describe(nameof(StateManager), () => {
-  let sut: StateManager;
+describe(nameof(ObjectClient), () => {
+  let sut: ObjectClient;
   let adapter: MockAdapter;
 
   beforeEach(() => {
     adapter = utils.unit.createMocks({ name: 'gsjm' }).adapter;
-    sut = new StateManager(adapter as unknown as AdapterInstance);
+    sut = new ObjectClient(adapter as unknown as AdapterInstance);
   });
 
   afterEach(() => {
     adapter.resetMock();
   });
   describe(
-    nameof<StateManager>((s) => s.getStatesAsync),
+    nameof<ObjectClient>((s) => s.getStatesAsync),
     () => {
       it(`Should return states`, async () => {
         // GIVEN
@@ -33,7 +33,7 @@ describe(nameof(StateManager), () => {
     },
   );
   describe(
-    nameof<StateManager>((s) => s.getForeignObjectAsync),
+    nameof<ObjectClient>((s) => s.getForeignObjectAsync),
     () => {
       it(`Should return object`, async () => {
         // GIVEN

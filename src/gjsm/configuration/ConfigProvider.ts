@@ -1,5 +1,5 @@
 import { DataFormatInterface } from '../../data_format/DataFormatInterface';
-import { StateManagerInterface } from '../../iob/StateManagerInterface';
+import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
 import { config as privateConfig } from '../Config';
 import { schema } from '../ConfigSchema';
 import { ConfigError } from './ConfigError';
@@ -12,20 +12,20 @@ export class ConfigProvider implements ConfigProviderInterface {
   private _publicConfig!: PublicConfigInterface;
   private _instanceConfig!: InstanceConfigInterface;
   private _json: DataFormatInterface;
-  private _stateManager: StateManagerInterface;
+  private _objectClient: ObjectClientInterface;
 
   public constructor(
     json: DataFormatInterface,
     instanceConfig: InstanceConfigInterface,
-    stateManager: StateManagerInterface,
+    objectClient: ObjectClientInterface,
   ) {
     this._json = json;
     this._instanceConfig = instanceConfig;
-    this._stateManager = stateManager;
+    this._objectClient = objectClient;
   }
 
   public async loadConfig(): Promise<void> {
-    const publicConfigObj = await this._stateManager.getForeignObjectAsync(
+    const publicConfigObj = await this._objectClient.getForeignObjectAsync(
       `system.adapter.${this._instanceConfig.instanceName}.${this._instanceConfig.instanceId}`,
     );
     if (!publicConfigObj) {

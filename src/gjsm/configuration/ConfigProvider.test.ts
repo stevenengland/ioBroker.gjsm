@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import ioPackage from '../../../io-package.json';
 import { Json } from '../../data_format/Json';
-import { StateManager } from '../../iob/StateManager';
+import { ObjectClient } from '../../iob/ObjectClient';
 import { nameof } from '../../utils/NameOf';
 import { ConfigError } from './ConfigError';
 import { ConfigProvider } from './ConfigProvider';
@@ -12,11 +12,11 @@ describe(nameof(ConfigProvider), () => {
   let sut: ConfigProvider;
   const jsonStub = sinon.createStubInstance(Json);
   const publicConfig = ioPackage.native;
-  const stateManagerStub = sinon.createStubInstance(StateManager);
+  const objectClientStub = sinon.createStubInstance(ObjectClient);
   const instanceConfig = { instanceId: 'testId', instanceName: 'testName' } as unknown as InstanceConfigInterface;
 
   beforeEach(() => {
-    sut = new ConfigProvider(jsonStub, instanceConfig, stateManagerStub);
+    sut = new ConfigProvider(jsonStub, instanceConfig, objectClientStub);
   });
   afterEach(() => {
     sinon.reset();
@@ -34,8 +34,8 @@ describe(nameof(ConfigProvider), () => {
     () => {
       it(`Should load and validate config`, async () => {
         // GIVEN
-        stateManagerStub.getForeignObjectAsync.resolves({ native: publicConfig });
-        sut = new ConfigProvider(new Json(), instanceConfig, stateManagerStub);
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig });
+        sut = new ConfigProvider(new Json(), instanceConfig, objectClientStub);
         // WHEN
         await sut.loadConfig();
         // THEN
@@ -46,7 +46,7 @@ describe(nameof(ConfigProvider), () => {
       });
       it(`Should throw if adapter config cannot be read`, async () => {
         // GIVEN
-        stateManagerStub.getForeignObjectAsync.resolves(null);
+        objectClientStub.getForeignObjectAsync.resolves(null);
         // WHEN
         async function when() {
           return sut.loadConfig();
@@ -56,9 +56,9 @@ describe(nameof(ConfigProvider), () => {
       });
       it(`Should throw if config is invalid`, async () => {
         // GIVEN
-        stateManagerStub.getForeignObjectAsync.resolves({ native: publicConfig });
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig });
         jsonStub.validateAgainstSchema.throws(new Error('Invalid (JSON) syntax'));
-        sut = new ConfigProvider(jsonStub, instanceConfig, stateManagerStub);
+        sut = new ConfigProvider(jsonStub, instanceConfig, objectClientStub);
         // WHEN
         async function when() {
           return sut.loadConfig();

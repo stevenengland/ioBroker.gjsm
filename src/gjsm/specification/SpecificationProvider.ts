@@ -1,6 +1,6 @@
 import { DataFormatError } from '../../data_format/DataFormatError';
 import { DataFormatInterface } from '../../data_format/DataFormatInterface';
-import { StateManagerInterface } from '../../iob/StateManagerInterface';
+import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
 import { schema } from '../InstructionSchema';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
 import { InstructionSetInterface } from './InstructionSetInterface';
@@ -9,17 +9,17 @@ import { SpecificationProviderInterface } from './SpecificationProviderInterface
 export class SpecificationProvider implements SpecificationProviderInterface {
   private _specifications: Array<InstructionSetInterface>;
   private _schema!: object;
-  private _stateManager: StateManagerInterface;
+  private _objectClient: ObjectClientInterface;
   private _configProvider: ConfigProviderInterface;
   private _yaml: DataFormatInterface;
   private _json: DataFormatInterface;
   public constructor(
     configProvider: ConfigProviderInterface,
-    stateManager: StateManagerInterface,
+    objectClient: ObjectClientInterface,
     yaml: DataFormatInterface,
     json: DataFormatInterface,
   ) {
-    this._stateManager = stateManager;
+    this._objectClient = objectClient;
     this._yaml = yaml;
     this._json = json;
     this._specifications = [];
@@ -38,7 +38,7 @@ export class SpecificationProvider implements SpecificationProviderInterface {
 
   public async loadSpecifications(): Promise<void> {
     this._specifications = []; // empty array
-    const instructionSetStates = await this._stateManager.getStatesAsync(
+    const instructionSetStates = await this._objectClient.getStatesAsync(
       this._configProvider.config.instructionSetStatesPattern,
     );
     try {

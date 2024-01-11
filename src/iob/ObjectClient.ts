@@ -1,9 +1,9 @@
 import * as utils from '@iobroker/adapter-core';
+import { ObjectClientInterface } from './ObjectClientInterface';
 import { ObjectInterface } from './ObjectInterface';
 import { StateInterface } from './StateInterface';
-import { StateManagerInterface } from './StateManagerInterface';
 
-export class StateManager implements StateManagerInterface {
+export class ObjectClient implements ObjectClientInterface {
   private _adapter: utils.AdapterInstance;
   public constructor(adapter: utils.AdapterInstance) {
     this._adapter = adapter;

@@ -1,7 +1,7 @@
 import * as utils from '@iobroker/adapter-core';
 import { LoggerInterface } from './LoggerInterface';
 
-export class IobAdapterLogger implements LoggerInterface {
+export class Logger implements LoggerInterface {
   private _adapter: utils.AdapterInstance;
   public debug(message: string): void {
     this._adapter.log.debug(message);

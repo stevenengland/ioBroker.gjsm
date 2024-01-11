@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { IobAdapterLogger } from '../logger_lib/IobAdapterLogger';
+import { Logger } from '../logger/Logger';
 import { nameof } from '../utils/NameOf';
 import { GenericJsonStateManager } from './GenericJsonStateManager';
 import { ConfigProvider } from './configuration/ConfigProvider';
@@ -8,7 +8,7 @@ import { SpecificationProvider } from './specification/SpecificationProvider';
 describe(nameof(GenericJsonStateManager), () => {
   let sut: GenericJsonStateManager;
   const specProviderMock = sinon.createStubInstance(SpecificationProvider);
-  const loggerMock = sinon.createStubInstance(IobAdapterLogger);
+  const loggerMock = sinon.createStubInstance(Logger);
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
 
   beforeEach(() => {

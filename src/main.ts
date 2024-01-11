@@ -13,8 +13,8 @@ import { Yaml } from './data_format/Yaml';
 import { GenericJsonStateManager } from './gjsm/GenericJsonStateManager';
 import { ConfigProvider } from './gjsm/configuration/ConfigProvider';
 import { SpecificationProvider } from './gjsm/specification/SpecificationProvider';
-import { StateManager } from './iob/StateManager';
-import { IobAdapterLogger } from './logger_lib/IobAdapterLogger';
+import { ObjectClient } from './iob/ObjectClient';
+import { Logger } from './logger/Logger';
 
 import { AwilixContainer, InjectionMode, asClass, asValue, createContainer } from 'awilix';
 import { DataFormatInterface } from './data_format/DataFormatInterface';
@@ -23,14 +23,14 @@ import { ConfigProviderInterface } from './gjsm/configuration/ConfigProviderInte
 import { InstanceConfigInterface } from './gjsm/configuration/InstanceConfigInterface';
 import { PublicConfigInterface } from './gjsm/configuration/PublicConfigInterface';
 import { SpecificationProviderInterface } from './gjsm/specification/SpecificationProviderInterface';
-import { StateManagerInterface } from './iob/StateManagerInterface';
-import { LoggerInterface } from './logger_lib/LoggerInterface';
+import { ObjectClientInterface } from './iob/ObjectClientInterface';
+import { LoggerInterface } from './logger/LoggerInterface';
 
 interface IocContainerInterface {
   adapter: utils.AdapterInstance;
   publicConfig: PublicConfigInterface;
   instanceConfig: InstanceConfigInterface;
-  stateManager: StateManagerInterface;
+  objectClient: ObjectClientInterface;
   logger: LoggerInterface;
   yaml: DataFormatInterface;
   json: DataFormatInterface;
@@ -151,8 +151,8 @@ class Gjsm extends utils.Adapter {
       publicConfig: asValue(this.config),
       instanceConfig: asValue(instanceConfig),
       // gjsm
-      stateManager: asClass(StateManager).transient(),
-      logger: asClass(IobAdapterLogger).singleton(),
+      objectClient: asClass(ObjectClient).transient(),
+      logger: asClass(Logger).singleton(),
       yaml: asClass(Yaml).transient(),
       json: asClass(Json).transient(),
       configProvider: asClass(ConfigProvider).singleton(),
