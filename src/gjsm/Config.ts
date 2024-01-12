@@ -1,5 +1,5 @@
 import { PrivateConfigInterface } from './configuration/PrivateConfigInterface';
 
 export const config = {
-  automationStatesPattern: 'automations.*',
+  automationStatesPattern: 'automations.*', // Automatically subscribes to new matching states
 } as PrivateConfigInterface;

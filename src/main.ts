@@ -134,6 +134,17 @@ class Gjsm extends utils.Adapter {
     }
   }
 
+  // TODO: improve checking for error types etc.
+  private handleError(error: Error, isCritical: boolean): void {
+    this.log.error(`[handleError] ${error.message}`);
+    if (isCritical) {
+      this.terminate(
+        'Adapter could not be initialized successfully, see the log for corresponding errors.',
+        utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,
+      );
+    }
+  }
+
   private prepareIocContainer(): void {
     const instanceConfig: InstanceConfigInterface = {
       instanceId: this.instance,

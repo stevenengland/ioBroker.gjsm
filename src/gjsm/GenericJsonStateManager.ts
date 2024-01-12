@@ -41,7 +41,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._specProvider.specifications.forEach((spec) => {
       if (spec.errors) {
         spec.errors.forEach((error) => {
-          this._logger.warn(`Automation definition loaded with error: ${error}`);
+          this._logger.warn(`Automation definition ${spec.id} loaded with error: ${error}`);
         });
       }
     });
@@ -49,8 +49,8 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
 
   public async initialize(): Promise<void> {
     await this.loadConfig();
-    // TODO: abbonieren von automation definition states
+    // Subscribe to changes of the automation states
     await this._onjectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
-    // TODO: Int
+    // TODO: Subcscribe to changes of the config object
   }
 }
