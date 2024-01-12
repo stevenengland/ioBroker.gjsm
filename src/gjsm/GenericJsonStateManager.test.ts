@@ -1,8 +1,10 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { ObjectClient } from '../iob/ObjectClient';
 import { Logger } from '../logger/Logger';
 import { nameof } from '../utils/NameOf';
 import { GenericJsonStateManager } from './GenericJsonStateManager';
+import { ConfigInterfaceFactory } from './configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from './configuration/ConfigProvider';
 import { AutomationSpecInterface } from './specification/AutomationSpecInterface';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
@@ -12,13 +14,17 @@ describe(nameof(GenericJsonStateManager), () => {
   const specProviderStub = sinon.createStubInstance(AutomationSpecProvider);
   const loggerStub = sinon.createStubInstance(Logger);
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
+  const objectClientStub = sinon.createStubInstance(ObjectClient);
+  sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
 
   beforeEach(() => {
-    sut = new GenericJsonStateManager(loggerStub, configProviderStub, specProviderStub);
+    sut = new GenericJsonStateManager(loggerStub, configProviderStub, specProviderStub, objectClientStub);
   });
+
   afterEach(() => {
     sinon.reset();
   });
+
   describe(
     nameof<GenericJsonStateManager>((g) => g.initialize),
     () => {
@@ -29,8 +35,16 @@ describe(nameof(GenericJsonStateManager), () => {
         // THEN
         expect(configProviderStub.loadConfig).calledOnce;
       });
+      it(`Should subscribe to config states`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.initialize();
+        // THEN
+        expect(objectClientStub.subscribeStatesAsync).calledOnce;
+      });
     },
   );
+
   describe(
     nameof<GenericJsonStateManager>((g) => g.loadConfig),
     () => {
@@ -43,6 +57,7 @@ describe(nameof(GenericJsonStateManager), () => {
       });
     },
   );
+
   describe(
     nameof<GenericJsonStateManager>((g) => g.loadAutomationDefinitions),
     () => {
@@ -53,7 +68,7 @@ describe(nameof(GenericJsonStateManager), () => {
         await sut.loadAutomationDefinitions();
         // THEN
         expect(specProviderStub.loadSpecifications).calledOnce;
-        expect(loggerStub.info).calledWithMatch(/successfully/);
+        expect(loggerStub.info).calledWithMatch(/definition\(s\) loaded/);
       });
       it(`Should handle when there is no automation specification found`, async () => {
         // GIVEN

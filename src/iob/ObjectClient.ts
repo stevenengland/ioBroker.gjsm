@@ -31,4 +31,8 @@ export class ObjectClient implements ObjectClientInterface {
     const result = { id: obj._id, native: obj.native } as ObjectInterface;
     return result;
   }
+
+  public async subscribeStatesAsync(pattern: string): Promise<void> {
+    await this._adapter.subscribeStatesAsync(pattern);
+  }
 }

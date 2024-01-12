@@ -57,4 +57,18 @@ describe(nameof(ObjectClient), () => {
       });
     },
   );
+  describe(
+    nameof<ObjectClient>((s) => s.subscribeStatesAsync),
+    () => {
+      it(`Should not throw`, async () => {
+        // GIVEN
+        // WHEN
+        async function when() {
+          await sut.subscribeStatesAsync('*');
+        }
+        // THEN
+        await expect(when()).not.to.be.rejected;
+      });
+    },
+  );
 });

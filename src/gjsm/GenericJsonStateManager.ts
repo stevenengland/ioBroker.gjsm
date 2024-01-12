@@ -1,3 +1,4 @@
+import { ObjectClientInterface } from '../iob/ObjectClientInterface';
 import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
@@ -7,17 +8,18 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   private _logger: LoggerInterface;
   private _configProvider: ConfigProviderInterface;
   private _specProvider: AutomationSpecProviderInterface;
+  private _onjectClient: ObjectClientInterface;
 
   public constructor(
     logger: LoggerInterface,
     configProvider: ConfigProviderInterface,
     specProvider: AutomationSpecProviderInterface,
+    objectClient: ObjectClientInterface,
   ) {
     this._logger = logger;
     this._configProvider = configProvider;
     this._specProvider = specProvider;
-
-    this._logger.debug('GSJ Manager initialized.');
+    this._onjectClient = objectClient;
   }
   public async loadConfig(): Promise<void> {
     await this._configProvider.loadConfig();
@@ -33,7 +35,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     if (this._specProvider.specifications.length === 0) {
       this._logger.warn('No automation definitions found.');
     } else {
-      this._logger.info('Automation definitions successfully loaded.');
+      this._logger.info(`${this._specProvider.specifications.length} Automation definition(s) loaded.`);
     }
 
     this._specProvider.specifications.forEach((spec) => {
@@ -48,6 +50,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   public async initialize(): Promise<void> {
     await this.loadConfig();
     // TODO: abbonieren von automation definition states
+    await this._onjectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
     // TODO: Int
   }
 }
