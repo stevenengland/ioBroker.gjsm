@@ -43,15 +43,16 @@ export class AutomationSpecProvider implements AutomationSpecProviderInterface {
     );
     await Promise.all(
       instructionSetStates.map(async (state) => {
+        // Check JSON first because it is more strict than YAML
         try {
-          if (this._yaml.hasCorrectDataFormat(state.val)) {
-            await this._yaml.validateAgainstSchema(state.val, this._schema);
-            const automationSpec = this._yaml.parse(state.val) as AutomationSpecInterface;
-            automationSpec.id = state.id;
-            this._specifications.push(automationSpec);
-          } else if (this._json.hasCorrectDataFormat(state.val)) {
+          if (this._json.hasCorrectDataFormat(state.val)) {
             await this._json.validateAgainstSchema(state.val, this._schema);
             const automationSpec = this._json.parse(state.val) as AutomationSpecInterface;
+            automationSpec.id = state.id;
+            this._specifications.push(automationSpec);
+          } else if (this._yaml.hasCorrectDataFormat(state.val)) {
+            await this._yaml.validateAgainstSchema(state.val, this._schema);
+            const automationSpec = this._yaml.parse(state.val) as AutomationSpecInterface;
             automationSpec.id = state.id;
             this._specifications.push(automationSpec);
           } else {
