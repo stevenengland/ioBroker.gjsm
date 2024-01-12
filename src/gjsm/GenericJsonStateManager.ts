@@ -48,5 +48,6 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   public async initialize(): Promise<void> {
     await this.loadConfig();
     // TODO: abbonieren von automation definition states
+    // TODO: Int
   }
 }

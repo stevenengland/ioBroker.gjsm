@@ -34,14 +34,19 @@ describe(nameof(AutomationSpecProvider), () => {
   describe(
     nameof<AutomationSpecProvider>((s) => s.loadSpecifications),
     () => {
-      it(`Should load an item with error field filled given a invalid state value`, async () => {
+      it(`Should load two items with with error and id field filled given a invalid state value`, async () => {
         // GIVEN
-        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal('invalid')]);
+        objectClientStub.getStatesAsync.resolves([
+          StateFactory.createWithVal('invalid'),
+          StateFactory.createWithVal('invalid'),
+        ]);
         // WHEN
         await sut.loadSpecifications();
-        const result = sut.specifications[0]!.errors![0];
+        const result = sut.specifications;
         // THEN
-        expect(result).to.contain('The data format of');
+        expect(result.length).equals(2);
+        expect(result[0]!.errors![0]).to.contain('The data format of');
+        expect(result[0]!.id).to.contain('id');
       });
       it(`Should load a config given a JSON document`, async () => {
         // GIVEN
@@ -49,9 +54,10 @@ describe(nameof(AutomationSpecProvider), () => {
         jsonStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();
-        const result = sut.specifications.length;
+        const result = sut.specifications;
         // THEN
-        expect(result).to.equal(1);
+        expect(result.length).to.equal(1);
+        expect(result[0]!.id).to.contain('id');
       });
       it(`Should load a config given a YAML document`, async () => {
         // GIVEN
@@ -59,9 +65,10 @@ describe(nameof(AutomationSpecProvider), () => {
         yamlStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();
-        const result = sut.specifications.length;
+        const result = sut.specifications;
         // THEN
-        expect(result).to.equal(1);
+        expect(result.length).to.equal(1);
+        expect(result[0]!.id).to.contain('id');
       });
     },
   );

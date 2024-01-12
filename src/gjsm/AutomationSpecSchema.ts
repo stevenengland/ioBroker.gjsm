@@ -1,6 +1,15 @@
 export const schema = {
   type: 'object',
   properties: {
+    id: {
+      type: 'string',
+    },
+    errors: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
     groupFilter: {
       type: 'string',
     },

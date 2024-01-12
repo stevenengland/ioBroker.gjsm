@@ -41,25 +41,27 @@ export class AutomationSpecProvider implements AutomationSpecProviderInterface {
     const instructionSetStates = await this._objectClient.getStatesAsync(
       this._configProvider.config.automationStatesPattern,
     );
-    try {
-      await Promise.all(
-        instructionSetStates.map(async (state) => {
+    await Promise.all(
+      instructionSetStates.map(async (state) => {
+        try {
           if (this._yaml.hasCorrectDataFormat(state.val)) {
             await this._yaml.validateAgainstSchema(state.val, this._schema);
-            const instructionSet = this._yaml.parse(state.val) as AutomationSpecInterface;
-            this._specifications.push(instructionSet);
+            const automationSpec = this._yaml.parse(state.val) as AutomationSpecInterface;
+            automationSpec.id = state.id;
+            this._specifications.push(automationSpec);
           } else if (this._json.hasCorrectDataFormat(state.val)) {
             await this._json.validateAgainstSchema(state.val, this._schema);
-            const instructionSet = this._json.parse(state.val) as AutomationSpecInterface;
-            this._specifications.push(instructionSet);
+            const automationSpec = this._json.parse(state.val) as AutomationSpecInterface;
+            automationSpec.id = state.id;
+            this._specifications.push(automationSpec);
           } else {
             throw new DataFormatError(`The data format of ${state.id} is not supported`);
           }
-        }),
-      );
-    } catch (error) {
-      this._specifications.push({ errors: [(error as Error).message] });
-    }
+        } catch (error) {
+          this.specifications.push({ id: state.id, errors: [(error as Error).message] });
+        }
+      }),
+    );
     // validate, set specications
   }
 
