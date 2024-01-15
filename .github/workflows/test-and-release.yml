@@ -70,16 +70,34 @@ jobs:
       matrix:
         node-version: [16.x, 18.x, 20.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
+        js-controller-version: ['5.0.2', latest]
 
     steps:
-      - uses: ioBroker/testing-action-adapter@v1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          os: ${{ matrix.os }}
-          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-          # install-command: 'npm install'
-          build: true
-          extra-tests: 'npm run test:ts'
+
+      - name: Install Dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Create a clean build
+        shell: bash
+        run: npm run build
+
+      - name: Run unit tests
+        shell: bash
+        run: npm run test:ts
+
+      - name: Run integration tests
+        shell: bash
+        run: npm run test:integration -- --controller-version=${{ matrix.js-controller-version }}
+        env:
+          DEBUG: 'testing:*'
 # TODO: To enable automatic npm releases, create a token on npmjs.org
 # Enter this token as a GitHub secret (with name NPM_TOKEN) in the repository options
 # Then uncomment the following block:
