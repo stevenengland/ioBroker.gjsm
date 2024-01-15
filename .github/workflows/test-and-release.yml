@@ -22,7 +22,11 @@ jobs:
   configure:
     runs-on: ubuntu-latest
     outputs:
-      dot_env: ${{ toJson(steps.dotenv.outputs) }}
+      CONTROLLER_VERSION_MAX: ${{ steps.dotenv.outputs.CONTROLLER_VERSION_MAX }}
+      CONTROLLER_VERSION_MIN: ${{ steps.dotenv.outputs.CONTROLLER_VERSION_MIN }}
+      NODE_VERSION: ${{ steps.dotenv.outputs.NODE_VERSION }}
+      NODE_VERSION_MIN: ${{ steps.dotenv.outputs.NODE_VERSION_MIN }}
+      NODE_VERSION_MAX: ${{ steps.dotenv.outputs.NODE_VERSION_MAX }}
     steps:
       - name: Checkout to repository
         uses: actions/checkout@v3
@@ -50,10 +54,10 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION) }}
+      - name: Use Node.js ${{ needs.configure.outputs.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION) }}
+          node-version: ${{ needs.configure.outputs.NODE_VERSION }}
 
       - name: Install Dependencies
         shell: bash
@@ -86,15 +90,12 @@ jobs:
     strategy:
       matrix:
         node-version:
-          [
-            '${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION_MIN) }}',
-            '${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION_MAX) }}',
-          ]
+          ['${{ needs.configure.outputs.NODE_VERSION_MIN }}', '${{ needs.configure.outputs.NODE_VERSION_MAX }}']
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
         js-controller-version:
           [
-            '${{ fromJson(needs.configure.outputs.dot_env.env.dot_env.CONTROLLER_VERSION_MIN) }}',
-            '${{ fromJson(needs.configure.outputs.dot_env.env.dot_env.CONTROLLER_VERSION_MAX) }}',
+            '${{ needs.configure.outputs.CONTROLLER_VERSION_MIN }}',
+            '${{ needs.configure.outputs.CONTROLLER_VERSION_MAX }}',
           ]
 
     steps:
