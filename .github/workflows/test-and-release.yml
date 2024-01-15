@@ -45,17 +45,14 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      dot_env: ${{ fromJson(needs.configure.outputs.dot_env) }}
-
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ env.dot_env.NODE_VERSION }}
+      - name: Use Node.js ${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION) }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.dot_env.NODE_VERSION }}
+          node-version: ${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION) }}
 
       - name: Install Dependencies
         shell: bash
@@ -84,9 +81,6 @@ jobs:
     needs: configure
 
     runs-on: ${{ matrix.os }}
-
-    env:
-      dot_env: ${{ fromJson(needs.configure.outputs.dot_env) }}
 
     strategy:
       matrix:
