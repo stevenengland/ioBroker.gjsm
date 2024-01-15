@@ -22,7 +22,7 @@ jobs:
   configure:
     runs-on: ubuntu-latest
     outputs:
-      dot_env: ${{ steps.dotenv.outputs }}
+      dot_env: ${{ toJson(steps.dotenv.outputs) }}
     steps:
       - name: Checkout to repository
         uses: actions/checkout@v3
@@ -40,17 +40,22 @@ jobs:
   # Performs quick checks before the expensive test runs
   check_lint_unit-test:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
+
     needs: configure
+
     runs-on: ubuntu-latest
+
+    env:
+      dot_env: ${{ fromJson(needs.configure.outputs.dot_env) }}
 
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ needs.configure.outputs.dot_env.NODE_VERSION }}
+      - name: Use Node.js ${{ env.dot_env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ needs.configure.outputs.dot_env.NODE_VERSION }}
+          node-version: ${{ env.dot_env.NODE_VERSION }}
 
       - name: Install Dependencies
         shell: bash
@@ -75,20 +80,26 @@ jobs:
   # Runs adapter tests on all supported node versions and OSes
   adapter-integration-tests:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
+
     needs: configure
+
     runs-on: ${{ matrix.os }}
+
+    env:
+      dot_env: ${{ fromJson(needs.configure.outputs.dot_env) }}
+
     strategy:
       matrix:
         node-version:
           [
-            '${{ needs.configure.outputs.dot_env.NODE_VERSION_MIN }}',
-            '${{ needs.configure.outputs.dot_env.NODE_VERSION_MAX }}',
+            '${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION_MIN) }}',
+            '${{ fromJson(needs.configure.outputs.dot_env.NODE_VERSION_MAX) }}',
           ]
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
         js-controller-version:
           [
-            '${{ needs.configure.outputs.dot_env.CONTROLLER_VERSION_MIN }}',
-            '${{ needs.configure.outputs.dot_env.CONTROLLER_VERSION_MAX }}',
+            '${{ fromJson(needs.configure.outputs.dot_env.env.dot_env.CONTROLLER_VERSION_MIN) }}',
+            '${{ fromJson(needs.configure.outputs.dot_env.env.dot_env.CONTROLLER_VERSION_MAX) }}',
           ]
 
     steps:
