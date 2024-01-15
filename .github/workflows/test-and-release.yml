@@ -36,6 +36,7 @@ jobs:
         with:
           path: .github/workflows/env_vars.txt
           log-variables: true
+          keys-case: bypass
 
   # Performs quick checks before the expensive test runs
   check_lint_unit-test:
