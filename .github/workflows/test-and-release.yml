@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   # Performs quick checks before the expensive test runs
-  check-and-lint:
+  check_lint_unit-test:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
 
     runs-on: ubuntu-latest
@@ -57,12 +57,12 @@ jobs:
         shell: bash
         run: npm run test:package
 
-      - name: Test files and check coverage
+      - name: Unit tests and coverage check
         shell: bash
         run: npm run coverage
 
   # Runs adapter tests on all supported node versions and OSes
-  adapter-tests:
+  adapter-integration-tests:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
 
     runs-on: ${{ matrix.os }}
@@ -89,10 +89,6 @@ jobs:
         shell: bash
         run: npm run build
 
-      - name: Run unit tests
-        shell: bash
-        run: npm run test:ts
-
       - name: Run integration tests
         shell: bash
         run: npm run test:integration -- --controller-version=${{ matrix.js-controller-version }}
@@ -104,7 +100,7 @@ jobs:
 
 #  # Deploys the final package to NPM
 #  deploy:
-#    needs: [check-and-lint, adapter-tests]
+#    needs: [check_lint_unit-test, adapter-tests]
 #
 #    # Trigger this step only when a commit on any branch is tagged with a version number
 #    if: |
