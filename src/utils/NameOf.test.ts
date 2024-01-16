@@ -5,6 +5,10 @@ class Test {
   public x: number = 1;
 }
 
+function testFunction() {
+  return 1;
+}
+
 describe('nameof', () => {
   it(`Should tell string representation of class property`, () => {
     // GIVEN
@@ -12,5 +16,12 @@ describe('nameof', () => {
     const result = nameof<Test>((t) => t.x);
     // THEN
     expect(result).to.equal('x');
+  });
+  it(`Should tell string representation of classless function`, () => {
+    // GIVEN
+    // WHEN
+    const result = nameof(testFunction);
+    // THEN
+    expect(result).to.equal('testFunction');
   });
 });

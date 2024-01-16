@@ -25,6 +25,10 @@ export function nameof<T extends object>(
     return cleanseAssertionOperators(fnStr.substring('class '.length, fnStr.indexOf(' {')));
   }
 
+  if (fnStr.startsWith('function ')) {
+    return cleanseAssertionOperators(fnStr.substring('function '.length, fnStr.indexOf('(')));
+  }
+
   // ES6 prop selector:
   // "x => x.prop"
   // if (fnStr.includes('=>')) {
