@@ -1,3 +1,4 @@
+import { ErrorParameterAdditionsInterface } from '../error/ErrorParameterAdditionsInterface';
 import { EventEmitter } from '../events/EventEmitter';
 import { ObjectClientInterface } from '../iob/ObjectClientInterface';
 import { LoggerInterface } from '../logger/LoggerInterface';
@@ -31,7 +32,10 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     try {
       await this._configProvider.loadConfig();
     } catch (error) {
-      this.handleError(error as Error, true);
+      this.handleError(error as Error, {
+        message: 'Error while loading configuration.',
+        isCritical: true,
+      });
     }
 
     this._logger.debug('Config successfully loaded.');
@@ -66,7 +70,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     // TODO: Subcscribe to changes of the config object
   }
 
-  private handleError(error: Error, isCritical = false): void {
-    this.errorEmitter.emit('error', error, isCritical);
+  private handleError(error: Error, additionalData?: ErrorParameterAdditionsInterface): void {
+    this.errorEmitter.emit('error', error, additionalData);
   }
 }

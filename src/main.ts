@@ -19,6 +19,7 @@ import { Logger } from './logger/Logger';
 import { AwilixContainer, InjectionMode, asClass, asValue, createContainer } from 'awilix';
 import { DataFormatInterface } from './data_format/DataFormatInterface';
 import { unpackError } from './error/ErrorHandling';
+import { ErrorParameterAdditionsInterface } from './error/ErrorParameterAdditionsInterface';
 import { GenericJsonStateManagerInterface } from './gjsm/GenericJsonStateManagerInterface';
 import { ConfigProviderInterface } from './gjsm/configuration/ConfigProviderInterface';
 import { InstanceConfigInterface } from './gjsm/configuration/InstanceConfigInterface';
@@ -66,9 +67,10 @@ class Gjsm extends utils.Adapter {
       this.prepareIocContainer();
       // 2. Resolve the main component and initialize it
       this._gjsm = iocContainer.cradle.gjsm;
-      this._gjsm.errorEmitter.on('error', (error, isCritical) => {
-        this.handleError(error, isCritical);
+      this._gjsm.errorEmitter.on('error', (error, additionalData) => {
+        this.handleError(error, { isCritical: additionalData?.isCritical });
       });
+      this.handleError(new Error('test'), { isCritical: false, message: 'test', details: 'test' });
       await this._gjsm.initialize();
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -140,11 +142,16 @@ class Gjsm extends utils.Adapter {
     }
   }
 
-  private handleError(error: Error, isCritical: boolean): void {
-    // TODO: Unpack errors causes
-    this.log.error(`An unexpected exception occured: ${error.message}`);
+  private handleError(error: Error, additionalData?: ErrorParameterAdditionsInterface): void {
+    if (additionalData?.message) {
+      this.log.error(`An unexpected exception occured: ${additionalData.message}
+      > Details (if any): ${additionalData.details ?? 'none'}
+      > The error message was: ${error.message}`);
+    } else {
+      this.log.error(`An unexpected exception occured: ${error.message}`);
+    }
     this.log.debug(JSON.stringify(unpackError(error)));
-    if (isCritical) {
+    if (additionalData?.isCritical) {
       this.terminate(
         'The Adapter experienced a serious error and terminates now. See the log for corresponding errors and hints.',
         utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,

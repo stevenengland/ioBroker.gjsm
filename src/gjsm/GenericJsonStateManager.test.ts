@@ -58,8 +58,8 @@ describe(nameof(GenericJsonStateManager), () => {
       it(`Should handle error`, async () => {
         // GIVEN
         configProviderStub.loadConfig.throws(new Error('test'));
-        sut.errorEmitter.on('error', (error, isCritical) => {
-          expect(isCritical).to.be.true;
+        sut.errorEmitter.on('error', (error, additionalData) => {
+          expect(additionalData?.isCritical).to.be.true;
           expect(error.message).to.equal('test');
         });
         // WHEN

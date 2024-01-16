@@ -1,3 +1,5 @@
+import { ErrorParameterAdditionsInterface } from '../error/ErrorParameterAdditionsInterface';
+
 export type GenericJsonStateMapperEventMap = {
-  error: [error: Error, isCritical: boolean];
+  error: [error: Error, additionalData?: ErrorParameterAdditionsInterface];
 };
