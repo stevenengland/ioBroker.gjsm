@@ -28,7 +28,12 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     new EventEmitter<GenericJsonStateMapperEventMap>();
 
   public async loadConfig(): Promise<void> {
-    await this._configProvider.loadConfig();
+    try {
+      await this._configProvider.loadConfig();
+    } catch (error) {
+      this.handleError(error as Error, true);
+    }
+
     this._logger.debug('Config successfully loaded.');
   }
 

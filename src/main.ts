@@ -18,6 +18,7 @@ import { Logger } from './logger/Logger';
 
 import { AwilixContainer, InjectionMode, asClass, asValue, createContainer } from 'awilix';
 import { DataFormatInterface } from './data_format/DataFormatInterface';
+import { unpackError } from './error/ErrorHandling';
 import { GenericJsonStateManagerInterface } from './gjsm/GenericJsonStateManagerInterface';
 import { ConfigProviderInterface } from './gjsm/configuration/ConfigProviderInterface';
 import { InstanceConfigInterface } from './gjsm/configuration/InstanceConfigInterface';
@@ -140,9 +141,9 @@ class Gjsm extends utils.Adapter {
   }
 
   private handleError(error: Error, isCritical: boolean): void {
+    // TODO: Unpack errors causes
     this.log.error(`An unexpected exception occured: ${error.message}`);
-    this.log.debug(`Critical: ${error.name}`);
-    this.log.debug(`Stacktrace: ${error.stack}`);
+    this.log.debug(JSON.stringify(unpackError(error)));
     if (isCritical) {
       this.terminate(
         'The Adapter experienced a serious error and terminates now. See the log for corresponding errors and hints.',
