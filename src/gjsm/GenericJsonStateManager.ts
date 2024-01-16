@@ -1,6 +1,8 @@
+import { EventEmitter } from '../events/EventEmitter';
 import { ObjectClientInterface } from '../iob/ObjectClientInterface';
 import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
+import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
 import { AutomationSpecProviderInterface } from './specification/AutomationSpecProviderInterface';
 
@@ -21,10 +23,15 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._specProvider = specProvider;
     this._onjectClient = objectClient;
   }
+
+  public errorEmitter: EventEmitter<GenericJsonStateMapperEventMap> =
+    new EventEmitter<GenericJsonStateMapperEventMap>();
+
   public async loadConfig(): Promise<void> {
     await this._configProvider.loadConfig();
     this._logger.debug('Config successfully loaded.');
   }
+
   public async loadAutomationDefinitions(): Promise<void> {
     try {
       await this._specProvider.loadSpecifications();
@@ -52,5 +59,9 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     // Subscribe to changes of the automation states
     await this._onjectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
     // TODO: Subcscribe to changes of the config object
+  }
+
+  private handleError(error: Error, isCritical = false): void {
+    this.errorEmitter.emit('error', error, isCritical);
   }
 }

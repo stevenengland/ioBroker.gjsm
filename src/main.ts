@@ -61,8 +61,13 @@ class Gjsm extends utils.Adapter {
   private async onReady(): Promise<void> {
     // Try to initialize the adapter, terminate if it fails.
     try {
+      // 1. Prepare the IoC container as very base of the application
       this.prepareIocContainer();
+      // 2. Resolve the main component and initialize it
       this._gjsm = iocContainer.cradle.gjsm;
+      this._gjsm.errorEmitter.on('error', (error, isCritical) => {
+        this.handleError(error, isCritical);
+      });
       await this._gjsm.initialize();
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -134,12 +139,13 @@ class Gjsm extends utils.Adapter {
     }
   }
 
-  // TODO: improve checking for error types etc.
   private handleError(error: Error, isCritical: boolean): void {
-    this.log.error(`[handleError] ${error.message}`);
+    this.log.error(`An unexpected exception occured: ${error.message}`);
+    this.log.debug(`Critical: ${error.name}`);
+    this.log.debug(`Stacktrace: ${error.stack}`);
     if (isCritical) {
       this.terminate(
-        'Adapter could not be initialized successfully, see the log for corresponding errors.',
+        'The Adapter experienced a serious error and terminates now. See the log for corresponding errors and hints.',
         utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,
       );
     }
