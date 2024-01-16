@@ -1,4 +1,6 @@
-export class IobError extends Error {
+import { BaseError } from '../error/BaseError';
+
+export class IobError extends BaseError {
   public constructor(msg: string) {
     super(msg);
 
