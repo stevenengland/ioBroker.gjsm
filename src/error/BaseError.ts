@@ -1,9 +1,14 @@
+import { ErrorParameterInterface } from './ErrorParameterInterface';
+
 export class BaseError extends Error {
   private _cause: Error | null;
-  public constructor(msg: string, cause?: Error) {
+  private _isCritical: boolean = false;
+
+  public constructor(msg: string, errorParams?: ErrorParameterInterface) {
     super(msg);
     this.name = this.constructor.name;
-    this._cause = cause || null;
+    this._cause = errorParams?.cause || null;
+    this._isCritical = errorParams?.isCritical || false;
 
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, BaseError.prototype);
@@ -11,5 +16,9 @@ export class BaseError extends Error {
 
   public get cause(): Error | null {
     return this._cause;
+  }
+
+  public get isCritical(): boolean {
+    return this._isCritical;
   }
 }
