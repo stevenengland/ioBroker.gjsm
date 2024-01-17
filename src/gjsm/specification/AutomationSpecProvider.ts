@@ -1,10 +1,10 @@
 import { DataFormatError } from '../../data_format/DataFormatError';
 import { DataFormatInterface } from '../../data_format/DataFormatInterface';
 import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
-import { schema } from '../AutomationSpecSchema';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
 import { AutomationSpecInterface } from './AutomationSpecInterface';
 import { AutomationSpecProviderInterface } from './AutomationSpecProviderInterface';
+import { schema } from './AutomationSpecSchema';
 
 export class AutomationSpecProvider implements AutomationSpecProviderInterface {
   private _specifications: Array<AutomationSpecInterface>;

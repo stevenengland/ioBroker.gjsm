@@ -1,4 +1,4 @@
-import { PrivateConfigInterface } from './configuration/PrivateConfigInterface';
+import { PrivateConfigInterface } from './PrivateConfigInterface';
 
 export const config = {
   automationStatesPattern: 'automations.*', // Automatically subscribes to new matching states

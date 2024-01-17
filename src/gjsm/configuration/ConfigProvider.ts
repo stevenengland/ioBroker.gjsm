@@ -1,10 +1,10 @@
 import { DataFormatInterface } from '../../data_format/DataFormatInterface';
 import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
-import { config as privateConfig } from '../Config';
-import { schema } from '../ConfigSchema';
+import { config as privateConfig } from './Config';
 import { ConfigError } from './ConfigError';
 import { ConfigInterface } from './ConfigInterface';
 import { ConfigProviderInterface } from './ConfigProviderInterface';
+import { schema } from './ConfigSchema';
 import { InstanceConfigInterface } from './InstanceConfigInterface';
 import { PublicConfigInterface } from './PublicConfigInterface';
 export class ConfigProvider implements ConfigProviderInterface {
