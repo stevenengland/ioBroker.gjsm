@@ -1,0 +1,26 @@
+[
+  {
+    "errors": [
+      "test1",
+      "test2",
+      "test3"
+    ]
+  },
+  {
+    "id": "mapping automation",
+    "groupFilter": "test",
+    "filterType": "Function",
+    "automations": [
+      {
+        "automationType": "Mapping",
+        "sourceStateName": "test1",
+        "mappings": [
+          {
+            "targetStateName": "test1",
+            "jsonPathVal": "test2"
+          }
+        ]
+      }
+    ]
+  }
+]

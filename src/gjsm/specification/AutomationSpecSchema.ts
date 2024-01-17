@@ -17,66 +17,56 @@ export const schema = {
       type: 'string',
       enum: ['Function'],
     },
-    mappingItems: {
+    automations: {
       type: 'array',
-      items: [
-        {
-          type: 'object',
+      items: {
+        type: 'object',
+        required: ['automationType', 'sourceStateName'],
+        properties: {
+          automationType: {
+            type: 'string',
+            enum: ['Mapping'],
+          },
+          sourceStateName: {
+            type: 'string',
+          },
+        },
+        if: {
           properties: {
-            sourceStateName: {
-              type: 'string',
-            },
-            targetMappings: {
-              type: 'array',
-              items: [
-                {
-                  type: 'object',
-                  properties: {
-                    targetStateName: {
-                      type: 'string',
-                    },
-                    jsonPathVal: {
-                      type: 'string',
-                    },
-                  },
-                  required: ['targetStateName', 'jsonPathVal'],
-                },
-              ],
+            automationType: {
+              const: 'Mapping',
             },
           },
-          required: ['sourceStateName', 'targetMappings'],
         },
-        {
-          type: 'object',
+        then: {
+          required: ['mappings'],
           properties: {
-            sourceStateName: {
-              type: 'string',
-            },
-            targetMappings: {
+            mappings: {
               type: 'array',
-              items: [
-                {
-                  type: 'object',
-                  properties: {
-                    targetStateName: {
-                      type: 'string',
-                    },
-                    jsonPathVal: {
-                      type: 'string',
-                    },
-                    jsonPathTimestamp: {
-                      type: 'string',
-                    },
+              items: {
+                type: 'object',
+                properties: {
+                  targetStateName: {
+                    type: 'string',
                   },
-                  required: ['targetStateName', 'jsonPathVal', 'jsonPathTimestamp'],
+                  jsonPathVal: {
+                    type: 'string',
+                  },
                 },
-              ],
+                required: ['targetStateName', 'jsonPathVal'],
+              },
             },
           },
-          required: ['sourceStateName', 'targetMappings'],
         },
-      ],
+      },
     },
   },
-  required: ['groupFilter', 'filterType', 'mappingItems'],
+  oneOf: [
+    {
+      required: ['errors'],
+    },
+    {
+      required: ['automations', 'groupFilter', 'filterType'],
+    },
+  ],
 };
