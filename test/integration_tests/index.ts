@@ -1,6 +1,8 @@
 import { TestSuite } from '@iobroker/testing/build/tests/integration';
-import { runTests as startupTests } from './Startup.test';
+import { runTests as integrationTestTools } from './IntegrationTestTools.test';
+import { runTests as startup } from './Startup.test';
 
 export function runTests(suite: TestSuite) {
-  startupTests(suite);
+  startup(suite);
+  integrationTestTools(suite);
 }

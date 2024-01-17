@@ -1,0 +1,35 @@
+[
+    {
+        "mqtt.0.smarthome.smartplug.tasmota_3E6EDD.tele.INFO2": {
+            "Info2": {
+                "WebServerMode": "Admin",
+                "Hostname": "tasmota-3E6EDD-3805",
+                "IPAddress": "192.168.2.244"
+            }
+        }
+    },
+    {
+        "mqtt.0.smarthome.smartplug.tasmota_3E6EDD.tele.STATUS": {
+            "Time": "2024-01-17T09:49:53",
+            "Uptime": "113T18:04:25",
+            "UptimeSec": 9828265,
+            "Heap": 19,
+            "SleepMode": "Dynamic",
+            "Sleep": 50,
+            "LoadAvg": 19,
+            "MqttCount": 25,
+            "POWER": "ON",
+            "Wifi": {
+                "AP": 1,
+                "SSId": "WLAN-00",
+                "BSSId": "98:9B:CB:ZZ:YY:XX",
+                "Channel": 6,
+                "Mode": "11n",
+                "RSSI": 54,
+                "Signal": -73,
+                "LinkCount": 2,
+                "Downtime": "0T00:02:22"
+            }
+        }
+    }
+]

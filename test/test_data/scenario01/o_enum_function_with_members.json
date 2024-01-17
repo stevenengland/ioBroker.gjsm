@@ -1,0 +1,25 @@
+[
+    {
+        "type": "enum",
+        "common": {
+            "name": "tasmota_power_meter",
+            "enabled": true,
+            "color": false,
+            "desc": "",
+            "members": [
+                "mqtt.0.smarthome.smartplug.tasmota_3E6EDD.tele.STATUS",
+                "mqtt.0.smarthome.smartplug.tasmota_3E6EDD.tele.INFO2"
+            ]
+        },
+        "native": {},
+        "_id": "enum.functions.power_meter.tasmota_power_meter",
+        "acl": {
+            "object": 1636,
+            "owner": "system.user.admin",
+            "ownerGroup": "system.group.administrator"
+        },
+        "from": "system.adapter.admin.0",
+        "user": "system.user.admin",
+        "ts": 1705385664320
+    }
+]
