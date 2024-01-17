@@ -8,6 +8,9 @@ import { ConfigProviderInterface } from './configuration/ConfigProviderInterface
 import { AutomationSpecProviderInterface } from './specification/AutomationSpecProviderInterface';
 
 export class GenericJsonStateManager implements GenericJsonStateManagerInterface {
+  public errorEmitter: EventEmitter<GenericJsonStateMapperEventMap> =
+    new EventEmitter<GenericJsonStateMapperEventMap>();
+
   private _logger: LoggerInterface;
   private _configProvider: ConfigProviderInterface;
   private _specProvider: AutomationSpecProviderInterface;
@@ -24,9 +27,6 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._specProvider = specProvider;
     this._onjectClient = objectClient;
   }
-
-  public errorEmitter: EventEmitter<GenericJsonStateMapperEventMap> =
-    new EventEmitter<GenericJsonStateMapperEventMap>();
 
   public async loadConfig(): Promise<void> {
     try {

@@ -24,6 +24,14 @@ export class ConfigProvider implements ConfigProviderInterface {
     this._objectClient = objectClient;
   }
 
+  public get schema(): object {
+    return schema;
+  }
+
+  public get config(): ConfigInterface {
+    return this._config;
+  }
+
   public async loadConfig(): Promise<void> {
     const publicConfigObj = await this._objectClient.getForeignObjectAsync(
       `system.adapter.${this._instanceConfig.instanceName}.${this._instanceConfig.instanceId}`,
@@ -41,13 +49,5 @@ export class ConfigProvider implements ConfigProviderInterface {
     } as ConfigInterface;
     await this._json.validateAgainstSchema(unvalidatedConfig, schema);
     this._config = unvalidatedConfig;
-  }
-
-  public get schema(): object {
-    return schema;
-  }
-
-  public get config(): ConfigInterface {
-    return this._config;
   }
 }

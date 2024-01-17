@@ -70,18 +70,20 @@ class Gjsm extends utils.Adapter {
       this._gjsm.errorEmitter.on('error', (error, additionalData) => {
         this.handleError(error, { isCritical: additionalData?.isCritical });
       });
-      this.handleError(new Error('test'), { isCritical: false, message: 'test', details: 'test' });
       await this._gjsm.initialize();
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.log.error(`[onReady] Startup error: ${error}`);
-      this.terminate(
-        'Adapter could not be initialized successfully, see the log for corresponding errors.',
-        utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,
-      );
+      if (error instanceof Error) {
+        this.handleError(error, {
+          message: `The adapter could not be initialized: ${error.message}`,
+          isCritical: true,
+        });
+      } else {
+        this.handleError(new Error('The adapter could not be initialized: Unknown error'), { isCritical: true });
+      }
     }
 
-    await this._gjsm.loadAutomationDefinitions();
+    // Process the automation definitions
+    await this._gjsm?.loadAutomationDefinitions();
   }
 
   /**
