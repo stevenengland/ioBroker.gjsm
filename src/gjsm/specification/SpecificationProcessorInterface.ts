@@ -3,10 +3,10 @@ import { FilterType } from './FilterType';
 
 export interface SpecificationProcessorInterface {
   // for states and devices? Channels?
-  getFilteredStates(
+  getFilteredSourceStates(
     filterType: FilterType,
     groupFilter: string,
-    //sourceStateName: string
+    sourceStateName: string,
   ): Promise<StateInterface[]>;
   // applyMappingSubscriptions(sourceStateName: string, mappings: MappingInterface[]): Promise<void>;
 }

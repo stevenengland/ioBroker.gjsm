@@ -115,8 +115,8 @@ describe(nameof(ObjectClient), () => {
       it('should return siblings', async () => {
         // GIVEN
         const records: Record<string, State> = {
-          id0: StateFactory.create(),
-          id1: StateFactory.create(),
+          id0: StateFactory.state(),
+          id1: StateFactory.state(),
         };
         adapter.getStatesAsync.resolves(records);
         // WHEN

@@ -8,17 +8,25 @@ import { ConfigInterfaceFactory } from './configuration/ConfigInterface.Factory.
 import { ConfigProvider } from './configuration/ConfigProvider';
 import { AutomationSpecInterface } from './specification/AutomationSpecInterface';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
+import { SpecificationProcessor } from './specification/SpecificationProcessor';
 
 describe(nameof(GenericJsonStateManager), () => {
   let sut: GenericJsonStateManager;
   const specProviderStub = sinon.createStubInstance(AutomationSpecProvider);
+  const specProcessorStub = sinon.createStubInstance(SpecificationProcessor);
   const loggerStub = sinon.createStubInstance(Logger);
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
   const objectClientStub = sinon.createStubInstance(ObjectClient);
   sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
 
   beforeEach(() => {
-    sut = new GenericJsonStateManager(loggerStub, configProviderStub, specProviderStub, objectClientStub);
+    sut = new GenericJsonStateManager(
+      loggerStub,
+      configProviderStub,
+      specProviderStub,
+      specProcessorStub,
+      objectClientStub,
+    );
   });
 
   afterEach(() => {
@@ -109,6 +117,18 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(loggerStub.warn).calledWithMatch('test1');
         expect(loggerStub.warn).calledWithMatch('test2');
         expect(loggerStub.warn).calledWithMatch('test3');
+      });
+    },
+  );
+
+  describe(
+    nameof<GenericJsonStateManager>((g) => g.processAutomationDefinitions),
+    () => {
+      it(`Should load automation sets`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.processAutomationDefinitions();
+        // THEN
       });
     },
   );

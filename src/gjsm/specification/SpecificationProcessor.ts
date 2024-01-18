@@ -13,18 +13,22 @@ export class SpecificationProcessor implements SpecificationProcessorInterface {
     this._configProvider = configProvider;
   }
 
-  public async getFilteredStates(
+  public async getFilteredSourceStates(
     filterType: FilterType,
     groupFilter: string,
-    // sourceStateName: string,
+    sourceStateName: string,
   ): Promise<StateInterface[]> {
+    let result = new Array<StateInterface>();
     // Stage 1: Check the filter type and apply group filter
     switch (filterType) {
       case FilterType.function:
-        return this.getFilteredStatesByFunction(groupFilter);
+        result = await this.getFilteredStatesByFunction(groupFilter);
+        break;
       default:
         throw new Error(`Filter type ${filterType} is not supported.`);
     }
+
+    return this.getFilteredStatesBySourceStateName(result, sourceStateName);
   }
 
   // public async applyMappingSubscriptions(sourceStateName: string, mappings: MappingInterface[]): Promise<void> {
@@ -52,5 +56,9 @@ export class SpecificationProcessor implements SpecificationProcessorInterface {
       result.reduce((map, obj: StateInterface) => map.set(obj.id, obj), new Map()).values(),
     );
     return newResult;
+  }
+
+  private getFilteredStatesBySourceStateName(states: StateInterface[], sourceStateName: string): StateInterface[] {
+    return states.filter((state) => this._objectClient.getStateName(state.id) === sourceStateName);
   }
 }

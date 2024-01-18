@@ -37,8 +37,8 @@ describe(nameof(AutomationSpecProvider), () => {
       it(`Should load two items with with error and id field filled given a invalid state value`, async () => {
         // GIVEN
         objectClientStub.getStatesAsync.resolves([
-          StateFactory.createWithVal('invalid'),
-          StateFactory.createWithVal('invalid'),
+          StateFactory.stateWithVal('invalid'),
+          StateFactory.stateWithVal('invalid'),
         ]);
         // WHEN
         await sut.loadSpecifications();
@@ -50,7 +50,7 @@ describe(nameof(AutomationSpecProvider), () => {
       });
       it(`Should load a config given a JSON document`, async () => {
         // GIVEN
-        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal("{ 'isJson': true }")]);
+        objectClientStub.getStatesAsync.resolves([StateFactory.stateWithVal("{ 'isJson': true }")]);
         jsonStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();
@@ -61,7 +61,7 @@ describe(nameof(AutomationSpecProvider), () => {
       });
       it(`Should load a config given a YAML document`, async () => {
         // GIVEN
-        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal('isYaml: true ')]);
+        objectClientStub.getStatesAsync.resolves([StateFactory.stateWithVal('isYaml: true ')]);
         yamlStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();

@@ -33,33 +33,42 @@ export class StateBuilder implements Builder {
 }
 
 export class StateFactory {
-  public static create(state?: State): State {
+  public static state(state?: State): State {
     const builder = typeof state !== 'undefined' ? new StateBuilder(state) : new StateBuilder();
     return builder.withId().withTs().withVal().build();
   }
-  public static createMultiple(count: number): State[] {
+  public static states(count: number): State[] {
     const result = new Array<State>();
     for (let i = 0; i < count; i++) {
-      result.push(this.create());
+      result.push(this.state());
     }
     return result;
   }
-  public static createWithVal(val: StateValueType): State {
-    const result = this.create();
+  public static stateWithVal(val: StateValueType): State {
+    const result = this.state();
     result.val = val;
     return result;
   }
-  public static createWithPrefixedId(count: number, prefix: string = ''): State[] {
+  public static statesWithId(count: number, id: string): State[] {
     const result = new Array<State>();
     for (let i = 0; i < count; i++) {
-      const state = this.create();
+      const state = this.state();
+      state.id = id;
+      result.push(state);
+    }
+    return result;
+  }
+  public static statesWithPrefixedId(count: number, prefix: string = ''): State[] {
+    const result = new Array<State>();
+    for (let i = 0; i < count; i++) {
+      const state = this.state();
       state.id = prefix + 'id_' + i;
       result.push(state);
     }
     return result;
   }
-  public static createWithInvalidJsonAsVal() {
-    const state = this.create();
+  public static stateWithInvalidJsonAsVal(): State {
+    const state = this.state();
     state.val = '-invalid-';
     return state;
   }

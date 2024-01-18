@@ -19,12 +19,12 @@ describe(nameof(SpecificationProcessor), () => {
   });
   afterEach(() => {});
   describe(
-    nameof<SpecificationProcessor>((s) => s.getFilteredStates),
+    nameof<SpecificationProcessor>((s) => s.getFilteredSourceStates),
     () => {
       it(`Should throw if filter type none was chosen`, async () => {
         // GIVEN
         // WHEN
-        const when = async () => await sut.getFilteredStates(FilterType.none, 'groupFilter');
+        const when = async () => await sut.getFilteredSourceStates(FilterType.none, 'groupFilter', 'testName');
         // THEN
         await expect(when()).to.be.rejectedWith(Error);
       });
@@ -32,7 +32,7 @@ describe(nameof(SpecificationProcessor), () => {
         // GIVEN
         objectClientStub.getForeignObjectAsync.resolves(null);
         // WHEN
-        const result = await sut.getFilteredStates(FilterType.function, 'groupFilter');
+        const result = await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
         // THEN
         expect(result).to.be.empty;
       });
@@ -40,21 +40,25 @@ describe(nameof(SpecificationProcessor), () => {
         // GIVEN
         objectClientStub.getForeignObjectAsync.resolves({ common: {} } as ObjectInterface);
         // WHEN
-        const result = await sut.getFilteredStates(FilterType.function, 'groupFilter');
+        const result = await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
         // THEN
         expect(result).to.be.empty;
       });
       it(`Should return filtered (duplicate free) states when filter type Function is given`, async () => {
         // GIVEN
-        const finalStates = StateFactory.createMultiple(2);
-        finalStates.push(StateFactory.createWithPrefixedId(1, 'id_')[0]);
-        finalStates.push(StateFactory.createWithPrefixedId(1, 'id_')[0]);
+        const finalStates = StateFactory.statesWithId(3, 'xyz.testName');
+        finalStates.push(StateFactory.state());
+        finalStates.push(StateFactory.statesWithId(1, 'xyz.testName2')[0]);
         objectClientStub.getForeignObjectAsync.resolves({ common: { members: ['test'] } } as ObjectInterface);
         objectClientStub.getStatesAsync.resolves(finalStates);
+        objectClientStub.getStateName.onCall(0).returns('testName');
         // WHEN
-        const result = await sut.getFilteredStates(FilterType.function, 'groupFilter');
+        const result = await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
         // THEN
-        expect(result.length).to.equal(3);
+        expect(result.length).to.equal(1);
+        result.forEach((state) => {
+          expect(state.id).to.equal('xyz.testName');
+        });
       });
     },
   );

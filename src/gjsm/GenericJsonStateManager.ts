@@ -6,6 +6,7 @@ import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInter
 import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
 import { AutomationSpecProviderInterface } from './specification/AutomationSpecProviderInterface';
+import { SpecificationProcessorInterface } from './specification/SpecificationProcessorInterface';
 
 export class GenericJsonStateManager implements GenericJsonStateManagerInterface {
   public errorEmitter: EventEmitter<GenericJsonStateMapperEventMap> =
@@ -14,22 +15,39 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   private _logger: LoggerInterface;
   private _configProvider: ConfigProviderInterface;
   private _specProvider: AutomationSpecProviderInterface;
+  private _specProcessor: SpecificationProcessorInterface;
   private _onjectClient: ObjectClientInterface;
 
   public constructor(
     logger: LoggerInterface,
     configProvider: ConfigProviderInterface,
     specProvider: AutomationSpecProviderInterface,
+    specProcessor: SpecificationProcessorInterface,
     objectClient: ObjectClientInterface,
   ) {
     this._logger = logger;
     this._configProvider = configProvider;
     this._specProvider = specProvider;
+    this._specProcessor = specProcessor;
     this._onjectClient = objectClient;
   }
 
-  public processAutomationDefinitions(): Promise<void> {
-    throw new Error('Method not implemented.');
+  public async processAutomationDefinitions(): Promise<void> {
+    for (const spec of this._specProvider.specifications) {
+      if (spec.automations) {
+        for (const automation of spec.automations) {
+          try {
+            await this._specProcessor.getFilteredSourceStates(
+              spec.filterType!,
+              spec.groupFilter!,
+              automation.sourceStateName,
+            );
+          } catch (error) {
+            this._logger.warn(`Error while processing automation spec ${spec.id}: ${(error as Error).message}`);
+          }
+        }
+      }
+    }
   }
 
   public async loadConfig(): Promise<void> {
