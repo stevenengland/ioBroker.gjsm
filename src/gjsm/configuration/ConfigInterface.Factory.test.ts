@@ -16,6 +16,7 @@ export class ConfigInterfaceBuilder implements Builder {
   public default(): this {
     this.config = {
       automationStatesPattern: faker.helpers.fromRegExp(/adapter.[0-9]{1}.\*/),
+      functionsNamespace: faker.helpers.fromRegExp(/enum.functions/),
       createTargetStatesIfNotExist: faker.datatype.boolean(),
       instanceId: faker.datatype.number(),
       instanceName: faker.name.firstName(),

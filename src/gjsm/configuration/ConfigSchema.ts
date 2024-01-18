@@ -4,6 +4,9 @@ export const schema = {
     automationStatesPattern: {
       type: 'string',
     },
+    functionsNamespace: {
+      type: 'string',
+    },
     createTargetStatesIfNotExist: {
       type: 'boolean',
     },

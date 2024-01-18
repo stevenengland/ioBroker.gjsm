@@ -34,7 +34,7 @@ describe(nameof(ConfigProvider), () => {
     () => {
       it(`Should load and validate config`, async () => {
         // GIVEN
-        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig });
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} });
         sut = new ConfigProvider(new Json(), instanceConfig, objectClientStub);
         // WHEN
         await sut.loadConfig();
@@ -56,7 +56,7 @@ describe(nameof(ConfigProvider), () => {
       });
       it(`Should throw if config is invalid`, async () => {
         // GIVEN
-        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig });
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} });
         jsonStub.validateAgainstSchema.throws(new Error('Invalid (JSON) syntax'));
         sut = new ConfigProvider(jsonStub, instanceConfig, objectClientStub);
         // WHEN

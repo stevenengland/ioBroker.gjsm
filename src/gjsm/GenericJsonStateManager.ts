@@ -28,6 +28,10 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._onjectClient = objectClient;
   }
 
+  public processAutomationDefinitions(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   public async loadConfig(): Promise<void> {
     try {
       await this._configProvider.loadConfig();
