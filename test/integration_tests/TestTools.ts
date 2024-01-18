@@ -11,7 +11,7 @@ export async function getState(harness: TestHarness, id: string): Promise<StateI
   return await harness.states.getStateAsync(id);
 }
 
-export async function insertObjectsToDb(harness: TestHarness, objects: Array<ioBroker.Object>) {
+export async function insertObjectsToDb(harness: TestHarness, objects: ioBroker.Object[]) {
   for (const obj of objects) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await harness.objects.setObjectAsync(obj._id, obj);
@@ -48,7 +48,7 @@ export function readTestStatesFromDir(directoryPath: string): Record<string, ioB
   for (const fileName of fileNames) {
     const filePath = `${directoryPath}/${fileName}`;
     const fileContent = fs.readFileSync(filePath, 'utf8');
-    const fileObjects: { [x: string]: ioBroker.State }[] = JSON.parse(fileContent) as { [x: string]: ioBroker.State }[];
+    const fileObjects: Record<string, ioBroker.State>[] = JSON.parse(fileContent) as Record<string, ioBroker.State>[];
 
     fileObjects.forEach((fileObject) => {
       Object.keys(fileObject).forEach((key) => {

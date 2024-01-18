@@ -7,8 +7,8 @@ export class BaseError extends Error {
   public constructor(msg: string, errorParams?: ErrorParameterInterface) {
     super(msg);
     this.name = this.constructor.name;
-    this._cause = errorParams?.cause || null;
-    this._isCritical = errorParams?.isCritical || false;
+    this._cause = errorParams?.cause ?? null;
+    this._isCritical = errorParams?.isCritical ?? false;
 
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, BaseError.prototype);

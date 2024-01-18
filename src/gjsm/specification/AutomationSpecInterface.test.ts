@@ -7,14 +7,12 @@ describe('Automation specification', () => {
   beforeEach(() => {
     _json = new Json();
   });
-  afterEach(() => {});
   describe('validation against schema', () => {
     it(`Should succeed`, async () => {
       // GIVEN
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-var-requires
       const rawSpecs: AutomationSpecInterface[] = require('../../../test/test_data/s_automations_for_validation.json');
-      for (let i = 0; i < rawSpecs.length; i++) {
-        const rawSpec = rawSpecs[i];
+      for (const rawSpec of rawSpecs) {
         const spec = rawSpec;
         // WHEN
         try {

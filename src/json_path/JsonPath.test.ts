@@ -19,7 +19,7 @@ describe('JsonPathLib', () => {
         ['string', '$.key2', 0],
         [undefined, '$.notexisting', 0],
         [[], '$.notexisting', -1],
-      ] as Array<[unknown, string, number]>
+      ] as [unknown, string, number][]
     ).forEach(([expected, input, testIndex]) => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       it(`should return ${expected} when ${input} is given`, () => {

@@ -4,8 +4,6 @@ import { BaseError } from './BaseError';
 import * as ErrorHandling from './ErrorHandling';
 
 describe('Error Handling functions', () => {
-  beforeEach(() => {});
-  afterEach(() => {});
   describe(nameof(ErrorHandling.unpackError), () => {
     it(`Should create loggable object with all child errors`, () => {
       // GIVEN

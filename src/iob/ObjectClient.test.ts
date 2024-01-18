@@ -81,7 +81,7 @@ describe(nameof(ObjectClient), () => {
           ['IPADDR', 'alias.0.sp_dachboden_switch.IPADDR'],
           ['IP_ADDR', 'alias.0.sp_dachboden_switch.IP_ADDR'],
           ['', 'alias_0_sp_dachboden_switch_IP_ADDR'],
-        ] as Array<[string, string]>
+        ] as [string, string][]
       ).forEach(([expected, input]) => {
         it(`should return ${expected} when ${input} is given`, () => {
           // GIVEN
@@ -96,7 +96,7 @@ describe(nameof(ObjectClient), () => {
   describe(
     nameof<ObjectClient>((o) => o.getStateParentId),
     () => {
-      ([['alias.0.sp_dachboden_switch', 'alias.0.sp_dachboden_switch.IPADDR']] as Array<[string, string]>).forEach(
+      ([['alias.0.sp_dachboden_switch', 'alias.0.sp_dachboden_switch.IPADDR']] as [string, string][]).forEach(
         ([expected, input]) => {
           it(`should return ${expected} when ${input} is given`, () => {
             // GIVEN

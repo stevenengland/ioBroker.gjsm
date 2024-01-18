@@ -3,8 +3,6 @@ import { nameof } from '../utils/NameOf';
 import { BaseError } from './BaseError';
 
 describe(nameof(BaseError), () => {
-  beforeEach(() => {});
-  afterEach(() => {});
   describe('constructor', () => {
     it(`Should set ${nameof<BaseError>((b) => b.cause)}`, () => {
       // GIVEN

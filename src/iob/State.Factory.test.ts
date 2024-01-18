@@ -58,7 +58,7 @@ export class StateFactory {
     }
     return result;
   }
-  public static statesWithPrefixedId(count: number, prefix: string = ''): State[] {
+  public static statesWithPrefixedId(count: number, prefix = ''): State[] {
     const result = new Array<State>();
     for (let i = 0; i < count; i++) {
       const state = this.state();

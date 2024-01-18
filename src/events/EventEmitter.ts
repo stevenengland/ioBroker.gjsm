@@ -1,6 +1,6 @@
-type Listener<T extends Array<unknown>> = (...args: T) => void;
+type Listener<T extends unknown[]> = (...args: T) => void;
 
-export class EventEmitter<EventMap extends Record<string, Array<unknown>>> {
+export class EventEmitter<EventMap extends Record<string, unknown[]>> {
   private eventListeners: {
     [K in keyof EventMap]?: Set<Listener<EventMap[K]>>;
   } = {};

@@ -11,7 +11,7 @@ function cleanseAssertionOperators(parsedName: string): string {
 
 export function nameof<T extends object>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  nameFunction: ((obj: T) => any) | { new (...params: any[]): T },
+  nameFunction: ((obj: T) => any) | (new (...params: any[]) => T),
 ): string {
   const fnStr = nameFunction.toString();
 

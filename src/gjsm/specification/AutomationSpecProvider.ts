@@ -7,7 +7,7 @@ import { AutomationSpecProviderInterface } from './AutomationSpecProviderInterfa
 import { schema } from './AutomationSpecSchema';
 
 export class AutomationSpecProvider implements AutomationSpecProviderInterface {
-  private _specifications: Array<AutomationSpecInterface>;
+  private _specifications: AutomationSpecInterface[];
   private _schema!: object;
   private readonly _objectClient: ObjectClientInterface;
   private readonly _configProvider: ConfigProviderInterface;

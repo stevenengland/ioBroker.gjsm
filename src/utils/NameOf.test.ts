@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { nameof } from './NameOf';
 
 class Test {
-  public x: number = 1;
+  public x = 1;
 }
 
 function testFunction() {

@@ -17,7 +17,6 @@ describe(nameof(AutomationSpecProcessor), () => {
   beforeEach(() => {
     sut = new AutomationSpecProcessor(configProviderStub, objectClientStub);
   });
-  afterEach(() => {});
   describe(
     nameof<AutomationSpecProcessor>((s) => s.getFilteredSourceStates),
     () => {
