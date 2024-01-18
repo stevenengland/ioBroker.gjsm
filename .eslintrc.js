@@ -16,7 +16,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off', // This is necessary for Map.has()/get()!
     '@typescript-eslint/explicit-member-accessibility': 'error',
     '@typescript-eslint/member-ordering': 'error',
-    // '@typescript-eslint/prefer-readonly': 'error',
+    '@typescript-eslint/prefer-readonly': 'error',
   },
   overrides: [
     {

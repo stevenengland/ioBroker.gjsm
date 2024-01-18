@@ -4,7 +4,7 @@ import { ObjectInterface } from './ObjectInterface';
 import { StateInterface } from './StateInterface';
 
 export class ObjectClient implements ObjectClientInterface {
-  private _adapter: utils.AdapterInstance;
+  private readonly _adapter: utils.AdapterInstance;
   public constructor(adapter: utils.AdapterInstance) {
     this._adapter = adapter;
   }

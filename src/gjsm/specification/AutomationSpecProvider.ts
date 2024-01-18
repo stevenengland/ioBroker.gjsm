@@ -9,10 +9,10 @@ import { schema } from './AutomationSpecSchema';
 export class AutomationSpecProvider implements AutomationSpecProviderInterface {
   private _specifications: Array<AutomationSpecInterface>;
   private _schema!: object;
-  private _objectClient: ObjectClientInterface;
-  private _configProvider: ConfigProviderInterface;
-  private _yaml: DataFormatInterface;
-  private _json: DataFormatInterface;
+  private readonly _objectClient: ObjectClientInterface;
+  private readonly _configProvider: ConfigProviderInterface;
+  private readonly _yaml: DataFormatInterface;
+  private readonly _json: DataFormatInterface;
   public constructor(
     configProvider: ConfigProviderInterface,
     objectClient: ObjectClientInterface,

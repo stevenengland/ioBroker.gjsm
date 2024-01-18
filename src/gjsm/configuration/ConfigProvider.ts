@@ -10,9 +10,9 @@ import { PublicConfigInterface } from './PublicConfigInterface';
 export class ConfigProvider implements ConfigProviderInterface {
   private _config!: ConfigInterface;
   private _publicConfig!: PublicConfigInterface;
-  private _instanceConfig!: InstanceConfigInterface;
-  private _json: DataFormatInterface;
-  private _objectClient: ObjectClientInterface;
+  private readonly _instanceConfig!: InstanceConfigInterface;
+  private readonly _json: DataFormatInterface;
+  private readonly _objectClient: ObjectClientInterface;
 
   public constructor(
     json: DataFormatInterface,

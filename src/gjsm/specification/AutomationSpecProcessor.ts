@@ -5,8 +5,8 @@ import { AutomationSpecProcessorInterface } from './AutomationSpecProcessorInter
 import { FilterType } from './FilterType';
 
 export class AutomationSpecProcessor implements AutomationSpecProcessorInterface {
-  private _objectClient: ObjectClientInterface;
-  private _configProvider: ConfigProviderInterface;
+  private readonly _objectClient: ObjectClientInterface;
+  private readonly _configProvider: ConfigProviderInterface;
 
   public constructor(configProvider: ConfigProviderInterface, objectClient: ObjectClientInterface) {
     this._objectClient = objectClient;

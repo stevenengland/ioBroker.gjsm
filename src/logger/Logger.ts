@@ -2,7 +2,7 @@ import * as utils from '@iobroker/adapter-core';
 import { LoggerInterface } from './LoggerInterface';
 
 export class Logger implements LoggerInterface {
-  private _adapter: utils.AdapterInstance;
+  private readonly _adapter: utils.AdapterInstance;
 
   public constructor(adapter: utils.AdapterInstance) {
     this._adapter = adapter;

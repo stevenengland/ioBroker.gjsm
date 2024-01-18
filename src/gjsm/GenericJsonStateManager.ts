@@ -12,11 +12,11 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   public errorEmitter: EventEmitter<GenericJsonStateMapperEventMap> =
     new EventEmitter<GenericJsonStateMapperEventMap>();
 
-  private _logger: LoggerInterface;
-  private _configProvider: ConfigProviderInterface;
-  private _specProvider: AutomationSpecProviderInterface;
-  private _specProcessor: AutomationSpecProcessorInterface;
-  private _onjectClient: ObjectClientInterface;
+  private readonly _logger: LoggerInterface;
+  private readonly _configProvider: ConfigProviderInterface;
+  private readonly _specProvider: AutomationSpecProviderInterface;
+  private readonly _specProcessor: AutomationSpecProcessorInterface;
+  private readonly _onjectClient: ObjectClientInterface;
 
   public constructor(
     logger: LoggerInterface,

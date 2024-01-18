@@ -9,7 +9,7 @@ interface Builder {
 }
 
 export class StateBuilder implements Builder {
-  private state: State;
+  private readonly state: State;
 
   public constructor(state?: State) {
     this.state = typeof state !== 'undefined' ? state : new State();
