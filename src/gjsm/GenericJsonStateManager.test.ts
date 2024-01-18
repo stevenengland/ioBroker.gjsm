@@ -7,13 +7,13 @@ import { GenericJsonStateManager } from './GenericJsonStateManager';
 import { ConfigInterfaceFactory } from './configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from './configuration/ConfigProvider';
 import { AutomationSpecInterface } from './specification/AutomationSpecInterface';
+import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
-import { SpecificationProcessor } from './specification/SpecificationProcessor';
 
 describe(nameof(GenericJsonStateManager), () => {
   let sut: GenericJsonStateManager;
   const specProviderStub = sinon.createStubInstance(AutomationSpecProvider);
-  const specProcessorStub = sinon.createStubInstance(SpecificationProcessor);
+  const specProcessorStub = sinon.createStubInstance(AutomationSpecProcessor);
   const loggerStub = sinon.createStubInstance(Logger);
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
   const objectClientStub = sinon.createStubInstance(ObjectClient);

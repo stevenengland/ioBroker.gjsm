@@ -6,20 +6,20 @@ import { StateFactory } from '../../iob/State.Factory.test';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterfaceFactory } from '../configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from '../configuration/ConfigProvider';
+import { AutomationSpecProcessor } from './AutomationSpecProcessor';
 import { FilterType } from './FilterType';
-import { SpecificationProcessor } from './SpecificationProcessor';
 
-describe(nameof(SpecificationProcessor), () => {
-  let sut: SpecificationProcessor;
+describe(nameof(AutomationSpecProcessor), () => {
+  let sut: AutomationSpecProcessor;
   const objectClientStub = sinon.createStubInstance(ObjectClient);
   const configProviderStub = sinon.createStubInstance(ConfigProvider);
   sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
   beforeEach(() => {
-    sut = new SpecificationProcessor(configProviderStub, objectClientStub);
+    sut = new AutomationSpecProcessor(configProviderStub, objectClientStub);
   });
   afterEach(() => {});
   describe(
-    nameof<SpecificationProcessor>((s) => s.getFilteredSourceStates),
+    nameof<AutomationSpecProcessor>((s) => s.getFilteredSourceStates),
     () => {
       it(`Should throw if filter type none was chosen`, async () => {
         // GIVEN

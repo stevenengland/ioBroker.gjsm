@@ -5,8 +5,8 @@ import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
 import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
+import { AutomationSpecProcessorInterface } from './specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './specification/AutomationSpecProviderInterface';
-import { SpecificationProcessorInterface } from './specification/SpecificationProcessorInterface';
 
 export class GenericJsonStateManager implements GenericJsonStateManagerInterface {
   public errorEmitter: EventEmitter<GenericJsonStateMapperEventMap> =
@@ -15,14 +15,14 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   private _logger: LoggerInterface;
   private _configProvider: ConfigProviderInterface;
   private _specProvider: AutomationSpecProviderInterface;
-  private _specProcessor: SpecificationProcessorInterface;
+  private _specProcessor: AutomationSpecProcessorInterface;
   private _onjectClient: ObjectClientInterface;
 
   public constructor(
     logger: LoggerInterface,
     configProvider: ConfigProviderInterface,
     specProvider: AutomationSpecProviderInterface,
-    specProcessor: SpecificationProcessorInterface,
+    specProcessor: AutomationSpecProcessorInterface,
     objectClient: ObjectClientInterface,
   ) {
     this._logger = logger;

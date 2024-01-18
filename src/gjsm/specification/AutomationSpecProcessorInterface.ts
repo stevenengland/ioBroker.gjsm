@@ -1,7 +1,7 @@
 import { StateInterface } from '../../iob/StateInterface';
 import { FilterType } from './FilterType';
 
-export interface SpecificationProcessorInterface {
+export interface AutomationSpecProcessorInterface {
   // for states and devices? Channels?
   getFilteredSourceStates(
     filterType: FilterType,

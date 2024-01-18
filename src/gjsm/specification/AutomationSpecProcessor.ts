@@ -1,10 +1,10 @@
 import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
 import { StateInterface } from '../../iob/StateInterface';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
+import { AutomationSpecProcessorInterface } from './AutomationSpecProcessorInterface';
 import { FilterType } from './FilterType';
-import { SpecificationProcessorInterface } from './SpecificationProcessorInterface';
 
-export class SpecificationProcessor implements SpecificationProcessorInterface {
+export class AutomationSpecProcessor implements AutomationSpecProcessorInterface {
   private _objectClient: ObjectClientInterface;
   private _configProvider: ConfigProviderInterface;
 
