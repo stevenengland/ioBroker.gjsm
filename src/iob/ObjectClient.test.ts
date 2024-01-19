@@ -3,6 +3,8 @@ import { MockAdapter, utils } from '@iobroker/testing';
 import { expect } from 'chai';
 import { nameof } from '../utils/NameOf';
 import { ObjectClient } from './ObjectClient';
+import { State } from './State';
+import { StateFactory } from './State.Factory.test';
 
 describe(nameof(ObjectClient), () => {
   let sut: ObjectClient;
@@ -16,6 +18,7 @@ describe(nameof(ObjectClient), () => {
   afterEach(() => {
     adapter.resetMock();
   });
+
   describe(
     nameof<ObjectClient>((s) => s.getStatesAsync),
     () => {
@@ -54,6 +57,88 @@ describe(nameof(ObjectClient), () => {
         const result = await sut.getForeignObjectAsync('*');
         // THEN
         expect(result).to.equal(null);
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((s) => s.subscribeStatesAsync),
+    () => {
+      it(`Should not throw`, async () => {
+        // GIVEN
+        // WHEN
+        async function when() {
+          await sut.subscribeStatesAsync('*');
+        }
+        // THEN
+        await expect(when()).not.to.be.rejected;
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((s) => s.subscribeForeignStatesAsync),
+    () => {
+      it(`Should not throw`, async () => {
+        // GIVEN
+        // WHEN
+        async function when() {
+          await sut.subscribeForeignStatesAsync('*');
+        }
+        // THEN
+        await expect(when()).not.to.be.rejected;
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((o) => o.getStateName),
+    () => {
+      (
+        [
+          ['IPADDR', 'alias.0.sp_dachboden_switch.IPADDR'],
+          ['IP_ADDR', 'alias.0.sp_dachboden_switch.IP_ADDR'],
+          ['', 'alias_0_sp_dachboden_switch_IP_ADDR'],
+        ] as [string, string][]
+      ).forEach(([expected, input]) => {
+        it(`should return ${expected} when ${input} is given`, () => {
+          // GIVEN
+          // WHEN
+          const result = sut.getStateName(input);
+          // THEN
+          expect(result).to.equal(expected);
+        });
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((o) => o.getStateParentId),
+    () => {
+      ([['alias.0.sp_dachboden_switch', 'alias.0.sp_dachboden_switch.IPADDR']] as [string, string][]).forEach(
+        ([expected, input]) => {
+          it(`should return ${expected} when ${input} is given`, () => {
+            // GIVEN
+            // WHEN
+            const result = sut.getStateParentId(input);
+            // THEN
+            expect(result).to.equal(expected);
+          });
+        },
+      );
+    },
+  );
+  describe(
+    nameof<ObjectClient>((o) => o.getStateSiblingsIds),
+    () => {
+      it('should return siblings', async () => {
+        // GIVEN
+        const records: Record<string, State> = {
+          id0: StateFactory.state(),
+          id1: StateFactory.state(),
+        };
+        adapter.getStatesAsync.resolves(records);
+        // WHEN
+        const result = await sut.getStateSiblingsIds('test');
+        // THEN
+        expect(result[0]).to.equal('id0');
+        expect(result[1]).to.equal('id1');
       });
     },
   );

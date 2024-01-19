@@ -1,4 +1,6 @@
-export class ConfigError extends Error {
+import { BaseError } from '../../error/BaseError';
+
+export class ConfigError extends BaseError {
   public constructor(msg: string) {
     super(msg);
 

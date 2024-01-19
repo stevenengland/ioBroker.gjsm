@@ -34,13 +34,13 @@ describe(nameof(ConfigProvider), () => {
     () => {
       it(`Should load and validate config`, async () => {
         // GIVEN
-        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig });
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} });
         sut = new ConfigProvider(new Json(), instanceConfig, objectClientStub);
         // WHEN
         await sut.loadConfig();
         // THEN
         // Something from every config part
-        expect(sut.config.instructionSetStatesPattern).to.not.be.undefined; // private
+        expect(sut.config.automationStatesPattern).to.not.be.undefined; // private
         expect(sut.config.instanceId).to.not.be.undefined; // instance
         expect(sut.config.createTargetStatesIfNotExist).to.not.be.undefined; // public
       });
@@ -56,7 +56,7 @@ describe(nameof(ConfigProvider), () => {
       });
       it(`Should throw if config is invalid`, async () => {
         // GIVEN
-        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig });
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} });
         jsonStub.validateAgainstSchema.throws(new Error('Invalid (JSON) syntax'));
         sut = new ConfigProvider(jsonStub, instanceConfig, objectClientStub);
         // WHEN

@@ -7,10 +7,10 @@ import { StateFactory } from '../../iob/State.Factory.test';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterface } from '../configuration/ConfigInterface';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
-import { SpecificationProvider } from './SpecificationProvider';
+import { AutomationSpecProvider } from './AutomationSpecProvider';
 
-describe(nameof(SpecificationProvider), () => {
-  let sut: SpecificationProvider;
+describe(nameof(AutomationSpecProvider), () => {
+  let sut: AutomationSpecProvider;
   const yamlStub = sinon.createStubInstance(Yaml);
   const jsonStub = sinon.createStubInstance(Json);
   const objectClientStub = sinon.createStubInstance(ObjectClient);
@@ -18,7 +18,7 @@ describe(nameof(SpecificationProvider), () => {
   const configProviderStub = { config: {} as ConfigInterface } as ConfigProviderInterface;
 
   beforeEach(() => {
-    sut = new SpecificationProvider(configProviderStub, objectClientStub, yamlStub, jsonStub);
+    sut = new AutomationSpecProvider(configProviderStub, objectClientStub, yamlStub, jsonStub);
   });
   afterEach(() => {
     sinon.reset();
@@ -32,36 +32,43 @@ describe(nameof(SpecificationProvider), () => {
     });
   });
   describe(
-    nameof<SpecificationProvider>((s) => s.loadSpecifications),
+    nameof<AutomationSpecProvider>((s) => s.loadSpecifications),
     () => {
-      it(`Should load an item with error field filled given a invalid state value`, async () => {
+      it(`Should load two items with with error and id field filled given a invalid state value`, async () => {
         // GIVEN
-        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal('invalid')]);
+        objectClientStub.getStatesAsync.resolves([
+          StateFactory.stateWithVal('invalid'),
+          StateFactory.stateWithVal('invalid'),
+        ]);
         // WHEN
         await sut.loadSpecifications();
-        const result = sut.specifications[0]!.errors![0];
+        const result = sut.specifications;
         // THEN
-        expect(result).to.contain('The data format of');
+        expect(result.length).equals(2);
+        expect(result[0]!.errors![0]).to.contain('The data format of');
+        expect(result[0]!.id).to.contain('id');
       });
       it(`Should load a config given a JSON document`, async () => {
         // GIVEN
-        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal("{ 'isJson': true }")]);
+        objectClientStub.getStatesAsync.resolves([StateFactory.stateWithVal("{ 'isJson': true }")]);
         jsonStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();
-        const result = sut.specifications.length;
+        const result = sut.specifications;
         // THEN
-        expect(result).to.equal(1);
+        expect(result.length).to.equal(1);
+        expect(result[0]!.id).to.contain('id');
       });
       it(`Should load a config given a YAML document`, async () => {
         // GIVEN
-        objectClientStub.getStatesAsync.resolves([StateFactory.createWithVal('isYaml: true ')]);
+        objectClientStub.getStatesAsync.resolves([StateFactory.stateWithVal('isYaml: true ')]);
         yamlStub.hasCorrectDataFormat.returns(true);
         // WHEN
         await sut.loadSpecifications();
-        const result = sut.specifications.length;
+        const result = sut.specifications;
         // THEN
-        expect(result).to.equal(1);
+        expect(result.length).to.equal(1);
+        expect(result[0]!.id).to.contain('id');
       });
     },
   );

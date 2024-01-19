@@ -13,7 +13,7 @@ describe('State', () => {
           [NaN, '2023-19-99 99:99:99'],
           [NaN, false],
           [1111, 1111],
-        ] as Array<[number, StateValueType]>
+        ] as [number, StateValueType][]
       ).forEach(([expected, input]) => {
         it(`should return ${expected} with state timestamp of ${input} given`, () => {
           // GIVEN

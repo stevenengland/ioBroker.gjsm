@@ -3,10 +3,10 @@ import { StateInterface } from './StateInterface';
 export type StateValueType = boolean | number | string | null;
 
 export class State implements StateInterface {
-  public id?: string;
+  public id = '';
   public val: StateValueType = null;
   public ts: number = Math.floor(Date.now() / 1000);
-  public ack: boolean = false;
+  public ack = false;
 
   public constructor(state?: StateInterface | Partial<StateInterface>) {
     Object.assign(this, state);

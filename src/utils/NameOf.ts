@@ -11,7 +11,7 @@ function cleanseAssertionOperators(parsedName: string): string {
 
 export function nameof<T extends object>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  nameFunction: ((obj: T) => any) | { new (...params: any[]): T },
+  nameFunction: ((obj: T) => any) | (new (...params: any[]) => T),
 ): string {
   const fnStr = nameFunction.toString();
 
@@ -23,6 +23,10 @@ export function nameof<T extends object>(
     !fnStr.startsWith('class =>')
   ) {
     return cleanseAssertionOperators(fnStr.substring('class '.length, fnStr.indexOf(' {')));
+  }
+
+  if (fnStr.startsWith('function ')) {
+    return cleanseAssertionOperators(fnStr.substring('function '.length, fnStr.indexOf('(')));
   }
 
   // ES6 prop selector:

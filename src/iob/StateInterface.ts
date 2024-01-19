@@ -1,7 +1,7 @@
 import { StateValueType } from './State';
 
 export interface StateInterface {
-  id?: string;
+  id: string;
 
   /** The value of the state. */
   val: StateValueType;

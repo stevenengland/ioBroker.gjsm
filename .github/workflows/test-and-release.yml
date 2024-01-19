@@ -19,13 +19,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Performs quick checks before the expensive test runs
-  check-and-lint:
-    if: contains(github.event.head_commit.message, '[skip ci]') == false
-
+  configure:
     runs-on: ubuntu-latest
-
+    outputs:
+      CONTROLLER_VERSION_MAX: ${{ steps.dotenv.outputs.CONTROLLER_VERSION_MAX }}
+      CONTROLLER_VERSION_MIN: ${{ steps.dotenv.outputs.CONTROLLER_VERSION_MIN }}
+      NODE_VERSION: ${{ steps.dotenv.outputs.NODE_VERSION }}
+      NODE_VERSION_MIN: ${{ steps.dotenv.outputs.NODE_VERSION_MIN }}
+      NODE_VERSION_MAX: ${{ steps.dotenv.outputs.NODE_VERSION_MAX }}
     steps:
+      - name: Checkout to repository
+        uses: actions/checkout@v3
+
       - name: Check out the repository
         uses: actions/checkout@v4
 
@@ -35,11 +40,24 @@ jobs:
         with:
           path: .github/workflows/env_vars.txt
           log-variables: true
+          keys-case: bypass
 
-      - name: Use Node.js ${{ steps.dotenv.outputs.NODE_VERSION }}
+  # Performs quick checks before the expensive test runs
+  check_lint_unit-test:
+    if: contains(github.event.head_commit.message, '[skip ci]') == false
+
+    needs: configure
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ needs.configure.outputs.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ steps.dotenv.outputs.NODE_VERSION }}
+          node-version: ${{ needs.configure.outputs.NODE_VERSION }}
 
       - name: Install Dependencies
         shell: bash
@@ -57,36 +75,58 @@ jobs:
         shell: bash
         run: npm run test:package
 
-      - name: Test files and check coverage
+      - name: Unit tests and coverage check
         shell: bash
         run: npm run coverage
 
   # Runs adapter tests on all supported node versions and OSes
-  adapter-tests:
+  adapter-integration-tests:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
 
+    needs: configure
+
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version:
+          ['${{ needs.configure.outputs.NODE_VERSION_MIN }}', '${{ needs.configure.outputs.NODE_VERSION_MAX }}']
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        js-controller-version:
+          [
+            '${{ needs.configure.outputs.CONTROLLER_VERSION_MIN }}',
+            '${{ needs.configure.outputs.CONTROLLER_VERSION_MAX }}',
+          ]
 
     steps:
-      - uses: ioBroker/testing-action-adapter@v1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          os: ${{ matrix.os }}
-          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-          # install-command: 'npm install'
-          build: true
-          extra-tests: 'npm run test:ts'
+
+      - name: Install Dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Create a clean build
+        shell: bash
+        run: npm run build
+
+      - name: Run integration tests
+        shell: bash
+        run: npm run test:integration -- --controller-version=${{ matrix.js-controller-version }}
+        env:
+          DEBUG: 'testing:*'
 # TODO: To enable automatic npm releases, create a token on npmjs.org
 # Enter this token as a GitHub secret (with name NPM_TOKEN) in the repository options
 # Then uncomment the following block:
 
 #  # Deploys the final package to NPM
 #  deploy:
-#    needs: [check-and-lint, adapter-tests]
+#    needs: [check_lint_unit-test, adapter-tests]
 #
 #    # Trigger this step only when a commit on any branch is tagged with a version number
 #    if: |

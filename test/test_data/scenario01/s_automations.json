@@ -1,0 +1,29 @@
+[
+    {
+        "id": "the_id_of_the_state_for_example",
+        "groupFilter": "power_meter.tasmota_power_meter",
+        "filterType": "Function",
+        "automations": [
+            {
+                "automationType": "Mapping",
+                "sourceStateName": "INFO2",
+                "mappings": [
+                    {
+                        "targetStateName": "IPADDR",
+                        "jsonPathVal": "$.Info2.IPAddress"
+                    }
+                ]
+            },
+            {
+                "sourceStateName": "SENSOR",
+                "mappings": [
+                    {
+                        "targetStateName": "CURRENT_POWER",
+                        "jsonPathVal": "$.ENERGY.Power",
+                        "jsonPathTimestamp": "$.Time"
+                    }
+                ]
+            }
+        ]
+    }
+]

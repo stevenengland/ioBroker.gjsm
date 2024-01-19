@@ -1,3 +1,4 @@
 export interface PrivateConfigInterface {
-  instructionSetStatesPattern: string;
+  automationStatesPattern: string;
+  functionsNamespace: string;
 }

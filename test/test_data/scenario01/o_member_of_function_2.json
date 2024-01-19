@@ -1,0 +1,26 @@
+[
+    {
+        "_id": "mqtt.0.smarthome.smartplug.tasmota_3E6EDD.tele.STATUS",
+        "common": {
+            "name": "smarthome/smartplug/tasmota_3E6EDD/tele/STATUS",
+            "write": true,
+            "read": true,
+            "role": "variable",
+            "desc": "mqtt client variable",
+            "type": "string"
+        },
+        "native": {
+            "topic": "smarthome/smartplug/tasmota_3E6EDD/tele/STATUS"
+        },
+        "type": "state",
+        "from": "system.adapter.mqtt.0",
+        "user": "system.user.admin",
+        "ts": 1695642223970,
+        "acl": {
+            "object": 1636,
+            "state": 1636,
+            "owner": "system.user.admin",
+            "ownerGroup": "system.group.administrator"
+        }
+    }
+]

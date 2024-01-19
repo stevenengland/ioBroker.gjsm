@@ -1,4 +1,6 @@
-export class DataFormatError extends Error {
+import { BaseError } from '../error/BaseError';
+
+export class DataFormatError extends BaseError {
   public constructor(msg: string) {
     super(msg);
 

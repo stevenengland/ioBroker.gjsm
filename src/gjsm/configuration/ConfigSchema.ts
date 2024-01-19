@@ -1,12 +1,15 @@
 export const schema = {
   type: 'object',
   properties: {
-    instructionSetStatesPattern: {
+    automationStatesPattern: {
+      type: 'string',
+    },
+    functionsNamespace: {
       type: 'string',
     },
     createTargetStatesIfNotExist: {
       type: 'boolean',
     },
   },
-  required: ['instructionSetStatesPattern', 'createTargetStatesIfNotExist'],
+  required: ['automationStatesPattern', 'createTargetStatesIfNotExist'],
 };

@@ -19,7 +19,7 @@ describe('YAML', () => {
         [true, '[1, false, null]'],
         [true, [1, false, null]],
         [false, ','], // Invalid YAML
-      ] as Array<[boolean, string]>
+      ] as [boolean, string][]
     ).forEach(([expected, input]) => {
       it(`should return ${expected} when ${input} is given`, () => {
         // GIVEN
@@ -38,7 +38,7 @@ describe('YAML', () => {
         [3, 3],
         [{ x: true }, '{"x":true}'],
         [[1, false, null], '[1, false, null]'],
-      ] as Array<[boolean, string]>
+      ] as [boolean, string][]
     ).forEach(([expected, input]) => {
       it(`should return ${expected} when ${input} is given`, () => {
         // GIVEN
@@ -69,7 +69,7 @@ describe('YAML', () => {
             bar: 'abc',
           },
         ],
-      ] as Array<[object | string]>
+      ] as [object | string][]
     ).forEach(([input]) => {
       it(`should succeed when ${JSON.stringify(input)} is given`, () => {
         // GIVEN
@@ -103,7 +103,7 @@ describe('YAML', () => {
             bar: 'abc',
           },
         ],
-      ] as Array<[object | string]>
+      ] as [object | string][]
     ).forEach(([input]) => {
       it(`should throw when ${JSON.stringify(input)} as invalid data is given`, async () => {
         // GIVEN

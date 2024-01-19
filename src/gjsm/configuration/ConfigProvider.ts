@@ -1,18 +1,18 @@
 import { DataFormatInterface } from '../../data_format/DataFormatInterface';
 import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
-import { config as privateConfig } from '../Config';
-import { schema } from '../ConfigSchema';
+import { config as privateConfig } from './Config';
 import { ConfigError } from './ConfigError';
 import { ConfigInterface } from './ConfigInterface';
 import { ConfigProviderInterface } from './ConfigProviderInterface';
+import { schema } from './ConfigSchema';
 import { InstanceConfigInterface } from './InstanceConfigInterface';
 import { PublicConfigInterface } from './PublicConfigInterface';
 export class ConfigProvider implements ConfigProviderInterface {
   private _config!: ConfigInterface;
   private _publicConfig!: PublicConfigInterface;
-  private _instanceConfig!: InstanceConfigInterface;
-  private _json: DataFormatInterface;
-  private _objectClient: ObjectClientInterface;
+  private readonly _instanceConfig!: InstanceConfigInterface;
+  private readonly _json: DataFormatInterface;
+  private readonly _objectClient: ObjectClientInterface;
 
   public constructor(
     json: DataFormatInterface,
@@ -22,6 +22,14 @@ export class ConfigProvider implements ConfigProviderInterface {
     this._json = json;
     this._instanceConfig = instanceConfig;
     this._objectClient = objectClient;
+  }
+
+  public get schema(): object {
+    return schema;
+  }
+
+  public get config(): ConfigInterface {
+    return this._config;
   }
 
   public async loadConfig(): Promise<void> {
@@ -41,13 +49,5 @@ export class ConfigProvider implements ConfigProviderInterface {
     } as ConfigInterface;
     await this._json.validateAgainstSchema(unvalidatedConfig, schema);
     this._config = unvalidatedConfig;
-  }
-
-  public get schema(): object {
-    return schema;
-  }
-
-  public get config(): ConfigInterface {
-    return this._config;
   }
 }
