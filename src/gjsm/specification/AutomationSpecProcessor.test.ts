@@ -13,10 +13,16 @@ describe(nameof(AutomationSpecProcessor), () => {
   let sut: AutomationSpecProcessor;
   const objectClientStub = sinon.createStubInstance(ObjectClient);
   const configProviderStub = sinon.createStubInstance(ConfigProvider);
-  sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
+
   beforeEach(() => {
+    sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
     sut = new AutomationSpecProcessor(configProviderStub, objectClientStub);
   });
+
+  afterEach(() => {
+    sinon.reset();
+  });
+
   describe(
     nameof<AutomationSpecProcessor>((s) => s.getFilteredSourceStates),
     () => {

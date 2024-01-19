@@ -18,6 +18,7 @@ describe(nameof(ObjectClient), () => {
   afterEach(() => {
     adapter.resetMock();
   });
+
   describe(
     nameof<ObjectClient>((s) => s.getStatesAsync),
     () => {

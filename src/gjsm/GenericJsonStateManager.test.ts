@@ -19,10 +19,10 @@ describe(nameof(GenericJsonStateManager), () => {
   const loggerStub = sinon.createStubInstance(Logger);
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
   const objectClientStub = sinon.createStubInstance(ObjectClient);
-  sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
-  sinon.stub(specProviderStub, 'specifications').value([AutomationSpecInterfaceFactory.create()]);
 
   beforeEach(() => {
+    sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
+    sinon.stub(specProviderStub, 'specifications').value([AutomationSpecInterfaceFactory.create()]);
     sut = new GenericJsonStateManager(
       loggerStub,
       configProviderStub,
