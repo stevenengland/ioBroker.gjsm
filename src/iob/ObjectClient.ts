@@ -38,6 +38,9 @@ export class ObjectClient implements ObjectClientInterface {
     await this._adapter.subscribeStatesAsync(pattern);
   }
 
+  public async subscribeForeignStatesAsync(pattern: string): Promise<void> {
+    await this._adapter.subscribeForeignStatesAsync(pattern);
+  }
   //#endregion
 
   //#region state helper

@@ -74,6 +74,20 @@ describe(nameof(ObjectClient), () => {
     },
   );
   describe(
+    nameof<ObjectClient>((s) => s.subscribeForeignStatesAsync),
+    () => {
+      it(`Should not throw`, async () => {
+        // GIVEN
+        // WHEN
+        async function when() {
+          await sut.subscribeForeignStatesAsync('*');
+        }
+        // THEN
+        await expect(when()).not.to.be.rejected;
+      });
+    },
+  );
+  describe(
     nameof<ObjectClient>((o) => o.getStateName),
     () => {
       (
