@@ -1,3 +1,4 @@
+import { unpackError } from '../error/ErrorHandling';
 import { ErrorParameterAdditionsInterface } from '../error/ErrorParameterAdditionsInterface';
 import { EventEmitter } from '../events/EventEmitter';
 import { ObjectClientInterface } from '../iob/ObjectClientInterface';
@@ -50,7 +51,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
               this._logger.debug(`Subscribed to ${state.id}.`);
             }
           } catch (error) {
-            this._logger.warn(`Error while processing automation spec ${spec.id}: ${(error as Error).message}`);
+            this.logWarning(`Error while processing automation spec ${spec.id}`, error);
           }
         }
       }
@@ -61,7 +62,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     try {
       await this._configProvider.loadConfig();
     } catch (error) {
-      this.handleError(error as Error, {
+      this.notifyOfAnError(error as Error, {
         message: 'Error while loading configuration.',
         isCritical: true,
       });
@@ -74,11 +75,11 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     try {
       await this._specProvider.loadSpecifications();
     } catch (error) {
-      this._logger.error(`Error while loading automation definitions: ${(error as Error).message}`);
+      this.logError(`Error while loading automation definitions`, error);
     }
 
     if (this._specProvider.specifications.length === 0) {
-      this._logger.warn('No automation definitions found.');
+      this.logWarning('No automation definitions found.');
     } else {
       this._logger.info(`${this._specProvider.specifications.length} Automation definition(s) loaded.`);
     }
@@ -86,7 +87,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._specProvider.specifications.forEach((spec) => {
       if (spec.errors) {
         spec.errors.forEach((error) => {
-          this._logger.warn(`Automation definition ${spec.id} loaded with error: ${error}`);
+          this.logWarning(`Automation definition ${spec.id} loaded with error: ${error}`);
         });
       }
     });
@@ -99,7 +100,31 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     // TODO: Subcscribe to changes of the config object
   }
 
-  private handleError(error: Error, additionalData?: ErrorParameterAdditionsInterface): void {
+  private logError(message: string, error?: unknown): void {
+    let enrichedMessage = message;
+    if (error && error instanceof Error) {
+      enrichedMessage += `\nThe error was:  ${error.message}`;
+    }
+    this._logger.error(enrichedMessage);
+    this.debugLogUnpackedError(error);
+  }
+
+  private logWarning(message: string, error?: unknown): void {
+    let enrichedMessage = message;
+    if (error && error instanceof Error) {
+      enrichedMessage += `\nThe error was:  ${error.message}`;
+    }
+    this._logger.warn(enrichedMessage);
+    this.debugLogUnpackedError(error);
+  }
+
+  private debugLogUnpackedError(error?: unknown): void {
+    if (error) {
+      this._logger.debug(JSON.stringify(unpackError(error)));
+    }
+  }
+
+  private notifyOfAnError(error: Error, additionalData?: ErrorParameterAdditionsInterface): void {
     this.errorEmitter.emit('error', error, additionalData);
   }
 }

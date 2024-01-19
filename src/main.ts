@@ -71,17 +71,19 @@ class Gjsm extends utils.Adapter {
       // 2. Resolve the main component and initialize it
       this._gjsm = iocContainer.cradle.gjsm;
       this._gjsm.errorEmitter.on('error', (error, additionalData) => {
-        this.handleError(error, { isCritical: additionalData?.isCritical });
+        this.handleNotifiedError(error, { isCritical: additionalData?.isCritical });
       });
       await this._gjsm.initialize();
     } catch (error) {
       if (error instanceof Error) {
-        this.handleError(error, {
+        this.handleNotifiedError(error, {
           message: `The adapter could not be initialized: ${error.message}`,
           isCritical: true,
         });
       } else {
-        this.handleError(new Error('The adapter could not be initialized: Unknown error'), { isCritical: true });
+        this.handleNotifiedError(new Error('The adapter could not be initialized: Unknown error'), {
+          isCritical: true,
+        });
       }
     }
 
@@ -147,7 +149,7 @@ class Gjsm extends utils.Adapter {
     }
   }
 
-  private handleError(error: Error, additionalData?: ErrorParameterAdditionsInterface): void {
+  private handleNotifiedError(error: Error, additionalData?: ErrorParameterAdditionsInterface): void {
     if (additionalData?.message) {
       this.log.error(`An unexpected exception occured: ${additionalData.message}
       > Details (if any): ${additionalData.details ?? 'none'}
