@@ -21,40 +21,43 @@ export const schema = {
       type: 'array',
       items: {
         type: 'object',
-        required: ['automationType', 'sourceStateName'],
+        required: ['instructions', 'sourceStateName'],
         properties: {
-          automationType: {
-            type: 'string',
-            enum: ['Mapping'],
-          },
           sourceStateName: {
             type: 'string',
           },
-        },
-        if: {
-          properties: {
-            automationType: {
-              const: 'Mapping',
-            },
-          },
-        },
-        then: {
-          required: ['mappings'],
-          properties: {
-            mappings: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  targetStateName: {
-                    type: 'string',
+          instructions: {
+            type: 'array',
+            items: {
+              anyOf: [
+                {
+                  // Set value
+                  type: 'object',
+                  required: ['action', 'targetStateName'],
+                  properties: {
+                    action: { const: 'set_value' },
+                    targetStateName: {
+                      type: 'string',
+                    },
                   },
-                  jsonPathVal: {
-                    type: 'string',
-                  },
+                  additionalProperties: false,
                 },
-                required: ['targetStateName', 'jsonPathVal'],
-              },
+                {
+                  // Map value
+                  type: 'object',
+                  required: ['action', 'targetStateName', 'jsonPathVal'],
+                  properties: {
+                    action: { const: 'map_value' },
+                    targetStateName: {
+                      type: 'string',
+                    },
+                    jsonPathVal: {
+                      type: 'string',
+                    },
+                  },
+                  additionalProperties: false,
+                },
+              ],
             },
           },
         },

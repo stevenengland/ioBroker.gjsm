@@ -1,4 +1,4 @@
-export interface MappingInterface {
+export interface MapValueInterface {
   targetStateName: string;
   jsonPathVal: string;
 }

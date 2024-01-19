@@ -12,12 +12,16 @@
     "filterType": "Function",
     "automations": [
       {
-        "automationType": "Mapping",
         "sourceStateName": "test1",
-        "mappings": [
+        "instructions": [
           {
+            "action": "map_value",
             "targetStateName": "test1",
             "jsonPathVal": "test2"
+          },
+          {
+            "action": "set_value",
+            "targetStateName": "test1"
           }
         ]
       }

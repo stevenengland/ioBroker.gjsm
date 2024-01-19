@@ -1,7 +1,5 @@
-import { AutomationType } from './AutomationType';
-import { MappingInterface } from './MappingInterface'; // Import the missing MappingInterface type
+import { Instruction } from './instructions/InstructionType';
 export interface AutomationInterface {
-  automationType: AutomationType;
   sourceStateName: string;
-  mappings: MappingInterface[];
+  instructions: Instruction[];
 }

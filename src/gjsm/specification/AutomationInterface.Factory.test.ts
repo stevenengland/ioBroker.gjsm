@@ -1,6 +1,5 @@
 import { faker } from '@faker-js/faker';
 import { AutomationInterface } from './AutomationInterface';
-import { AutomationType } from './AutomationType';
 
 interface Builder {
   default(): this;
@@ -16,9 +15,8 @@ export class AutomationInterfaceBuilder implements Builder {
 
   public default(): this {
     this.spec = {
-      automationType: faker.helpers.enumValue(AutomationType),
       sourceStateName: faker.word.verb(),
-      mappings: [],
+      instructions: [],
     };
     return this;
   }
