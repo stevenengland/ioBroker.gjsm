@@ -18,6 +18,7 @@ import { Logger } from './logger/Logger';
 
 import { AwilixContainer, InjectionMode, asClass, asValue, createContainer } from 'awilix';
 import { DataFormatInterface } from './data_format/DataFormatInterface';
+import { BaseError } from './error/BaseError';
 import { unpackError } from './error/ErrorHandling';
 import { ErrorParameterAdditionsInterface } from './error/ErrorParameterAdditionsInterface';
 import { GenericJsonStateManagerInterface } from './gjsm/GenericJsonStateManagerInterface';
@@ -84,14 +85,37 @@ class Gjsm extends utils.Adapter {
           isCritical: true,
         });
       } else {
-        this.handleNotifiedError(new Error('The adapter could not be initialized: Unknown error'), {
+        this.handleNotifiedError(new Error('The adapter could not be initialized because of an unexpected error.'), {
           isCritical: true,
         });
       }
     }
 
     // Process the automation definitions
-    await this._gjsm?.loadAutomationDefinitions();
+    try {
+      await this._gjsm?.loadAutomationDefinitions();
+    } catch (error) {
+      this.handleNotifiedError(
+        new BaseError('The adapter could not load the automation definitions because of an unexpected error.', {
+          cause: error,
+        }),
+        {
+          isCritical: false,
+        },
+      );
+    }
+    try {
+      await this._gjsm?.createSubscriptionsAndRepositoryForSourceStates();
+    } catch (error) {
+      this.handleNotifiedError(
+        new BaseError('The adapter could not create state subscriptions and corresponding automation plans.', {
+          cause: error,
+        }),
+        {
+          isCritical: false,
+        },
+      );
+    }
   }
 
   /**

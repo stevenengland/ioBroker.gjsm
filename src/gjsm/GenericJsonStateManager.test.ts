@@ -135,14 +135,14 @@ describe(nameof(GenericJsonStateManager), () => {
   );
 
   describe(
-    nameof<GenericJsonStateManager>((g) => g.identifyAndSubscribeSourceStates),
+    nameof<GenericJsonStateManager>((g) => g.createSubscriptionsAndRepositoryForSourceStates),
     () => {
       it(`Should subscribe to states`, async () => {
         // GIVEN
         const states = StateFactory.statesWithPrefixedId(3, 'id_');
         specProcessorStub.getFilteredSourceStates.resolves(states);
         // WHEN
-        await sut.identifyAndSubscribeSourceStates();
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
         // THEN
         expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_0');
         expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_1');
@@ -153,7 +153,7 @@ describe(nameof(GenericJsonStateManager), () => {
         const states = StateFactory.statesWithPrefixedId(3, 'id_');
         specProcessorStub.getFilteredSourceStates.resolves(states);
         // WHEN
-        await sut.identifyAndSubscribeSourceStates();
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
         // THEN
         expect(autoRepositoryStub.addAutomations).called;
       });

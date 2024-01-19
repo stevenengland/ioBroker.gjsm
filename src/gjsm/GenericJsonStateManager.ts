@@ -37,7 +37,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._autoRepository = autoRepository;
   }
 
-  public async identifyAndSubscribeSourceStates(): Promise<void> {
+  public async createSubscriptionsAndRepositoryForSourceStates(): Promise<void> {
     for (const spec of this._specProvider.specifications) {
       if (spec.automations) {
         for (const automation of spec.automations) {
