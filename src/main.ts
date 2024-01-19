@@ -21,6 +21,8 @@ import { DataFormatInterface } from './data_format/DataFormatInterface';
 import { unpackError } from './error/ErrorHandling';
 import { ErrorParameterAdditionsInterface } from './error/ErrorParameterAdditionsInterface';
 import { GenericJsonStateManagerInterface } from './gjsm/GenericJsonStateManagerInterface';
+import { AutomationRepository } from './gjsm/automation_repository/AutomationRepository';
+import { AutomationRepositoryInterface } from './gjsm/automation_repository/AutomationRepositoryInterface';
 import { ConfigProviderInterface } from './gjsm/configuration/ConfigProviderInterface';
 import { InstanceConfigInterface } from './gjsm/configuration/InstanceConfigInterface';
 import { PublicConfigInterface } from './gjsm/configuration/PublicConfigInterface';
@@ -41,6 +43,7 @@ interface IocContainerInterface {
   configProvider: ConfigProviderInterface;
   specProvider: AutomationSpecProviderInterface;
   specProcessor: AutomationSpecProcessorInterface;
+  autoRepository: AutomationRepositoryInterface;
   gjsm: GenericJsonStateManagerInterface;
 }
 
@@ -190,6 +193,7 @@ class Gjsm extends utils.Adapter {
       configProvider: asClass(ConfigProvider).singleton(),
       specProvider: asClass(AutomationSpecProvider).singleton(),
       specProcessor: asClass(AutomationSpecProcessor).singleton(),
+      autoRepository: asClass(AutomationRepository).singleton(),
       gjsm: asClass(GenericJsonStateManager).singleton(),
     });
   }

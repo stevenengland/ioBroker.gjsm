@@ -5,6 +5,7 @@ import { StateFactory } from '../iob/State.Factory.test';
 import { Logger } from '../logger/Logger';
 import { nameof } from '../utils/NameOf';
 import { GenericJsonStateManager } from './GenericJsonStateManager';
+import { AutomationRepository } from './automation_repository/AutomationRepository';
 import { ConfigInterfaceFactory } from './configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from './configuration/ConfigProvider';
 import { AutomationSpecInterface } from './specification/AutomationSpecInterface';
@@ -19,6 +20,7 @@ describe(nameof(GenericJsonStateManager), () => {
   const loggerStub = sinon.createStubInstance(Logger);
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
   const objectClientStub = sinon.createStubInstance(ObjectClient);
+  const autoRepositoryStub = sinon.createStubInstance(AutomationRepository);
 
   beforeEach(() => {
     sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
@@ -29,6 +31,7 @@ describe(nameof(GenericJsonStateManager), () => {
       specProviderStub,
       specProcessorStub,
       objectClientStub,
+      autoRepositoryStub,
     );
   });
 
@@ -101,6 +104,13 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(specProviderStub.loadSpecifications).calledOnce;
         expect(loggerStub.warn).calledWithMatch(/No automation/); // Actually nothing to do, but we want to know
       });
+      it(`Should clear the repository`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.loadAutomationDefinitions();
+        // THEN
+        expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
+      });
       it(`Should catch errors when spec loading throws`, async () => {
         // GIVEN
         specProviderStub.loadSpecifications.throws(new Error('test'));
@@ -137,6 +147,15 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_0');
         expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_1');
         expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_2');
+      });
+      it(`Should add items to automation repository`, async () => {
+        // GIVEN
+        const states = StateFactory.statesWithPrefixedId(3, 'id_');
+        specProcessorStub.getFilteredSourceStates.resolves(states);
+        // WHEN
+        await sut.identifyAndSubscribeSourceStates();
+        // THEN
+        expect(autoRepositoryStub.addAutomations).called;
       });
     },
   );

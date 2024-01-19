@@ -5,6 +5,7 @@ import { ObjectClientInterface } from '../iob/ObjectClientInterface';
 import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
 import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
+import { AutomationRepositoryInterface } from './automation_repository/AutomationRepositoryInterface';
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
 import { AutomationSpecProcessorInterface } from './specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './specification/AutomationSpecProviderInterface';
@@ -18,6 +19,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   private readonly _specProvider: AutomationSpecProviderInterface;
   private readonly _specProcessor: AutomationSpecProcessorInterface;
   private readonly _onjectClient: ObjectClientInterface;
+  private readonly _autoRepository: AutomationRepositoryInterface;
 
   public constructor(
     logger: LoggerInterface,
@@ -25,12 +27,14 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     specProvider: AutomationSpecProviderInterface,
     specProcessor: AutomationSpecProcessorInterface,
     objectClient: ObjectClientInterface,
+    autoRepository: AutomationRepositoryInterface,
   ) {
     this._logger = logger;
     this._configProvider = configProvider;
     this._specProvider = specProvider;
     this._specProcessor = specProcessor;
     this._onjectClient = objectClient;
+    this._autoRepository = autoRepository;
   }
 
   public async identifyAndSubscribeSourceStates(): Promise<void> {
@@ -49,6 +53,9 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
             for (const state of statesToSubscribe) {
               await this._onjectClient.subscribeForeignStatesAsync(state.id);
               this._logger.debug(`Subscribed to ${state.id}.`);
+              for (const instruction of automation.instructions) {
+                this._autoRepository.addAutomations(state.id, [instruction]);
+              }
             }
           } catch (error) {
             this.logWarning(`Error while processing automation spec ${spec.id}`, error);
@@ -72,6 +79,8 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   }
 
   public async loadAutomationDefinitions(): Promise<void> {
+    this._autoRepository.deleteAllAutomations();
+
     try {
       await this._specProvider.loadSpecifications();
     } catch (error) {

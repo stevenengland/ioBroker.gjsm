@@ -1,2 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface AutomationRepositoryInterface {}
+import { Instruction } from '../specification/instructions/Instruction';
+
+export interface AutomationRepositoryInterface {
+  addAutomations(stateId: string, instructions: Instruction[]): void;
+  getAutomations(stateId: string): Instruction[];
+  deleteAllAutomations(): void;
+}

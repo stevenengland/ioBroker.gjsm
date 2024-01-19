@@ -13,7 +13,15 @@ module.exports = {
   ],
   plugins: [],
   rules: {
-    '@typescript-eslint/naming-convention': 'error',
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: ['classProperty'],
+        modifiers: ['private'],
+        format: ['camelCase'],
+        leadingUnderscore: 'require',
+      },
+    ],
     '@typescript-eslint/no-non-null-assertion': 'off', // This is necessary for Map.has()/get()!
     '@typescript-eslint/explicit-member-accessibility': 'error',
     '@typescript-eslint/member-ordering': 'error',

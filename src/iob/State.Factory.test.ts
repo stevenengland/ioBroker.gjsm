@@ -9,26 +9,26 @@ interface Builder {
 }
 
 export class StateBuilder implements Builder {
-  private readonly state: State;
+  private readonly _state: State;
 
   public constructor(state?: State) {
-    this.state = typeof state !== 'undefined' ? state : new State();
+    this._state = typeof state !== 'undefined' ? state : new State();
   }
   public withVal(val?: StateValueType): this {
-    this.state.val = typeof val !== 'undefined' ? val : faker.string.alpha(100);
+    this._state.val = typeof val !== 'undefined' ? val : faker.string.alpha(100);
     return this;
   }
   public withId(id?: string): this {
-    this.state.id = typeof id !== 'undefined' ? id : faker.helpers.fromRegExp(/adapter.[0-9]{1}.id_[0-9]{5}/);
+    this._state.id = typeof id !== 'undefined' ? id : faker.helpers.fromRegExp(/adapter.[0-9]{1}.id_[0-9]{5}/);
     return this;
   }
   public withTs(timestamp?: number): this {
-    this.state.ts =
+    this._state.ts =
       typeof timestamp !== 'undefined' ? timestamp : faker.number.int({ min: 1697666400, max: 1697666999 });
     return this;
   }
   public build() {
-    return this.state;
+    return this._state;
   }
 }
 

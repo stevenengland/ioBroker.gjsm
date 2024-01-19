@@ -7,14 +7,14 @@ interface Builder {
 }
 
 export class ConfigInterfaceBuilder implements Builder {
-  private config: ConfigInterface;
+  private _config: ConfigInterface;
 
   public constructor(config?: ConfigInterface) {
-    this.config = typeof config !== 'undefined' ? config : ({} as ConfigInterface);
+    this._config = typeof config !== 'undefined' ? config : ({} as ConfigInterface);
   }
 
   public default(): this {
-    this.config = {
+    this._config = {
       automationStatesPattern: faker.helpers.fromRegExp(/adapter.[0-9]{1}.\*/),
       functionsNamespace: faker.helpers.fromRegExp(/enum.functions/),
       createTargetStatesIfNotExist: faker.datatype.boolean(),
@@ -25,7 +25,7 @@ export class ConfigInterfaceBuilder implements Builder {
   }
 
   public build() {
-    return this.config;
+    return this._config;
   }
 }
 

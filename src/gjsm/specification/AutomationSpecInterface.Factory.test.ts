@@ -9,14 +9,14 @@ interface Builder {
 }
 
 export class AutomationSpecInterfaceBuilder implements Builder {
-  private spec: AutomationSpecInterface;
+  private _spec: AutomationSpecInterface;
 
   public constructor(config?: AutomationSpecInterface) {
-    this.spec = typeof config !== 'undefined' ? config : ({} as AutomationSpecInterface);
+    this._spec = typeof config !== 'undefined' ? config : ({} as AutomationSpecInterface);
   }
 
   public default(): this {
-    this.spec = {
+    this._spec = {
       automations: [AutomationInterfaceFactory.create()],
       filterType: faker.helpers.enumValue(FilterType),
       groupFilter: faker.word.verb(),
@@ -25,7 +25,7 @@ export class AutomationSpecInterfaceBuilder implements Builder {
   }
 
   public build() {
-    return this.spec;
+    return this._spec;
   }
 }
 
