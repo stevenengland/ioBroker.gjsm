@@ -32,16 +32,23 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._onjectClient = objectClient;
   }
 
-  public async processAutomationDefinitions(): Promise<void> {
+  public async identifyAndSubscribeSourceStates(): Promise<void> {
     for (const spec of this._specProvider.specifications) {
       if (spec.automations) {
         for (const automation of spec.automations) {
           try {
-            await this._specProcessor.getFilteredSourceStates(
+            const statesToSubscribe = await this._specProcessor.getFilteredSourceStates(
               spec.filterType!,
               spec.groupFilter!,
               automation.sourceStateName,
             );
+            this._logger.debug(
+              `Subscribing to ${statesToSubscribe.length} states for automation definition ${spec.id}.`,
+            );
+            for (const state of statesToSubscribe) {
+              await this._onjectClient.subscribeForeignStatesAsync(state.id);
+              this._logger.debug(`Subscribed to ${state.id}.`);
+            }
           } catch (error) {
             this._logger.warn(`Error while processing automation spec ${spec.id}: ${(error as Error).message}`);
           }

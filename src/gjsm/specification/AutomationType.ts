@@ -1,1 +1,3 @@
-export type AutomationType = 'Mapping';
+export enum AutomationType {
+  mapping = 'Mapping',
+}

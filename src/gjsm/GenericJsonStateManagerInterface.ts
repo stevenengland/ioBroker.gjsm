@@ -6,5 +6,5 @@ export interface GenericJsonStateManagerInterface {
   initialize(): Promise<void>;
   loadConfig(): Promise<void>;
   loadAutomationDefinitions(): Promise<void>;
-  processAutomationDefinitions(): Promise<void>;
+  identifyAndSubscribeSourceStates(): Promise<void>;
 }

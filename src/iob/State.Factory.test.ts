@@ -62,7 +62,7 @@ export class StateFactory {
     const result = new Array<State>();
     for (let i = 0; i < count; i++) {
       const state = this.state();
-      state.id = prefix + 'id_' + i;
+      state.id = prefix === '' ? 'id_' + i : prefix + i;
       result.push(state);
     }
     return result;

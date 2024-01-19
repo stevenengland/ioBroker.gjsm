@@ -1,12 +1,14 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ObjectClient } from '../iob/ObjectClient';
+import { StateFactory } from '../iob/State.Factory.test';
 import { Logger } from '../logger/Logger';
 import { nameof } from '../utils/NameOf';
 import { GenericJsonStateManager } from './GenericJsonStateManager';
 import { ConfigInterfaceFactory } from './configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from './configuration/ConfigProvider';
 import { AutomationSpecInterface } from './specification/AutomationSpecInterface';
+import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecInterface.Factory.test';
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
 
@@ -18,6 +20,7 @@ describe(nameof(GenericJsonStateManager), () => {
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
   const objectClientStub = sinon.createStubInstance(ObjectClient);
   sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
+  sinon.stub(specProviderStub, 'specifications').value([AutomationSpecInterfaceFactory.create()]);
 
   beforeEach(() => {
     sut = new GenericJsonStateManager(
@@ -122,13 +125,18 @@ describe(nameof(GenericJsonStateManager), () => {
   );
 
   describe(
-    nameof<GenericJsonStateManager>((g) => g.processAutomationDefinitions),
+    nameof<GenericJsonStateManager>((g) => g.identifyAndSubscribeSourceStates),
     () => {
-      it(`Should load automation sets`, async () => {
+      it(`Should subscribe to states`, async () => {
         // GIVEN
+        const states = StateFactory.statesWithPrefixedId(3, 'id_');
+        specProcessorStub.getFilteredSourceStates.resolves(states);
         // WHEN
-        await sut.processAutomationDefinitions();
+        await sut.identifyAndSubscribeSourceStates();
         // THEN
+        expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_0');
+        expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_1');
+        expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_2');
       });
     },
   );
