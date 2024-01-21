@@ -93,6 +93,19 @@ describe(nameof(AutomationSpecProcessor), () => {
         // THEN
         expect(result).to.equal(ExecutionResult.jsonPathNoMatch);
       });
+      it(`Should set target state with new value`, async () => {
+        // GIVEN
+        const sourceState = StateFactory.state();
+        const targetState = StateFactory.state();
+        objectClientStub.getForeignStateAsync.resolves(targetState);
+        jsonPathStub.getValues.returns(['testValue']);
+        // WHEN
+        const result = await sut.executeInstruction(sourceState, MapValueInstructionFactory.instruction());
+        // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
+        // THEN
+        expect(objectClientStub.setForeignStateAsync).calledOnceWithExactly(targetState.id, targetState);
+        expect(result).to.equal(ExecutionResult.success);
+      });
       it(`Should fail if instruction is not supported`, async () => {
         // GIVEN
         // WHEN
