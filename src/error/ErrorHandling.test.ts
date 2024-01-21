@@ -1,9 +1,10 @@
 import { expect } from 'chai';
+import path from 'path';
 import { nameof } from '../utils/NameOf';
 import { BaseError } from './BaseError';
 import * as ErrorHandling from './ErrorHandling';
 
-describe('Error Handling functions', () => {
+describe(path.parse(__filename).name.split('.')[0], () => {
   describe(nameof(ErrorHandling.unpackError), () => {
     it(`Should create loggable object with all child errors`, () => {
       // GIVEN

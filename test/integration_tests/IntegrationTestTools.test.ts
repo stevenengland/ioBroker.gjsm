@@ -2,11 +2,12 @@
 import { TestSuite } from '@iobroker/testing/build/tests/integration';
 import { TestHarness } from '@iobroker/testing/build/tests/integration/lib/harness';
 import { expect } from 'chai';
+import path from 'path';
 import { StateInterface } from '../../src/iob/StateInterface';
 import { delay, getState, prepareDbEntities, startAdapter } from './TestTools';
 
 export function runTests(suite: TestSuite) {
-  suite('Integration Test Tools', function (getHarness: () => TestHarness) {
+  suite(path.parse(__filename).name.split('.')[0], function (getHarness: () => TestHarness) {
     describe('Should set and get objects/states', function () {
       this.timeout(5000);
 
