@@ -9,6 +9,18 @@ import { StateFactory } from './State.Factory.test';
 describe(nameof(ObjectClient), () => {
   let sut: ObjectClient;
   let adapter: MockAdapter;
+  const testRecord: Record<string, ioBroker.State> = {
+    test: { val: 1, ack: true, ts: 123, lc: 123, from: 'system.adapter.test.0', q: 0, expire: 123 },
+  };
+  const testState: ioBroker.State = {
+    val: 1,
+    ack: true,
+    ts: 123,
+    lc: 123,
+    from: 'system.adapter.test.0',
+    q: 0,
+    expire: 123,
+  };
 
   beforeEach(() => {
     adapter = utils.unit.createMocks({ name: 'gsjm' }).adapter;
@@ -24,14 +36,58 @@ describe(nameof(ObjectClient), () => {
     () => {
       it(`Should return states`, async () => {
         // GIVEN
-        const record: Record<string, ioBroker.State> = {
-          test: { val: 1, ack: true, ts: 123, lc: 123, from: 'system.adapter.test.0', q: 0, expire: 123 },
-        };
-        adapter.getStatesAsync.resolves(record);
+        adapter.getStatesAsync.resolves(testRecord);
         // WHEN
         const result = await sut.getStatesAsync('*');
         // THEN
         expect(result[0].id).to.equal('test');
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((s) => s.getForeignStateAsync),
+    () => {
+      it(`Should return state`, async () => {
+        // GIVEN
+        adapter.getForeignStateAsync.resolves(testState);
+        // WHEN
+        const result = await sut.getForeignStateAsync('test');
+        // THEN
+        expect(result?.id).to.equal('test');
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((s) => s.setForeignStateAsync),
+    () => {
+      it(`Should return state`, async () => {
+        // GIVEN
+        adapter.getForeignStateAsync.resolves(testRecord);
+        // WHEN
+        await sut.setForeignStateAsync('*', StateFactory.state());
+        // THEN
+        expect(adapter.setForeignStateAsync).to.be.calledOnce;
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((s) => s.existsStateAsync),
+    () => {
+      it(`Should return true if exists`, async () => {
+        // GIVEN
+        adapter.getForeignStateAsync.resolves(testRecord);
+        // WHEN
+        const result = await sut.existsStateAsync('*');
+        // THEN
+        expect(result).to.be.true;
+      });
+      it(`Should return false if not exists`, async () => {
+        // GIVEN
+        adapter.getForeignStateAsync.resolves(null);
+        // WHEN
+        const result = await sut.existsStateAsync('*');
+        // THEN
+        expect(result).to.be.false;
       });
     },
   );

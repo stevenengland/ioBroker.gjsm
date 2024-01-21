@@ -31,6 +31,9 @@ import { AutomationSpecProcessor } from './gjsm/specification/AutomationSpecProc
 import { AutomationSpecProcessorInterface } from './gjsm/specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './gjsm/specification/AutomationSpecProviderInterface';
 import { ObjectClientInterface } from './iob/ObjectClientInterface';
+import { State } from './iob/State';
+import { JsonPath } from './json_path/JsonPath';
+import { JsonPathInterface } from './json_path/JsonPathInterface';
 import { LoggerInterface } from './logger/LoggerInterface';
 
 interface IocContainerInterface {
@@ -41,6 +44,7 @@ interface IocContainerInterface {
   logger: LoggerInterface;
   yaml: DataFormatInterface;
   json: DataFormatInterface;
+  jsonPath: JsonPathInterface;
   configProvider: ConfigProviderInterface;
   specProvider: AutomationSpecProviderInterface;
   specProcessor: AutomationSpecProcessorInterface;
@@ -151,13 +155,24 @@ class Gjsm extends utils.Adapter {
   /**
    * Is called if a subscribed state changes
    */
-  private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
-    if (state) {
-      // The state was changed
-      this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-    } else {
-      // The state was deleted
-      this.log.info(`state ${id} deleted`);
+  private async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
+    try {
+      if (state) {
+        // The state was changed
+        await this._gjsm?.handleStateChange(id, new State(state));
+      } else {
+        // The state was deleted
+        this.log.debug(`Subscribed state ${id} was deleted`);
+      }
+    } catch (error) {
+      this.handleNotifiedError(
+        new BaseError(`The adapter could not handle the changed state for state ${id}.`, {
+          cause: error,
+        }),
+        {
+          isCritical: false,
+        },
+      );
     }
   }
 
@@ -214,6 +229,7 @@ class Gjsm extends utils.Adapter {
       logger: asClass(Logger).singleton(),
       yaml: asClass(Yaml).transient(),
       json: asClass(Json).transient(),
+      jsonPath: asClass(JsonPath).transient(),
       configProvider: asClass(ConfigProvider).singleton(),
       specProvider: asClass(AutomationSpecProvider).singleton(),
       specProcessor: asClass(AutomationSpecProcessor).singleton(),

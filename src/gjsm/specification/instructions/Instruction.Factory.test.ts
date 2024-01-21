@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { Instruction } from './Instruction';
-import { MapValueInterface } from './MapValueInterface';
-import { SetValueInterface } from './SetValueInterface';
+import { MapValueInstruction } from './MapValueInstruction';
+import { SetValueInstruction } from './SetValueInstruction';
 
 interface Builder {
   defaultMapValueInstruction(): this;
@@ -20,14 +20,14 @@ export class InstructionInterfaceBuilder implements Builder {
     this._instruction = {
       jsonPathVal: faker.word.verb(),
       targetStateName: faker.word.verb(),
-    } as MapValueInterface;
+    } as MapValueInstruction;
     return this;
   }
 
   public defaultSetValueInstruction(): this {
     this._instruction = {
       targetStateName: faker.word.verb(),
-    } as SetValueInterface;
+    } as SetValueInstruction;
     return this;
   }
 

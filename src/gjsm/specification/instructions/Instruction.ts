@@ -1,4 +1,4 @@
-import { MapValueInterface } from './MapValueInterface';
-import { SetValueInterface } from './SetValueInterface';
+import { MapValueInstruction } from './MapValueInstruction';
+import { SetValueInstruction } from './SetValueInstruction';
 
-export type Instruction = MapValueInterface | SetValueInterface;
+export type Instruction = MapValueInstruction | SetValueInstruction;

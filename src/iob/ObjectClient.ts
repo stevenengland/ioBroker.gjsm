@@ -1,6 +1,7 @@
 import * as utils from '@iobroker/adapter-core';
 import { ObjectClientInterface } from './ObjectClientInterface';
 import { ObjectInterface } from './ObjectInterface';
+import { State } from './State';
 import { StateInterface } from './StateInterface';
 
 export class ObjectClient implements ObjectClientInterface {
@@ -12,7 +13,6 @@ export class ObjectClient implements ObjectClientInterface {
   //#region state retrieval
   public async getStatesAsync(pattern: string): Promise<StateInterface[]> {
     const result = new Array<StateInterface>();
-    // ToDo: Error Handling
     const records = await this._adapter.getStatesAsync(pattern);
     Object.entries(records).map((key) => {
       result.push(this.mapIoBrokerState(key[0], key[1]));
@@ -20,18 +20,22 @@ export class ObjectClient implements ObjectClientInterface {
     return result;
   }
 
-  //#endregion
-
-  //#region object retrieval
-  public async getForeignObjectAsync(id: string): Promise<ObjectInterface | null> {
-    // ToDo: Error Handling
-    const obj = await this._adapter.getForeignObjectAsync(id, {});
-    if (!obj) {
-      // throw new IobError(`Object with ${id} not found`);
+  public async getForeignStateAsync(id: string): Promise<StateInterface | null> {
+    const state = await this._adapter.getForeignStateAsync(id);
+    if (!state) {
       return null;
     }
-    const result = { id: obj._id, native: obj.native } as ObjectInterface;
+    const result = new State(state, id);
     return result;
+  }
+
+  public async setForeignStateAsync(id: string, state: StateInterface): Promise<void> {
+    await this._adapter.setForeignStateAsync(id, state);
+  }
+
+  public async existsStateAsync(id: string): Promise<boolean> {
+    const state = await this.getForeignStateAsync(id);
+    return state !== null;
   }
 
   public async subscribeStatesAsync(pattern: string): Promise<void> {
@@ -40,6 +44,18 @@ export class ObjectClient implements ObjectClientInterface {
 
   public async subscribeForeignStatesAsync(pattern: string): Promise<void> {
     await this._adapter.subscribeForeignStatesAsync(pattern);
+  }
+  //#endregion
+
+  //#region object retrieval
+  public async getForeignObjectAsync(id: string): Promise<ObjectInterface | null> {
+    const obj = await this._adapter.getForeignObjectAsync(id, {});
+    if (!obj) {
+      // throw new IobError(`Object with ${id} not found`);
+      return null;
+    }
+    const result = { id: obj._id, native: obj.native } as ObjectInterface;
+    return result;
   }
   //#endregion
 

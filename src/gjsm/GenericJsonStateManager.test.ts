@@ -12,6 +12,7 @@ import { AutomationSpecInterface } from './specification/AutomationSpecInterface
 import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecInterface.Factory.test';
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
+import { MapValueInstructionFactory } from './specification/instructions/MapValueInstruction.Factory.test';
 
 describe(nameof(GenericJsonStateManager), () => {
   let sut: GenericJsonStateManager;
@@ -156,6 +157,39 @@ describe(nameof(GenericJsonStateManager), () => {
         await sut.createSubscriptionsAndRepositoryForSourceStates();
         // THEN
         expect(autoRepositoryStub.addAutomations).called;
+      });
+      it(`Should log occuring exceptions`, async () => {
+        // GIVEN
+        specProcessorStub.getFilteredSourceStates.throws(new Error('test'));
+        // WHEN
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
+        // THEN
+        expect(loggerStub.warn).calledWithMatch(/test/);
+      });
+    },
+  );
+  describe(
+    nameof<GenericJsonStateManager>((g) => g.handleStateChange),
+    () => {
+      it(`Should subscribe to states`, async () => {
+        // GIVEN
+        autoRepositoryStub.getAutomations.returns([
+          MapValueInstructionFactory.instruction(),
+          MapValueInstructionFactory.instruction(),
+        ]);
+        // WHEN
+        await sut.handleStateChange('test', StateFactory.state());
+        // THEN
+        expect(specProcessorStub.executeInstruction).calledTwice;
+      });
+      it(`Should log if exutoion of instruction fails`, async () => {
+        // GIVEN
+        autoRepositoryStub.getAutomations.returns([MapValueInstructionFactory.instruction()]);
+        specProcessorStub.executeInstruction.throws(new Error('test'));
+        // WHEN
+        await sut.handleStateChange('test', StateFactory.state());
+        // THEN
+        expect(loggerStub.warn).calledWithMatch(/test/);
       });
     },
   );

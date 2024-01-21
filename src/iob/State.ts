@@ -1,6 +1,5 @@
 import { StateInterface } from './StateInterface';
-
-export type StateValueType = boolean | number | string | null;
+import { StateValueType } from './StateValueType';
 
 export class State implements StateInterface {
   public id = '';
@@ -8,7 +7,8 @@ export class State implements StateInterface {
   public ts: number = Math.floor(Date.now() / 1000);
   public ack = false;
 
-  public constructor(state?: StateInterface | Partial<StateInterface>) {
+  public constructor(state?: StateInterface | Partial<StateInterface>, id?: string) {
+    this.id = id ?? '';
     Object.assign(this, state);
   }
 

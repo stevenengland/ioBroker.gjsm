@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { nameof } from '../utils/NameOf';
-import { State, StateValueType } from './State';
+import { State } from './State';
+import { StateValueType } from './StateValueType';
 
 describe('State', () => {
   describe(

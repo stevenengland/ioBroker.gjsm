@@ -2,6 +2,7 @@ import { unpackError } from '../error/ErrorHandling';
 import { ErrorParameterAdditionsInterface } from '../error/ErrorParameterAdditionsInterface';
 import { EventEmitter } from '../events/EventEmitter';
 import { ObjectClientInterface } from '../iob/ObjectClientInterface';
+import { State } from '../iob/State';
 import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
 import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
@@ -61,6 +62,18 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
             this.logWarning(`Error while processing automation spec ${spec.id}`, error);
           }
         }
+      }
+    }
+  }
+
+  public async handleStateChange(id: string, state: State): Promise<void> {
+    const automations = this._autoRepository.getAutomations(id);
+    for (const automation of automations) {
+      // Try catch for single operation so that a failing execution does not prevent other automations from being executed
+      try {
+        await this._specProcessor.executeInstruction(state, automation);
+      } catch (error) {
+        this.logWarning(`Error while executing automation ${automation.name ?? 'unnamed'} for state ${id}`, error);
       }
     }
   }

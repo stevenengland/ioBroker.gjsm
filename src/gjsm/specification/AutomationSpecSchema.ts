@@ -35,6 +35,9 @@ export const schema = {
                   type: 'object',
                   required: ['action', 'targetStateName'],
                   properties: {
+                    name: {
+                      type: 'string',
+                    },
                     action: { const: 'set_value' },
                     targetStateName: {
                       type: 'string',
@@ -47,6 +50,9 @@ export const schema = {
                   type: 'object',
                   required: ['action', 'targetStateName', 'jsonPathVal'],
                   properties: {
+                    name: {
+                      type: 'string',
+                    },
                     action: { const: 'map_value' },
                     targetStateName: {
                       type: 'string',

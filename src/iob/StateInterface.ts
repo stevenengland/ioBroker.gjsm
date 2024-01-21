@@ -1,4 +1,4 @@
-import { StateValueType } from './State';
+import { StateValueType } from './StateValueType';
 
 export interface StateInterface {
   id: string;

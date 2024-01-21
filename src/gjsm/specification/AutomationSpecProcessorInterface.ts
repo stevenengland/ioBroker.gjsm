@@ -1,5 +1,8 @@
+import { State } from '../../iob/State';
 import { StateInterface } from '../../iob/StateInterface';
 import { FilterType } from './FilterType';
+import { ExecutionResult } from './instructions/ExecutionResult';
+import { Instruction } from './instructions/Instruction';
 
 export interface AutomationSpecProcessorInterface {
   // for states and devices? Channels?
@@ -8,5 +11,5 @@ export interface AutomationSpecProcessorInterface {
     groupFilter: string,
     sourceStateName: string,
   ): Promise<StateInterface[]>;
-  // applyMappingSubscriptions(sourceStateName: string, mappings: MappingInterface[]): Promise<void>;
+  executeInstruction(sourceState: State, instruction: Instruction): Promise<ExecutionResult>;
 }

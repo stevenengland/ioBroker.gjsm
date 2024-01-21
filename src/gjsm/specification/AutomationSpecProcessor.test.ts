@@ -3,20 +3,25 @@ import sinon from 'sinon';
 import { ObjectClient } from '../../iob/ObjectClient';
 import { ObjectInterface } from '../../iob/ObjectInterface';
 import { StateFactory } from '../../iob/State.Factory.test';
+import { JsonPath } from '../../json_path/JsonPath';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterfaceFactory } from '../configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from '../configuration/ConfigProvider';
 import { AutomationSpecProcessor } from './AutomationSpecProcessor';
 import { FilterType } from './FilterType';
+import { ExecutionResult } from './instructions/ExecutionResult';
+import { MapValueInstruction } from './instructions/MapValueInstruction';
+import { MapValueInstructionFactory } from './instructions/MapValueInstruction.Factory.test';
 
 describe(nameof(AutomationSpecProcessor), () => {
   let sut: AutomationSpecProcessor;
   const objectClientStub = sinon.createStubInstance(ObjectClient);
   const configProviderStub = sinon.createStubInstance(ConfigProvider);
+  const jsonPathStub = sinon.createStubInstance(JsonPath);
 
   beforeEach(() => {
     sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
-    sut = new AutomationSpecProcessor(configProviderStub, objectClientStub);
+    sut = new AutomationSpecProcessor(configProviderStub, objectClientStub, jsonPathStub);
   });
 
   afterEach(() => {
@@ -64,6 +69,36 @@ describe(nameof(AutomationSpecProcessor), () => {
         result.forEach((state) => {
           expect(state.id).to.equal('xyz.testName');
         });
+      });
+    },
+  );
+  describe(
+    nameof<AutomationSpecProcessor>((s) => s.executeInstruction),
+    () => {
+      it(`Should fail if target state is not found`, async () => {
+        // GIVEN
+        // WHEN
+        const result = await sut.executeInstruction(StateFactory.state(), MapValueInstructionFactory.instruction());
+        // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
+        // THEN
+        expect(result).to.equal(ExecutionResult.targetStateNotFound);
+      });
+      it(`Should fail if jsonpath for target value does not match`, async () => {
+        // GIVEN
+        objectClientStub.getForeignStateAsync.resolves(StateFactory.state());
+        jsonPathStub.getValues.returns([]);
+        // WHEN
+        const result = await sut.executeInstruction(StateFactory.state(), MapValueInstructionFactory.instruction());
+        // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
+        // THEN
+        expect(result).to.equal(ExecutionResult.jsonPathNoMatch);
+      });
+      it(`Should fail if instruction is not supported`, async () => {
+        // GIVEN
+        // WHEN
+        const result = await sut.executeInstruction(StateFactory.state(), {} as MapValueInstruction); // Since instruction is not created via constructor, instanceof will not recognize it.
+        // THEN
+        expect(result).to.equal(ExecutionResult.instructionNotImplemented);
       });
     },
   );

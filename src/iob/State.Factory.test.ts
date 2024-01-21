@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { State, StateValueType } from './State';
+import { State } from './State';
+import { StateValueType } from './StateValueType';
 
 interface Builder {
   withVal(val: unknown): this;
