@@ -6,9 +6,19 @@ export function delay(time: number | undefined) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export async function getState(harness: TestHarness, id: string): Promise<StateInterface> {
+export async function getStateAsync(harness: TestHarness, id: string): Promise<StateInterface> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   return await harness.states.getStateAsync(id);
+}
+
+export async function setStateAsync(
+  harness: TestHarness,
+  id: string,
+  state: Partial<StateInterface>,
+  ack = true,
+): Promise<StateInterface> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  return await harness.states.setStateAsync(id, state, ack);
 }
 
 export async function insertObjectsToDb(harness: TestHarness, objects: ioBroker.Object[]) {

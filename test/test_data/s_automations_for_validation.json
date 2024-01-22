@@ -9,7 +9,7 @@
   {
     "id": "mapping automation",
     "groupFilter": "test",
-    "filterType": "Function",
+    "filterType": "function",
     "automations": [
       {
         "sourceStateName": "test1",

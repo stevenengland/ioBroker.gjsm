@@ -57,13 +57,13 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
     const functionObj = await this._objectClient.getForeignObjectAsync(
       this._configProvider.config.functionsNamespace + '.' + groupFilter,
     );
-    if (!functionObj) {
+    if (!functionObj?.common || !(functionObj.common as ioBroker.EnumCommon).members) {
       return result;
     }
 
     // Get the members of the function object and iterate over every one of them to get the state objects affected by the function
-    const functionMembers = (functionObj.common as ioBroker.EnumCommon).members ?? [];
-    for (const member of functionMembers) {
+    const functionMembers = (functionObj.common as ioBroker.EnumCommon).members;
+    for (const member of functionMembers ?? []) {
       const affectedStates = await this._objectClient.getStatesAsync(member + '*');
       // Add affectedStates to the result set
       affectedStates.forEach((state) => result.push(state));

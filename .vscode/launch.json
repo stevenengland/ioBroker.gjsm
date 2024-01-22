@@ -45,5 +45,17 @@
       "postDebugTask": "postDebug_KillAll", // Kill all tasks after debugging
       "continueOnAttach": true // This is needed to prevent the debugger from stopping on the first line
     }
+    //{
+    //  "name": "Debug Mocha Tests (Custom)",
+    //  "type": "node",
+    //  "request": "attach",
+    //  "port": 9229,
+    //  "continueOnAttach": true,
+    //  "autoAttachChildProcesses": false,
+    //  "localRoot": "${workspaceFolder}",
+    //  "remoteRoot": "/tmp/test-iobroker.gjsm/node_modules/iobroker.gjsm/",
+    //  "smartStep": true,
+    //  "skipFiles": ["<node_internals>/**"]
+    //}
   ]
 }

@@ -1,0 +1,10 @@
+[
+    {
+        "_id": "test.0.test_folder",
+        "type": "folder",
+        "common": {
+            "name": "test_folder"
+        },
+        "native": {}
+    }
+]

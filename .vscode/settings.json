@@ -20,4 +20,5 @@
   ],
   // For users of Mocha test explorer: Find additional tests in test dir. The rest is found via .mocharc.json spec
   "mochaExplorer.files": "test/**/*.ts"
+  // "mochaExplorer.debuggerConfig": "Debug Mocha Tests (Custom)"
 }

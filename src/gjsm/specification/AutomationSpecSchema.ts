@@ -15,7 +15,7 @@ export const schema = {
     },
     filterType: {
       type: 'string',
-      enum: ['Function'],
+      enum: ['function'],
     },
     automations: {
       type: 'array',

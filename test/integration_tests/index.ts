@@ -5,4 +5,5 @@ import { runTests as startup } from './Startup.test';
 export function runTests(suite: TestSuite) {
   startup(suite);
   integrationTestTools(suite);
+  // mapValueTests(suite);
 }

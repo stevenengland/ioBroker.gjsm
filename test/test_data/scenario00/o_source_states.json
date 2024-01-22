@@ -1,0 +1,40 @@
+[
+    {
+        "_id": "test.0.test_folder.source_state",
+        "common": {
+            "name": "source_state",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {},
+        "acl": {
+            "object": 1636,
+            "state": 1636,
+            "owner": "system.user.admin",
+            "ownerGroup": "system.group.administrator"
+        }
+    },
+    {
+        "_id": "test.0.test_folder.source_state2",
+        "common": {
+            "name": "source_state2",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {},
+        "acl": {
+            "object": 1636,
+            "state": 1636,
+            "owner": "system.user.admin",
+            "ownerGroup": "system.group.administrator"
+        }
+    }
+]

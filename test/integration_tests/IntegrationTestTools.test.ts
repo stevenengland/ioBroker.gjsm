@@ -4,7 +4,7 @@ import { TestHarness } from '@iobroker/testing/build/tests/integration/lib/harne
 import { expect } from 'chai';
 import path from 'path';
 import { StateInterface } from '../../src/iob/StateInterface';
-import { delay, getState, prepareDbEntities, startAdapter } from './TestTools';
+import { delay, getStateAsync, prepareDbEntities, startAdapter } from './TestTools';
 
 export function runTests(suite: TestSuite) {
   suite(path.parse(__filename).name.split('.')[0], function (getHarness: () => TestHarness) {
@@ -20,7 +20,10 @@ export function runTests(suite: TestSuite) {
 
       it('Should map JSON fields from source states to target states', async () => {
         await prepareDbEntities(harness, require('../test_data/scenario01') as NodeRequire);
-        const state: StateInterface = await getState(harness, 'mqtt.0.smarthome.smartplug.tasmota_3E6EDD.tele.INFO2');
+        const state: StateInterface = await getStateAsync(
+          harness,
+          'mqtt.0.smarthome.smartplug.tasmota_3E6EDD.tele.INFO2',
+        );
         expect(state.val).to.have.property('Info2');
         await delay(100);
         return new Promise((resolve) => {

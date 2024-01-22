@@ -49,8 +49,9 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
               automation.sourceStateName,
             );
             this._logger.debug(
-              `Subscribing to ${statesToSubscribe.length} states for automation definition ${spec.id}.`,
+              `Subscribing to ${statesToSubscribe.length} states for automation definition ${spec.id} with a filter of "${spec.filterType}=${spec.groupFilter}".`,
             );
+            // TODO: Set status state of adapter and create integration test?
             for (const state of statesToSubscribe) {
               await this._onjectClient.subscribeForeignStatesAsync(state.id);
               this._logger.debug(`Subscribed to ${state.id}.`);
@@ -89,6 +90,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     }
 
     this._logger.debug('Config successfully loaded.');
+    this._logger.debug(JSON.stringify(this._configProvider.config, null, 2));
   }
 
   public async loadAutomationDefinitions(): Promise<void> {

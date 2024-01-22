@@ -2,7 +2,7 @@
     {
         "id": "the_id_of_the_state_for_example",
         "groupFilter": "power_meter.tasmota_power_meter",
-        "filterType": "Function",
+        "filterType": "function",
         "automations": [
             {
                 "automationType": "Mapping",

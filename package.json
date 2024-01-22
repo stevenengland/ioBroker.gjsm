@@ -89,7 +89,7 @@
     "release": "release-script",
     "test:ts": "mocha --config .mocharc.json",
     "test:package": "mocha --no-config --require ts-node/register test/package.ts --exit",
-    "test:integration": "mocha --no-config --require test/mocha.setup.js --require ts-node/register test/integration.ts --exit",
+    "test:integration": "npm run prebuild && npm run build && mocha --no-config --require test/mocha.setup.js --require ts-node/register test/integration.ts --exit",
     "test": "npm run test:ts && npm run test:package",
     "translate": "translate-adapter"
   },

@@ -6,6 +6,8 @@ import { SetValueInstruction } from './SetValueInstruction';
 interface Builder {
   defaultMapValueInstruction(): this;
   defaultSetValueInstruction(): this;
+  withJsonPathVal(jsonPathVal: string): this;
+  withTargetStateName(targetStateName: string): this;
   build(): Instruction;
 }
 
@@ -18,6 +20,7 @@ export class InstructionInterfaceBuilder implements Builder {
 
   public defaultMapValueInstruction(): this {
     this._instruction = {
+      action: 'map_value',
       jsonPathVal: faker.word.verb(),
       targetStateName: faker.word.verb(),
     } as MapValueInstruction;
@@ -26,8 +29,20 @@ export class InstructionInterfaceBuilder implements Builder {
 
   public defaultSetValueInstruction(): this {
     this._instruction = {
+      action: 'set_value',
       targetStateName: faker.word.verb(),
     } as SetValueInstruction;
+    return this;
+  }
+
+  public withJsonPathVal(jsonPathVal: string): this {
+    (this._instruction as MapValueInstruction).jsonPathVal =
+      typeof jsonPathVal !== 'undefined' ? jsonPathVal : faker.word.verb();
+    return this;
+  }
+
+  public withTargetStateName(targetStateName: string): this {
+    this._instruction.targetStateName = typeof targetStateName !== 'undefined' ? targetStateName : faker.word.verb();
     return this;
   }
 
