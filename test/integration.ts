@@ -19,8 +19,9 @@ function determineAdapterVersion(): string {
 }
 
 function cleanTestArtifacts() {
+  const npmCmd = os.platform() === 'win32' ? 'npm.cmd' : 'npm';
   console.log('>>> Cleaning npm cache keys');
-  const cacheKeys = spawnSync('npm', ['cache', 'ls'])
+  const cacheKeys = spawnSync(npmCmd, ['cache', 'ls'])
     .stdout.toString('utf8')
     .split('\n')
     .filter((line) => line.includes('gjsm'));
