@@ -27,7 +27,7 @@ function cleanTestArtifacts() {
     .filter((line) => line.includes('gjsm'));
   for (const key of cacheKeys) {
     console.log('Deleting ' + key);
-    console.log(spawnSync('npm', ['cache', 'clean', key]).stdout.toString('utf8'));
+    console.log(spawnSync(npmCmd, ['cache', 'clean', key]).stdout.toString('utf8'));
   }
   const tmpDir = path.join(os.tmpdir(), `test-iobroker.gjsm`, 'node_modules', 'iobroker.gjsm');
   if (fs.existsSync(tmpDir)) {

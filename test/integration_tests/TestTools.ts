@@ -92,13 +92,19 @@ export function readTestObjectsFromDir(directoryPath: string): ioBroker.Object[]
   return objects;
 }
 
-export async function prepareDbEntities(harness: TestHarness, req: NodeRequire) {
+export function getDbEntities(req: NodeRequire): [ioBroker.Object[], Record<string, ioBroker.State>] {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const entities = JSON.parse(JSON.stringify(req));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const iobObjects: ioBroker.Object[] = entities.iobObjects;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const iobStates: Record<string, ioBroker.State> = entities.iobStates;
+
+  return [iobObjects, iobStates];
+}
+
+export async function prepareDbEntities(harness: TestHarness, req: NodeRequire) {
+  const [iobObjects, iobStates] = getDbEntities(req);
 
   await insertObjectsToDb(harness, iobObjects);
   await insertStatesToDb(harness, iobStates);
