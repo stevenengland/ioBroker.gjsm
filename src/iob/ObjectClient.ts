@@ -80,7 +80,7 @@ export class ObjectClient implements ObjectClientInterface {
   private mapIoBrokerState(id: string, state: ioBroker.State): StateInterface {
     const result = {
       id: id,
-      val: state.val,
+      val: state.val ?? null,
       ts: state.ts,
       ack: state.ack,
     } as StateInterface;
