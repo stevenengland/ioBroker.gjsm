@@ -40,7 +40,7 @@ describe(nameof(ConfigProvider), () => {
         await sut.loadConfig();
         // THEN
         // Something from every config part
-        expect(sut.config.automationStatesPattern).to.not.be.undefined; // private
+        expect(sut.config.automationNamespace).to.not.be.undefined; // private
         expect(sut.config.instanceId).to.not.be.undefined; // instance
         expect(sut.config.createTargetStatesIfNotExist).to.not.be.undefined; // public
       });

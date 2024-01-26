@@ -105,13 +105,6 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(specProviderStub.loadSpecifications).calledOnce;
         expect(loggerStub.warn).calledWithMatch(/No automation/); // Actually nothing to do, but we want to know
       });
-      it(`Should clear the repository`, async () => {
-        // GIVEN
-        // WHEN
-        await sut.loadAutomationDefinitions();
-        // THEN
-        expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
-      });
       it(`Should catch errors when spec loading throws`, async () => {
         // GIVEN
         specProviderStub.loadSpecifications.throws(new Error('test'));
@@ -166,6 +159,13 @@ describe(nameof(GenericJsonStateManager), () => {
         // THEN
         expect(loggerStub.warn).calledWithMatch(/test/);
       });
+      it(`Should clear the repository`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
+        // THEN
+        expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
+      });
     },
   );
   describe(
@@ -190,6 +190,24 @@ describe(nameof(GenericJsonStateManager), () => {
         await sut.handleStateChange('test', StateFactory.state());
         // THEN
         expect(loggerStub.warn).calledWithMatch(/test/);
+      });
+      it(`Should reload automation definitions`, async () => {
+        // GIVEN
+        const states = StateFactory.statesWithPrefixedId(3, 'id_');
+        specProcessorStub.getFilteredSourceStates.resolves(states);
+        // WHEN
+        await sut.handleStateChange(
+          configProviderStub.config.instanceName +
+            '.' +
+            configProviderStub.config.instanceId +
+            '.' +
+            configProviderStub.config.automationNamespace,
+          StateFactory.state(),
+        );
+        // THEN
+        expect(specProviderStub.loadSpecifications).calledOnce;
+        expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
+        expect(autoRepositoryStub.addAutomations).called;
       });
     },
   );

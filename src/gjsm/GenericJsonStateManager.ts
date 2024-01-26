@@ -39,6 +39,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   }
 
   public async createSubscriptionsAndRepositoryForSourceStates(): Promise<void> {
+    this._autoRepository.deleteAllAutomations();
     for (const spec of this._specProvider.specifications) {
       if (spec.automations) {
         for (const automation of spec.automations) {
@@ -68,6 +69,20 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   }
 
   public async handleStateChange(id: string, state: State): Promise<void> {
+    if (
+      id.startsWith(
+        this._configProvider.config.instanceName +
+          '.' +
+          this._configProvider.config.instanceId +
+          '.' +
+          this._configProvider.config.automationNamespace,
+      )
+    ) {
+      this._logger.debug(`Changed configuration ${id} detected, reloading automation specification.`);
+      await this.loadAutomationDefinitions();
+      await this.createSubscriptionsAndRepositoryForSourceStates();
+      return;
+    }
     const automations = this._autoRepository.getAutomations(id);
     for (const automation of automations) {
       // Try catch for single operation so that a failing execution does not prevent other automations from being executed
@@ -94,8 +109,6 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   }
 
   public async loadAutomationDefinitions(): Promise<void> {
-    this._autoRepository.deleteAllAutomations();
-
     try {
       await this._specProvider.loadSpecifications();
     } catch (error) {
