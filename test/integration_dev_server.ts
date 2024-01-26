@@ -117,7 +117,7 @@ async function fillDatabase(): Promise<void> {
     }
   }
 
-  console.log('JSONL files for states and objects found, injecting data...');
+  console.log(`Found ${statesMap.size} states and ${objectsMap.size} objects, injecting data ...`);
   const requirePath = path.join(config.testDataDir, config.testDataFrom);
   if (!fs.existsSync(requirePath)) {
     throw new Error(`Test data not found at ${requirePath}`);

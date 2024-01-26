@@ -46,16 +46,18 @@ export async function startAdapter(harness: TestHarness) {
 }
 
 export function readTestStatesFromDir(directoryPath: string): Record<string, ioBroker.State> {
-  const fileNames: string[] = [];
+  const jsonFileNames: string[] = [];
+  const tsFileNames: string[] = [];
   const states: Record<string, ioBroker.State> = {};
 
+  // JSON files
   fs.readdirSync(directoryPath).forEach((file) => {
     if (file.endsWith('.json') && file.startsWith('s_')) {
-      fileNames.push(file);
+      jsonFileNames.push(file);
     }
   });
 
-  for (const fileName of fileNames) {
+  for (const fileName of jsonFileNames) {
     const filePath = `${directoryPath}/${fileName}`;
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const fileObjects: Record<string, ioBroker.State>[] = JSON.parse(fileContent) as Record<string, ioBroker.State>[];
@@ -64,6 +66,27 @@ export function readTestStatesFromDir(directoryPath: string): Record<string, ioB
       Object.keys(fileObject).forEach((key) => {
         states[key] = fileObject[key];
       });
+    });
+  }
+
+  // TS files
+  fs.readdirSync(directoryPath).forEach((file) => {
+    if (file.endsWith('.ts') && file.startsWith('s_')) {
+      tsFileNames.push(file);
+    }
+  });
+
+  for (const fileName of tsFileNames) {
+    const filePath = `${directoryPath}/${fileName}`;
+    // const fileContent = fs.readFileSync(filePath, 'utf8');
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
+    const module = require(filePath);
+    // 2. Zweites TS File mit gleichem export (states oder default) konsumieren -> Muss ich vorher deregistrieren? https://github.com/nodejs/help/issues/2751
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    module.states.forEach((state: StateInterface) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      states[state.id] = { val: state.val, ack: state.ack, ts: state.ts } as ioBroker.State;
     });
   }
 
