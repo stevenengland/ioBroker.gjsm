@@ -81,6 +81,7 @@
     "coverage": "c8 npm run test:ts",
     "devserver:watch": "dev-server upload && dev-server watch",
     "devserver:debug": "dev-server debug --wait",
+    "devserver:preparation": "ts-node --files test/integration_dev_server.ts --skip=false",
     "lint:src": "eslint --ext .ts,.js src/",
     "lint:test": "eslint --ext .ts test/",
     "lint": "npm run lint:src && npm run lint:test",
@@ -90,7 +91,6 @@
     "test:ts": "mocha --config .mocharc.json",
     "test:package": "mocha --no-config --require ts-node/register test/package.ts --exit",
     "test:integration": "npm run prebuild && npm run build && mocha --no-config --require test/mocha.setup.js --require ts-node/register test/integration.ts --exit",
-    "test:devserver": "ts-node --files test/integration_dev_server.ts --skip=false",
     "test": "npm run test:ts && npm run test:package",
     "translate": "translate-adapter"
   },

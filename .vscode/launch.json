@@ -44,18 +44,25 @@
       "preLaunchTask": "preLaunchTask_startDevServer", // Start dev server before attaching a debugger to it
       "postDebugTask": "postDebug_KillAll", // Kill all tasks after debugging
       "continueOnAttach": true // This is needed to prevent the debugger from stopping on the first line
+    },
+    {
+      "name": "Attach to ioBroker Adapter (Integration)",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        // only exclude node_modules from the workspace folder
+        // If we exclude node_modules from .dev-server/..., we don't get sourcemaps
+        "!${workspaceFolder}/node_modules/**"
+      ],
+      "sourceMapPathOverrides": {
+        "../src/*": "${workspaceFolder}/src/*"
+      },
+      "preLaunchTask": "preLaunchTask_startDevServerIntegration", // Start dev server before attaching a debugger to it
+      "postDebugTask": "postDebug_KillAll", // Kill all tasks after debugging
+      "continueOnAttach": true // This is needed to prevent the debugger from stopping on the first line
     }
-    //{
-    //  "name": "Debug Mocha Tests (Custom)",
-    //  "type": "node",
-    //  "request": "attach",
-    //  "port": 9229,
-    //  "continueOnAttach": true,
-    //  "autoAttachChildProcesses": false,
-    //  "localRoot": "${workspaceFolder}",
-    //  "remoteRoot": "/tmp/test-iobroker.gjsm/node_modules/iobroker.gjsm/",
-    //  "smartStep": true,
-    //  "skipFiles": ["<node_internals>/**"]
-    //}
   ]
 }
