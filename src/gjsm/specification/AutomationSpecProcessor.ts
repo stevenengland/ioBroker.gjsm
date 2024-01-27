@@ -4,6 +4,7 @@ import { StateInterface } from '../../iob/StateInterface';
 import { StateValueType } from '../../iob/StateValueType';
 import { JsonPathInterface } from '../../json_path/JsonPathInterface';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
+import { AutomationError } from './AutomationError';
 import { AutomationSpecProcessorInterface } from './AutomationSpecProcessorInterface';
 import { FilterType } from './FilterType';
 import { ExecutionResult } from './instructions/ExecutionResult';
@@ -58,13 +59,15 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
       this._configProvider.config.functionsNamespace + '.' + groupFilter,
     );
     if (!functionObj?.common || !(functionObj.common as ioBroker.EnumCommon).members) {
-      return result;
+      throw new AutomationError(
+        `Function object ${this._configProvider.config.functionsNamespace + '.' + groupFilter} doesn't exist or has no members.`,
+      );
     }
 
     // Get the members of the function object and iterate over every one of them to get the state objects affected by the function
     const functionMembers = (functionObj.common as ioBroker.EnumCommon).members;
     for (const member of functionMembers ?? []) {
-      const affectedStates = await this._objectClient.getStatesAsync(member + '*');
+      const affectedStates = await this._objectClient.getForeignStatesAsync(member + '.*');
       // Add affectedStates to the result set
       affectedStates.forEach((state) => result.push(state));
     }

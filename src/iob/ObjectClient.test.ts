@@ -102,9 +102,27 @@ describe(nameof(ObjectClient), () => {
         };
         adapter.getForeignObjectAsync.resolves(record);
         // WHEN
-        const result = await sut.getForeignObjectAsync('*');
+        const result = (await sut.getForeignObjectAsync('*')) as ioBroker.BaseObject;
         // THEN
-        expect(result?.id).to.equal('system.adapter.test.0');
+        expect(result._id).to.equal('system.adapter.test.0');
+      });
+      it(`Should return object with more properties than an object interface`, async () => {
+        // GIVEN
+        const record: ioBroker.EnumObject = {
+          _id: 'system.adapter.test.0',
+          native: { test: 1 },
+          common: {
+            members: ['test'],
+            name: '',
+          },
+          type: 'enum',
+        };
+        adapter.getForeignObjectAsync.resolves(record);
+        // WHEN
+        const result = (await sut.getForeignObjectAsync('*')) as ioBroker.EnumObject;
+        // THEN
+        expect(result._id).to.equal('system.adapter.test.0');
+        expect(result.common.members![0]).to.equal('test');
       });
       it(`Should return null`, async () => {
         // GIVEN

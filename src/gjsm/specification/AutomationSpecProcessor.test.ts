@@ -7,6 +7,7 @@ import { JsonPath } from '../../json_path/JsonPath';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterfaceFactory } from '../configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from '../configuration/ConfigProvider';
+import { AutomationError } from './AutomationError';
 import { AutomationSpecProcessor } from './AutomationSpecProcessor';
 import { FilterType } from './FilterType';
 import { ExecutionResult } from './instructions/ExecutionResult';
@@ -38,21 +39,21 @@ describe(nameof(AutomationSpecProcessor), () => {
         // THEN
         await expect(when()).to.be.rejectedWith(Error);
       });
-      it(`Should return zero states when function with id is not found`, async () => {
+      it(`Should throw automation error when function with id is not found`, async () => {
         // GIVEN
         objectClientStub.getForeignObjectAsync.resolves(null);
         // WHEN
-        const result = await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
+        const when = async () => await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
         // THEN
-        expect(result).to.be.empty;
+        await expect(when()).to.be.rejectedWith(AutomationError);
       });
       it(`Should return zero states when function object has no members`, async () => {
         // GIVEN
         objectClientStub.getForeignObjectAsync.resolves({ common: {} } as ObjectInterface);
         // WHEN
-        const result = await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
+        const when = async () => await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
         // THEN
-        expect(result).to.be.empty;
+        await expect(when()).to.be.rejectedWith(AutomationError);
       });
       it(`Should return filtered (duplicate free) states when filter type Function is given`, async () => {
         // GIVEN
@@ -60,7 +61,7 @@ describe(nameof(AutomationSpecProcessor), () => {
         finalStates.push(StateFactory.state());
         finalStates.push(StateFactory.statesWithId(1, 'xyz.testName2')[0]);
         objectClientStub.getForeignObjectAsync.resolves({ common: { members: ['test'] } } as ObjectInterface);
-        objectClientStub.getStatesAsync.resolves(finalStates);
+        objectClientStub.getForeignStatesAsync.resolves(finalStates);
         objectClientStub.getStateName.onCall(0).returns('testName');
         // WHEN
         const result = await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');

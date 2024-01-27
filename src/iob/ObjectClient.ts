@@ -29,6 +29,15 @@ export class ObjectClient implements ObjectClientInterface {
     return result;
   }
 
+  public async getForeignStatesAsync(pattern: string): Promise<StateInterface[]> {
+    const result = new Array<StateInterface>();
+    const records = await this._adapter.getForeignStatesAsync(pattern);
+    Object.entries(records).map((key) => {
+      result.push(this.mapIoBrokerState(key[0], key[1]));
+    });
+    return result;
+  }
+
   public async setForeignStateAsync(id: string, state: StateInterface): Promise<void> {
     await this._adapter.setForeignStateAsync(id, state);
   }
@@ -54,7 +63,7 @@ export class ObjectClient implements ObjectClientInterface {
       // throw new IobError(`Object with ${id} not found`);
       return null;
     }
-    const result = { id: obj._id, native: obj.native } as ObjectInterface;
+    const result = obj as ObjectInterface;
     return result;
   }
   //#endregion
@@ -72,7 +81,7 @@ export class ObjectClient implements ObjectClientInterface {
 
   public async getStateSiblingsIds(stateId: string): Promise<string[]> {
     const stateParent = this.getStateParentId(stateId);
-    const stateSiblings = await this.getStatesAsync(stateParent + '*]');
+    const stateSiblings = await this.getStatesAsync(stateParent + '.*');
     const siblingIds = stateSiblings.map((sibling) => sibling.id);
     return siblingIds;
   }
