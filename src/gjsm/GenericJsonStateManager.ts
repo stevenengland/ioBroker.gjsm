@@ -19,7 +19,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   private readonly _configProvider: ConfigProviderInterface;
   private readonly _specProvider: AutomationSpecProviderInterface;
   private readonly _specProcessor: AutomationSpecProcessorInterface;
-  private readonly _onjectClient: ObjectClientInterface;
+  private readonly _objectClient: ObjectClientInterface;
   private readonly _autoRepository: AutomationRepositoryInterface;
 
   public constructor(
@@ -34,7 +34,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._configProvider = configProvider;
     this._specProvider = specProvider;
     this._specProcessor = specProcessor;
-    this._onjectClient = objectClient;
+    this._objectClient = objectClient;
     this._autoRepository = autoRepository;
   }
 
@@ -54,7 +54,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
             );
             // TODO: Set status state of adapter and create integration test?
             for (const state of statesToSubscribe) {
-              await this._onjectClient.subscribeForeignStatesAsync(state.id);
+              await this._objectClient.subscribeForeignStatesAsync(state.id);
               this._logger.debug(`Subscribed to ${state.id}.`);
               for (const instruction of automation.instructions) {
                 this._autoRepository.addAutomations(state.id, [instruction]);
@@ -134,7 +134,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   public async initialize(): Promise<void> {
     await this.loadConfig();
     // Subscribe to changes of the automation states
-    await this._onjectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
+    await this._objectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
     // TODO: Subcscribe to changes of the config object
   }
 
