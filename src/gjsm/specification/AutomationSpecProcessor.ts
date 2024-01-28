@@ -67,9 +67,16 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
     // Get the members of the function object and iterate over every one of them to get the state objects affected by the function
     const functionMembers = (functionObj.common as ioBroker.EnumCommon).members;
     for (const member of functionMembers ?? []) {
-      const affectedStates = await this._objectClient.getForeignStatesAsync(member + '.*');
-      // Add affectedStates to the result set
-      affectedStates.forEach((state) => result.push(state));
+      if (await this._objectClient.isObjectOfTypeState(member)) {
+        const state = await this._objectClient.getForeignStateAsync(member);
+        if (state) {
+          result.push(state);
+        }
+      } else {
+        const affectedStates = await this._objectClient.getForeignStatesAsync(member + '.*');
+        // Add affectedStates to the result set
+        affectedStates.forEach((state) => result.push(state));
+      }
     }
     const newResult = Array.from<StateInterface>(
       result.reduce((map, obj: StateInterface) => map.set(obj.id, obj), new Map()).values(),

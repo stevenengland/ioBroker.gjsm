@@ -10,13 +10,7 @@
             "def": ""
         },
         "type": "state",
-        "native": {},
-        "acl": {
-            "object": 1636,
-            "state": 1636,
-            "owner": "system.user.admin",
-            "ownerGroup": "system.group.administrator"
-        }
+        "native": {}
     },
     {
         "_id": "test.0.test_folder.source_state2",
@@ -29,12 +23,32 @@
             "def": ""
         },
         "type": "state",
-        "native": {},
-        "acl": {
-            "object": 1636,
-            "state": 1636,
-            "owner": "system.user.admin",
-            "ownerGroup": "system.group.administrator"
-        }
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder_that_is_function_member_and_owns_states.source_state",
+        "common": {
+            "name": "source_state",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder_that_is_function_member_and_owns_states.source_state2",
+        "common": {
+            "name": "source_state2",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
     }
 ]

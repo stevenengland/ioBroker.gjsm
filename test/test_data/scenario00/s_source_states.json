@@ -1,0 +1,16 @@
+[
+    {
+        "test.0.test_folder.source_state": {
+            "val": {
+                "numberValue": 1
+            }
+        }
+    },
+    {
+        "test.0.test_folder_that_is_function_member_and_owns_states.source_state": {
+            "val": {
+                "numberValue": 2
+            }
+        }
+    }
+]

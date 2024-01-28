@@ -15,7 +15,12 @@ export class ObjectClient implements ObjectClientInterface {
     const result = new Array<StateInterface>();
     const records = await this._adapter.getStatesAsync(pattern);
     Object.entries(records).map((key) => {
-      result.push(this.mapIoBrokerState(key[0], key[1]));
+      // getForeignStatesAsync returns null values for non-existing states although the API does not say so.
+      // Situation appears e.g. when a state object exists in objects.jsonl but no corresponding state in states.jsonl
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (key[1] !== null) {
+        result.push(this.mapIoBrokerState(key[0], key[1]));
+      }
     });
     return result;
   }
@@ -33,7 +38,12 @@ export class ObjectClient implements ObjectClientInterface {
     const result = new Array<StateInterface>();
     const records = await this._adapter.getForeignStatesAsync(pattern);
     Object.entries(records).map((key) => {
-      result.push(this.mapIoBrokerState(key[0], key[1]));
+      // getForeignStatesAsync returns null values for non-existing states although the API does not say so.
+      // Situation appears e.g. when a state object exists in objects.jsonl but no corresponding state in states.jsonl
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (key[1] !== null) {
+        result.push(this.mapIoBrokerState(key[0], key[1]));
+      }
     });
     return result;
   }

@@ -15,6 +15,8 @@ describe(nameof(ObjectClient), () => {
 
   const testRecord: Record<string, ioBroker.State> = {
     test: { val: 1, ack: true, ts: 123, lc: 123, from: 'system.adapter.test.0', q: 0, expire: 123 },
+    test2: { val: 2, ack: true, ts: 123, lc: 123, from: 'system.adapter.test.0', q: 0, expire: 123 },
+    test_null: null as unknown as ioBroker.State,
   };
 
   const testState: ioBroker.State = {
@@ -49,6 +51,8 @@ describe(nameof(ObjectClient), () => {
         const result = await sut.getStatesAsync('*');
         // THEN
         expect(result[0].id).to.equal('test');
+        expect(result[1].id).to.equal('test2');
+        expect(result[2]).to.be.undefined;
       });
     },
   );
@@ -68,7 +72,7 @@ describe(nameof(ObjectClient), () => {
   describe(
     nameof<ObjectClient>((s) => s.getForeignStatesAsync),
     () => {
-      it(`Should return state`, async () => {
+      it(`Should return states that are not null`, async () => {
         // GIVEN
         // TODO: Remove hack after https://github.com/ioBroker/testing/issues/591 is fixed
         class tmpAdapter {
@@ -81,14 +85,13 @@ describe(nameof(ObjectClient), () => {
         }
         const tmpAdapterMock = sinon.createStubInstance(tmpAdapter);
         const tmpSut = new ObjectClient(tmpAdapterMock as unknown as AdapterInstance);
-        //tmpAdapterMock.expects('getForeignStatesAsync').resolves(testRecord);
         tmpAdapterMock.getForeignStatesAsync.resolves(testRecord);
-        //sinon.stub(adapter, 'getForeignStatesAsync').resolves(testRecord);
         // WHEN
-        // const result = await sut.getForeignStatesAsync('test');
         const result = await tmpSut.getForeignStatesAsync('test');
         // THEN
         expect(result[0].id).to.equal('test');
+        expect(result[1].id).to.equal('test2');
+        expect(result[2]).to.be.undefined;
       });
     },
   );
