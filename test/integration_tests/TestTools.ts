@@ -90,6 +90,13 @@ export function readTestStatesFromDir(directoryPath: string): Record<string, ioB
     });
   }
 
+  // A few last corrections
+  for (const key in states) {
+    if (typeof states[key].val === 'object') {
+      states[key].val = JSON.stringify(states[key].val);
+    }
+  }
+
   return states;
 }
 
