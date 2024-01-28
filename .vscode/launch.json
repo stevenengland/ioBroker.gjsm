@@ -3,17 +3,6 @@
   "configurations": [
     {
       "type": "node",
-      "request": "launch",
-      "name": "Launch TypeScript Adapter",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/main.ts",
-      "args": ["--debug", "0"],
-      "preLaunchTask": "tsc: build - tsconfig.build.json",
-      "outFiles": ["${workspaceFolder}/build/**/*.js"],
-      "stopOnEntry": true
-    },
-    {
-      "type": "node",
       "request": "attach",
       "name": "Attach to ioBroker Adapter (1)",
       "address": "127.0.0.1",
