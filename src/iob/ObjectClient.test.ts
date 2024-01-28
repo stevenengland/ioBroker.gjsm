@@ -1,6 +1,8 @@
 import { AdapterInstance } from '@iobroker/adapter-core';
-import { MockAdapter, utils } from '@iobroker/testing';
+import { MockAdapter, MockDatabase, utils } from '@iobroker/testing';
 import { expect } from 'chai';
+import sinon from 'sinon';
+import { delay } from '../../test/integration_tests/TestTools';
 import { nameof } from '../utils/NameOf';
 import { ObjectClient } from './ObjectClient';
 import { State } from './State';
@@ -9,9 +11,12 @@ import { StateFactory } from './State.Factory.test';
 describe(nameof(ObjectClient), () => {
   let sut: ObjectClient;
   let adapter: MockAdapter;
+  let database: MockDatabase;
+
   const testRecord: Record<string, ioBroker.State> = {
     test: { val: 1, ack: true, ts: 123, lc: 123, from: 'system.adapter.test.0', q: 0, expire: 123 },
   };
+
   const testState: ioBroker.State = {
     val: 1,
     ack: true,
@@ -23,12 +28,15 @@ describe(nameof(ObjectClient), () => {
   };
 
   beforeEach(() => {
-    adapter = utils.unit.createMocks({ name: 'gsjm' }).adapter;
+    const mocks = utils.unit.createMocks({ name: 'gsjm' });
+    database = mocks.database;
+    adapter = mocks.adapter as unknown as MockAdapter;
     sut = new ObjectClient(adapter as unknown as AdapterInstance);
   });
 
   afterEach(() => {
     adapter.resetMock();
+    database.clear();
   });
 
   describe(
@@ -54,6 +62,33 @@ describe(nameof(ObjectClient), () => {
         const result = await sut.getForeignStateAsync('test');
         // THEN
         expect(result?.id).to.equal('test');
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((s) => s.getForeignStatesAsync),
+    () => {
+      it(`Should return state`, async () => {
+        // GIVEN
+        // TODO: Remove hack after https://github.com/ioBroker/testing/issues/591 is fixed
+        class tmpAdapter {
+          public async getForeignStatesAsync(pattern: string): Promise<Record<string, ioBroker.State>> {
+            await delay(1);
+            return {
+              test: { val: pattern, ack: true, ts: 123, lc: 123, from: 'system.adapter.test.0', q: 0, expire: 123 },
+            };
+          }
+        }
+        const tmpAdapterMock = sinon.createStubInstance(tmpAdapter);
+        const tmpSut = new ObjectClient(tmpAdapterMock as unknown as AdapterInstance);
+        //tmpAdapterMock.expects('getForeignStatesAsync').resolves(testRecord);
+        tmpAdapterMock.getForeignStatesAsync.resolves(testRecord);
+        //sinon.stub(adapter, 'getForeignStatesAsync').resolves(testRecord);
+        // WHEN
+        // const result = await sut.getForeignStatesAsync('test');
+        const result = await tmpSut.getForeignStatesAsync('test');
+        // THEN
+        expect(result[0].id).to.equal('test');
       });
     },
   );
@@ -213,6 +248,29 @@ describe(nameof(ObjectClient), () => {
         // THEN
         expect(result[0]).to.equal('id0');
         expect(result[1]).to.equal('id1');
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((o) => o.isObjectOfTypeState),
+    () => {
+      it('should return true if object is a state', async () => {
+        // GIVEN
+        const records = { type: 'state' };
+        adapter.getForeignObjectAsync.resolves(records);
+        // WHEN
+        const result = await sut.isObjectOfTypeState('test');
+        // THEN
+        expect(result).to.be.true;
+      });
+      it('should return false if object is not a state', async () => {
+        // GIVEN
+        const records = { type: 'folder' };
+        adapter.getForeignObjectAsync.resolves(records);
+        // WHEN
+        const result = await sut.isObjectOfTypeState('test');
+        // THEN
+        expect(result).to.be.false;
       });
     },
   );

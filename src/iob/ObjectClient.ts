@@ -86,6 +86,11 @@ export class ObjectClient implements ObjectClientInterface {
     return siblingIds;
   }
 
+  public async isObjectOfTypeState(objectId: string): Promise<boolean> {
+    const object = await this._adapter.getForeignObjectAsync(objectId, {});
+    return object !== null && object !== undefined && object.type === 'state';
+  }
+
   private mapIoBrokerState(id: string, state: ioBroker.State): StateInterface {
     const result = {
       id: id,

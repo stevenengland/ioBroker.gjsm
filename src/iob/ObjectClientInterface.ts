@@ -13,4 +13,5 @@ export interface ObjectClientInterface {
   getStateName(stateId: string): string;
   getStateParentId(stateId: string): string;
   getStateSiblingsIds(stateId: string): Promise<string[]>;
+  isObjectOfTypeState(objectId: string): Promise<boolean>;
 }
