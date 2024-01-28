@@ -87,6 +87,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     for (const automation of automations) {
       // Try catch for single operation so that a failing execution does not prevent other automations from being executed
       try {
+        this._logger.debug(`Executing automation ${automation.name ?? 'unnamed'} for state ${id}`);
         await this._specProcessor.executeInstruction(state, automation);
       } catch (error) {
         this.logWarning(`Error while executing automation ${automation.name ?? 'unnamed'} for state ${id}`, error);
