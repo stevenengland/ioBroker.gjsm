@@ -52,9 +52,11 @@ export class InstructionInterfaceBuilder implements Builder {
 }
 
 export class InsctructionInterfaceFactory {
-  public static createMapValueInstruction(config?: Instruction): Instruction {
+  public static createMapValueInstruction(instruction?: Instruction): Instruction {
     const builder =
-      typeof config !== 'undefined' ? new InstructionInterfaceBuilder(config) : new InstructionInterfaceBuilder();
+      typeof instruction !== 'undefined'
+        ? new InstructionInterfaceBuilder(instruction)
+        : new InstructionInterfaceBuilder();
     return builder.defaultMapValueInstruction().build();
   }
 
