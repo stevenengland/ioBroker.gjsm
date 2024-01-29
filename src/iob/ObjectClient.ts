@@ -30,7 +30,7 @@ export class ObjectClient implements ObjectClientInterface {
     if (!state) {
       return null;
     }
-    const result = new State(state, id);
+    const result = new State(id, state);
     return result;
   }
 
@@ -49,7 +49,11 @@ export class ObjectClient implements ObjectClientInterface {
   }
 
   public async setForeignStateAsync(id: string, state: StateInterface): Promise<void> {
-    await this._adapter.setForeignStateAsync(id, state);
+    await this._adapter.setForeignStateAsync(id, {
+      val: state.val,
+      ack: state.ack,
+      ts: state.ts,
+    }); // Only transfer properties the original iobroker state type has
   }
 
   public async existsStateAsync(id: string): Promise<boolean> {

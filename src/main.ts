@@ -159,7 +159,7 @@ class Gjsm extends utils.Adapter {
     try {
       if (state) {
         // The state was changed
-        await this._gjsm?.handleStateChange(id, new State(state));
+        await this._gjsm?.handleStateChange(id, new State(id, state));
       } else {
         // The state was deleted
         this.log.debug(`Subscribed state ${id} was deleted`);

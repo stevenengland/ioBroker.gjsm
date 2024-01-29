@@ -7,8 +7,8 @@ export class State implements StateInterface {
   public ts: number = Math.floor(Date.now() / 1000);
   public ack = false;
 
-  public constructor(state?: StateInterface | Partial<StateInterface>, id?: string) {
-    this.id = id ?? '';
+  public constructor(id: string, state?: StateInterface | Partial<StateInterface>) {
+    this.id = id;
     Object.assign(this, state);
   }
 

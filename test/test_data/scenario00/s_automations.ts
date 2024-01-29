@@ -12,8 +12,7 @@ const instructionBuilder = new InstructionInterfaceBuilder();
 const mapValueBuilder = new MapValueInstructionBuilder();
 
 export const states: StateInterface[] = [
-  new State({
-    id: 'gjsm.0.automations.test_automation',
+  new State('gjsm.0.automations.test_automation', {
     ack: true,
     val: JSON.stringify(
       automationSpecBuilder
