@@ -214,10 +214,10 @@ describe(nameof(GenericJsonStateManager), () => {
       it(`Should handle execution results`, async () => {
         // GIVEN
         autoRepositoryStub.getAutomations.returns([InsctructionInterfaceFactory.createMapValueInstruction()]);
-        specProcessorStub.executeInstruction.onCall(1).resolves(ExecutionResult.instructionNotImplemented);
-        specProcessorStub.executeInstruction.onCall(2).resolves(ExecutionResult.success);
-        specProcessorStub.executeInstruction.onCall(3).resolves(ExecutionResult.jsonPathNoMatch);
-        specProcessorStub.executeInstruction.onCall(4).resolves(ExecutionResult.targetStateNotFound);
+        specProcessorStub.executeInstruction.onCall(0).resolves(ExecutionResult.instructionNotImplemented);
+        specProcessorStub.executeInstruction.onCall(1).resolves(ExecutionResult.success);
+        specProcessorStub.executeInstruction.onCall(2).resolves(ExecutionResult.jsonPathNoMatch);
+        specProcessorStub.executeInstruction.onCall(3).resolves(ExecutionResult.targetStateNotFound);
         // WHEN
         await sut.handleStateChange('test', StateFactory.state());
         await sut.handleStateChange('test', StateFactory.state());
