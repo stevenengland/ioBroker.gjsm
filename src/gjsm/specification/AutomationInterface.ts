@@ -1,5 +1,5 @@
-import { Instruction } from './instructions/Instruction';
+import { InstructionInterface } from './instructions/InstructionInterface';
 export interface AutomationInterface {
   sourceStateName: string;
-  instructions: Instruction[];
+  instructions: InstructionInterface[];
 }

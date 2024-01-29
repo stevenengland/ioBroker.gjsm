@@ -13,8 +13,7 @@ import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecIn
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
 import { ExecutionResult } from './specification/instructions/ExecutionResult';
-import { InsctructionFactory as InstructionInterfaceFactory } from './specification/instructions/Instruction.Factory.test';
-import { MapValueInstructionFactory } from './specification/instructions/MapValueInstruction.Factory.test';
+import { InstructionInterfaceFactory } from './specification/instructions/InstructionInterface.Factory.test';
 
 describe(nameof(GenericJsonStateManager), () => {
   let sut: GenericJsonStateManager;
@@ -176,8 +175,8 @@ describe(nameof(GenericJsonStateManager), () => {
       it(`Should subscribe to states`, async () => {
         // GIVEN
         autoRepositoryStub.getAutomations.returns([
-          MapValueInstructionFactory.instruction(),
-          MapValueInstructionFactory.instruction(),
+          InstructionInterfaceFactory.createMapValueInstruction(),
+          InstructionInterfaceFactory.createMapValueInstruction(),
         ]);
         // WHEN
         await sut.handleStateChange('test', StateFactory.state());
@@ -186,7 +185,7 @@ describe(nameof(GenericJsonStateManager), () => {
       });
       it(`Should log if exutoion of instruction fails`, async () => {
         // GIVEN
-        autoRepositoryStub.getAutomations.returns([MapValueInstructionFactory.instruction()]);
+        autoRepositoryStub.getAutomations.returns([InstructionInterfaceFactory.createMapValueInstruction()]);
         specProcessorStub.executeInstruction.throws(new Error('test'));
         // WHEN
         await sut.handleStateChange('test', StateFactory.state());

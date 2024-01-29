@@ -11,8 +11,8 @@ import { AutomationError } from './AutomationError';
 import { AutomationSpecProcessor } from './AutomationSpecProcessor';
 import { FilterType } from './FilterType';
 import { ExecutionResult } from './instructions/ExecutionResult';
-import { MapValueInstruction } from './instructions/MapValueInstruction';
-import { MapValueInstructionFactory } from './instructions/MapValueInstruction.Factory.test';
+import { InstructionInterface } from './instructions/InstructionInterface';
+import { InstructionInterfaceFactory } from './instructions/InstructionInterface.Factory.test';
 
 describe(nameof(AutomationSpecProcessor), () => {
   let sut: AutomationSpecProcessor;
@@ -79,7 +79,10 @@ describe(nameof(AutomationSpecProcessor), () => {
       it(`Should fail if target state is not found`, async () => {
         // GIVEN
         // WHEN
-        const result = await sut.executeInstruction(StateFactory.state(), MapValueInstructionFactory.instruction());
+        const result = await sut.executeInstruction(
+          StateFactory.state(),
+          InstructionInterfaceFactory.createMapValueInstruction(),
+        );
         // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
         // THEN
         expect(result).to.equal(ExecutionResult.targetStateNotFound);
@@ -89,7 +92,10 @@ describe(nameof(AutomationSpecProcessor), () => {
         objectClientStub.getForeignStateAsync.resolves(StateFactory.state());
         jsonPathStub.getValues.returns([]);
         // WHEN
-        const result = await sut.executeInstruction(StateFactory.state(), MapValueInstructionFactory.instruction());
+        const result = await sut.executeInstruction(
+          StateFactory.state(),
+          InstructionInterfaceFactory.createMapValueInstruction(),
+        );
         // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
         // THEN
         expect(result).to.equal(ExecutionResult.jsonPathNoMatch);
@@ -101,7 +107,10 @@ describe(nameof(AutomationSpecProcessor), () => {
         objectClientStub.getForeignStateAsync.resolves(targetState);
         jsonPathStub.getValues.returns(['testValue']);
         // WHEN
-        const result = await sut.executeInstruction(sourceState, MapValueInstructionFactory.instruction());
+        const result = await sut.executeInstruction(
+          sourceState,
+          InstructionInterfaceFactory.createMapValueInstruction(),
+        );
         // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
         // THEN
         expect(objectClientStub.setForeignStateAsync).calledOnceWithExactly(targetState.id, targetState);
@@ -110,7 +119,7 @@ describe(nameof(AutomationSpecProcessor), () => {
       it(`Should fail if instruction is not supported`, async () => {
         // GIVEN
         // WHEN
-        const result = await sut.executeInstruction(StateFactory.state(), {} as MapValueInstruction); // Since instruction is not created via constructor, instanceof will not recognize it.
+        const result = await sut.executeInstruction(StateFactory.state(), {} as InstructionInterface); // Since instruction is not created via constructor, instanceof will not recognize it.
         // THEN
         expect(result).to.equal(ExecutionResult.instructionNotImplemented);
       });

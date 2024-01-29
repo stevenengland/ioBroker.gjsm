@@ -1,10 +1,10 @@
-import { Instruction } from '../specification/instructions/Instruction';
+import { InstructionInterface } from '../specification/instructions/InstructionInterface';
 import { AutomationRepositoryInterface } from './AutomationRepositoryInterface';
 
 export class AutomationRepository implements AutomationRepositoryInterface {
-  private readonly _automationMap: Map<string, Instruction[]> = new Map<string, Instruction[]>();
+  private readonly _automationMap: Map<string, InstructionInterface[]> = new Map<string, InstructionInterface[]>();
 
-  public addAutomations(stateId: string, instructions: Instruction[]): void {
+  public addAutomations(stateId: string, instructions: InstructionInterface[]): void {
     if (this._automationMap.has(stateId)) {
       this._automationMap.get(stateId)?.push(...instructions);
     } else {
@@ -12,7 +12,7 @@ export class AutomationRepository implements AutomationRepositoryInterface {
     }
   }
 
-  public getAutomations(stateId: string): Instruction[] {
+  public getAutomations(stateId: string): InstructionInterface[] {
     return this._automationMap.get(stateId) ?? [];
   }
 

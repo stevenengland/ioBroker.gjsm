@@ -8,8 +8,8 @@ import { AutomationError } from './AutomationError';
 import { AutomationSpecProcessorInterface } from './AutomationSpecProcessorInterface';
 import { FilterType } from './FilterType';
 import { ExecutionResult } from './instructions/ExecutionResult';
-import { Instruction } from './instructions/Instruction';
-import { MapValueInstruction } from './instructions/MapValueInstruction';
+import { InstructionInterface } from './instructions/InstructionInterface';
+import { MapValueInterface } from './instructions/MapValueInterface';
 
 export class AutomationSpecProcessor implements AutomationSpecProcessorInterface {
   private readonly _objectClient: ObjectClientInterface;
@@ -26,9 +26,9 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
     this._jsonPath = jsonPath;
   }
 
-  public async executeInstruction(sourceState: State, instruction: Instruction): Promise<ExecutionResult> {
-    if (instruction instanceof MapValueInstruction) {
-      return this.mapValue(sourceState, instruction);
+  public async executeInstruction(sourceState: State, instruction: InstructionInterface): Promise<ExecutionResult> {
+    if (instruction.map_value) {
+      return this.mapValue(sourceState, instruction.map_value);
     } else {
       return ExecutionResult.instructionNotImplemented;
     }
@@ -88,7 +88,7 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
     return states.filter((state) => this._objectClient.getStateName(state.id) === sourceStateName);
   }
 
-  private async mapValue(sourceState: State, instruction: MapValueInstruction): Promise<ExecutionResult> {
+  private async mapValue(sourceState: State, instruction: MapValueInterface): Promise<ExecutionResult> {
     const targetState = await this._objectClient.getForeignStateAsync(
       this._objectClient.getStateParentId(sourceState.id) + '.' + instruction.targetStateName,
     );
