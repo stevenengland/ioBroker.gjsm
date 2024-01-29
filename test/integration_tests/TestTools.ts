@@ -92,6 +92,11 @@ export function readTestStatesFromDir(directoryPath: string): Record<string, ioB
 
   // A few last corrections
   for (const key in states) {
+    // Reset all alive states to false to avoid ADAPTER_ALREADY_RUNNING
+    if (key.startsWith('system.adapter.') && key.endsWith('.alive') && states[key].val === true) {
+      states[key].val = false;
+    }
+    // Stringify objects
     if (typeof states[key].val === 'object') {
       states[key].val = JSON.stringify(states[key].val);
     }
