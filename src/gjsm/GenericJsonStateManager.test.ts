@@ -12,6 +12,8 @@ import { AutomationSpecInterface } from './specification/AutomationSpecInterface
 import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecInterface.Factory.test';
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
+import { ExecutionResult } from './specification/instructions/ExecutionResult';
+import { InsctructionInterfaceFactory } from './specification/instructions/InstructionInterface.Factory.test';
 import { MapValueInstructionFactory } from './specification/instructions/MapValueInstruction.Factory.test';
 
 describe(nameof(GenericJsonStateManager), () => {
@@ -208,6 +210,25 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(specProviderStub.loadSpecifications).calledOnce;
         expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
         expect(autoRepositoryStub.addAutomations).called;
+      });
+      it(`Should handle execution results`, async () => {
+        // GIVEN
+        autoRepositoryStub.getAutomations.returns([InsctructionInterfaceFactory.createMapValueInstruction()]);
+        specProcessorStub.executeInstruction.onCall(1).resolves(ExecutionResult.instructionNotImplemented);
+        specProcessorStub.executeInstruction.onCall(2).resolves(ExecutionResult.success);
+        specProcessorStub.executeInstruction.onCall(3).resolves(ExecutionResult.jsonPathNoMatch);
+        specProcessorStub.executeInstruction.onCall(4).resolves(ExecutionResult.targetStateNotFound);
+        // WHEN
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state()); // unexpected result
+        // THEN
+        expect(loggerStub.debug).calledWithMatch(/executed/);
+        expect(loggerStub.warn).calledWithMatch(/implemented/);
+        expect(loggerStub.warn).calledWithMatch(/JSON path/);
+        expect(loggerStub.warn).calledWithMatch(/target state/);
       });
     },
   );
