@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { AutomationInterface } from './AutomationInterface';
 import { Instruction } from './instructions/Instruction';
-import { InsctructionInterfaceFactory } from './instructions/InstructionInterface.Factory.test';
+import { InsctructionFactory } from './instructions/Instruction.Factory.test';
 
 interface Builder {
   default(): this;
@@ -20,10 +20,7 @@ export class AutomationInterfaceBuilder implements Builder {
   public default(): this {
     this._automation = {
       sourceStateName: faker.word.verb(),
-      instructions: [
-        InsctructionInterfaceFactory.createMapValueInstruction(),
-        InsctructionInterfaceFactory.createSetValueInstruction(),
-      ],
+      instructions: [InsctructionFactory.createMapValueInstruction(), InsctructionFactory.createSetValueInstruction()],
     };
     return this;
   }
@@ -36,10 +33,7 @@ export class AutomationInterfaceBuilder implements Builder {
     this._automation.instructions =
       typeof instructions !== 'undefined'
         ? instructions
-        : [
-            InsctructionInterfaceFactory.createMapValueInstruction(),
-            InsctructionInterfaceFactory.createSetValueInstruction(),
-          ];
+        : [InsctructionFactory.createMapValueInstruction(), InsctructionFactory.createSetValueInstruction()];
     return this;
   }
 

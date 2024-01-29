@@ -1,13 +1,13 @@
 import { AutomationInterfaceBuilder } from '../../../src/gjsm/specification/AutomationInterface.Factory.test';
 import { AutomationSpecInterfaceBuilder } from '../../../src/gjsm/specification/AutomationSpecInterface.Factory.test';
 import { FilterType } from '../../../src/gjsm/specification/FilterType';
-import { InstructionInterfaceBuilder } from '../../../src/gjsm/specification/instructions/InstructionInterface.Factory.test';
+import { InstructionBuilder } from '../../../src/gjsm/specification/instructions/Instruction.Factory.test';
 import { State } from '../../../src/iob/State';
 import { StateInterface } from '../../../src/iob/StateInterface';
 
 const automationSpecBuilder = new AutomationSpecInterfaceBuilder();
 const automationBuilder = new AutomationInterfaceBuilder();
-const instructionBuilder = new InstructionInterfaceBuilder();
+const instructionBuilder = new InstructionBuilder();
 
 export const states: StateInterface[] = [
   new State({

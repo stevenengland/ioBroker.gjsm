@@ -11,7 +11,7 @@ interface Builder {
   build(): Instruction;
 }
 
-export class InstructionInterfaceBuilder implements Builder {
+export class InstructionBuilder implements Builder {
   private _instruction: Instruction;
 
   public constructor(instruction?: Instruction) {
@@ -51,20 +51,14 @@ export class InstructionInterfaceBuilder implements Builder {
   }
 }
 
-export class InsctructionInterfaceFactory {
+export class InsctructionFactory {
   public static createMapValueInstruction(instruction?: Instruction): Instruction {
-    const builder =
-      typeof instruction !== 'undefined'
-        ? new InstructionInterfaceBuilder(instruction)
-        : new InstructionInterfaceBuilder();
+    const builder = typeof instruction !== 'undefined' ? new InstructionBuilder(instruction) : new InstructionBuilder();
     return builder.defaultMapValueInstruction().build();
   }
 
   public static createSetValueInstruction(instruction?: Instruction): Instruction {
-    const builder =
-      typeof instruction !== 'undefined'
-        ? new InstructionInterfaceBuilder(instruction)
-        : new InstructionInterfaceBuilder();
+    const builder = typeof instruction !== 'undefined' ? new InstructionBuilder(instruction) : new InstructionBuilder();
     return builder.defaultSetValueInstruction().build();
   }
 }

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { nameof } from '../../utils/NameOf';
-import { InsctructionInterfaceFactory } from '../specification/instructions/InstructionInterface.Factory.test';
+import { InsctructionFactory } from '../specification/instructions/Instruction.Factory.test';
 import { AutomationRepository } from './AutomationRepository';
 
 describe(nameof(AutomationRepository), () => {
@@ -20,7 +20,7 @@ describe(nameof(AutomationRepository), () => {
     () => {
       it(`Should add an item to the repository`, () => {
         // GIVEN
-        sut.addAutomations('test', [InsctructionInterfaceFactory.createMapValueInstruction()]);
+        sut.addAutomations('test', [InsctructionFactory.createMapValueInstruction()]);
         // WHEN
         const result = sut.getAutomations('test');
         // THEN
@@ -28,8 +28,8 @@ describe(nameof(AutomationRepository), () => {
       });
       it(`Should append an item to the repository`, () => {
         // GIVEN
-        sut.addAutomations('test', [InsctructionInterfaceFactory.createMapValueInstruction()]);
-        sut.addAutomations('test', [InsctructionInterfaceFactory.createMapValueInstruction()]);
+        sut.addAutomations('test', [InsctructionFactory.createMapValueInstruction()]);
+        sut.addAutomations('test', [InsctructionFactory.createMapValueInstruction()]);
         // WHEN
         const result = sut.getAutomations('test');
         // THEN
@@ -54,8 +54,8 @@ describe(nameof(AutomationRepository), () => {
     () => {
       it(`Should delete all automations`, () => {
         // GIVEN
-        sut.addAutomations('test', [InsctructionInterfaceFactory.createMapValueInstruction()]);
-        sut.addAutomations('test', [InsctructionInterfaceFactory.createMapValueInstruction()]);
+        sut.addAutomations('test', [InsctructionFactory.createMapValueInstruction()]);
+        sut.addAutomations('test', [InsctructionFactory.createMapValueInstruction()]);
         // WHEN
         const resultBefore = sut.getAutomations('test');
         sut.deleteAllAutomations();
