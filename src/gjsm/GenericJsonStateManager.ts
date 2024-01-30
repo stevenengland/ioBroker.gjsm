@@ -86,30 +86,29 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     }
     const automations = this._autoRepository.getAutomations(id);
     for (const automation of automations) {
+      const automationName = automation.name ?? 'unnamed';
       // Try catch for single operation so that a failing execution does not prevent other automations from being executed
       try {
-        this._logger.debug(`Executing automation ${automation.name ?? 'unnamed'} for state ${id}`);
+        this._logger.debug(`Executing automation ${automationName} for state ${id}`);
         const execResult = await this._specProcessor.executeInstruction(state, automation);
         switch (execResult) {
           case ExecutionResult.success:
-            this._logger.debug(`Instruction ${automation.name ?? 'unnamed'} for state ${id} executed.`);
+            this._logger.debug(`Instruction ${automationName} for state ${id} executed.`);
             break;
           case ExecutionResult.instructionNotImplemented:
-            this._logger.warn(`Instruction ${automation.name ?? 'unnamed'} for state ${id} is not implemented.`);
+            this._logger.warn(`Instruction ${automationName} for state ${id} is not implemented.`);
             break;
           case ExecutionResult.jsonPathNoMatch:
-            this._logger.warn(`Instruction ${automation.name ?? 'unnamed'} for state ${id} found no JSON path match.`);
+            this._logger.warn(`Instruction ${automationName} for state ${id} found no JSON path match.`);
             break;
           case ExecutionResult.targetStateNotFound:
-            this._logger.warn(`Instruction ${automation.name ?? 'unnamed'} for state ${id} found no target state.`);
+            this._logger.warn(`Instruction ${automationName} for state ${id} found no target state.`);
             break;
           default:
-            this._logger.warn(
-              `Instruction ${automation.name ?? 'unnamed'} for state ${id} returned an unexpected result.`,
-            );
+            this._logger.warn(`Instruction ${automationName}} for state ${id} returned an unexpected result.`);
         }
       } catch (error) {
-        this.logWarning(`Error while executing automation ${automation.name ?? 'unnamed'} for state ${id}`, error);
+        this.logWarning(`Error while executing automation ${automationName} for state ${id}`, error);
       }
     }
   }

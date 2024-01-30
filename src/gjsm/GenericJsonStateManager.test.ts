@@ -13,6 +13,7 @@ import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecIn
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
 import { ExecutionResult } from './specification/instructions/ExecutionResult';
+import { InstructionInterface } from './specification/instructions/InstructionInterface';
 import { InstructionInterfaceFactory } from './specification/instructions/InstructionInterface.Factory.test';
 
 describe(nameof(GenericJsonStateManager), () => {
@@ -212,6 +213,7 @@ describe(nameof(GenericJsonStateManager), () => {
       });
       it(`Should handle execution results`, async () => {
         // GIVEN
+        autoRepositoryStub.getAutomations.onCall(0).returns([{} as InstructionInterface]);
         autoRepositoryStub.getAutomations.returns([InstructionInterfaceFactory.createMapValueInstruction()]);
         specProcessorStub.executeInstruction.onCall(0).resolves(ExecutionResult.instructionNotImplemented);
         specProcessorStub.executeInstruction.onCall(1).resolves(ExecutionResult.success);
