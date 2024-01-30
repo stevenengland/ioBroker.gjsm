@@ -18,7 +18,7 @@ describe('State', () => {
       ).forEach(([expected, input]) => {
         it(`should return ${expected} with state timestamp of ${input} given`, () => {
           // GIVEN
-          const state = new State({
+          const state = new State('test', {
             val: input,
           });
           // WHEN

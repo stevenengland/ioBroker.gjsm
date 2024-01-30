@@ -5,7 +5,15 @@ repos:
       - id: eslint
         name: eslint
         entry: |
-          npm run check && npm run lint
+          npm run lint
+        language: system
+        types: [ts]
+        pass_filenames: false
+
+      - id: tsc-check
+        name: tsc-check
+        entry: |
+          npm run check
         language: system
         types: [ts]
         pass_filenames: false

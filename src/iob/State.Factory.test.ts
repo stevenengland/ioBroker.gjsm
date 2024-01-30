@@ -13,7 +13,7 @@ export class StateBuilder implements Builder {
   private readonly _state: State;
 
   public constructor(state?: State) {
-    this._state = typeof state !== 'undefined' ? state : new State();
+    this._state = typeof state !== 'undefined' ? state : new State('test');
   }
   public withVal(val?: StateValueType): this {
     this._state.val = typeof val !== 'undefined' ? val : faker.string.alpha(100);
