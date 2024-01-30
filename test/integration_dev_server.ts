@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { addEntryToMap, readJsonlFile, writeMapToJsonlFile } from './integration_tests/JsonLinesDbTools';
-import { getDbEntities } from './integration_tests/TestTools';
+import { cleanTestArtifactsFromNpmCache, getDbEntities } from './integration_tests/TestTools';
 
 const config = {
   devServerProfile: '',
@@ -183,6 +183,7 @@ async function main() {
   }
 
   if (config.dbPreparationOnly !== 'true') {
+    cleanTestArtifactsFromNpmCache();
     await setupProfile();
   }
 

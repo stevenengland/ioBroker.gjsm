@@ -1,9 +1,34 @@
 import { TestHarness } from '@iobroker/testing/build/tests/integration/lib/harness';
+import { spawnSync } from 'child_process';
 import fs from 'fs';
+import os from 'os';
 import { StateInterface } from '../../src/iob/StateInterface';
 
 export function delay(time: number | undefined) {
   return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+export interface StateChangeExpectation {
+  newVal?: unknown;
+}
+
+export async function waitForStateChange(harness: TestHarness, targetId: string, expectation: StateChangeExpectation) {
+  console.log('Listening for state change on state ' + targetId + ' ...');
+  return new Promise((resolve) => {
+    function stateChangedListener(id: string, state: ioBroker.State | null | undefined) {
+      if (id === targetId) {
+        console.log(`Received update for ${id}, checking conditions`);
+        if (expectation.newVal && state?.val === expectation.newVal) {
+          console.log('Entities updated! -> resolve');
+          harness.removeListener('stateChange', stateChangedListener);
+          resolve(0);
+        }
+      } else {
+        console.log('Ignore change for', id);
+      }
+    }
+    harness.on('stateChange', stateChangedListener);
+  });
 }
 
 export async function getStateAsync(harness: TestHarness, id: string): Promise<StateInterface> {
@@ -31,7 +56,7 @@ export async function insertObjectsToDb(harness: TestHarness, objects: ioBroker.
 export async function insertStatesToDb(harness: TestHarness, states: Record<string, ioBroker.State>) {
   for (const id in states) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    await harness.states.setStateAsync(id, { val: states[id] });
+    await harness.states.setStateAsync(id, states[id]);
   }
 }
 
@@ -39,7 +64,7 @@ export async function startAdapter(harness: TestHarness) {
   console.log('Starting adapter...');
   const promises = [
     harness.startAdapterAndWait(),
-    // waitForStateChange('lovelace.0.info.readyForClients', harness)
+    // waitForStateChange(harness, 'gjsm.0.info.readyForAutomations', { newVal: true }),
   ];
   await Promise.all(promises);
   console.log('Started adapter...');
@@ -143,4 +168,17 @@ export async function prepareDbEntities(harness: TestHarness, req: NodeRequire) 
 
   await insertObjectsToDb(harness, iobObjects);
   await insertStatesToDb(harness, iobStates);
+}
+
+export function cleanTestArtifactsFromNpmCache() {
+  const npmCmd = os.platform() === 'win32' ? 'npm.cmd' : 'npm';
+  console.log('>>> Cleaning npm cache keys');
+  const cacheKeys = spawnSync(npmCmd, ['cache', 'ls'])
+    .stdout.toString('utf8')
+    .split('\n')
+    .filter((line) => line.includes('gjsm'));
+  for (const key of cacheKeys) {
+    console.log('Deleting ' + key);
+    console.log(spawnSync(npmCmd, ['cache', 'clean', key]).stdout.toString('utf8'));
+  }
 }

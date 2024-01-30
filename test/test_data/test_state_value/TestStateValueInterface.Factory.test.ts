@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { TestStateValueInterface } from './TestStateValueInterface';
 
 interface Builder {
@@ -14,8 +15,8 @@ export class TestStateValueInterfaceBuilder implements Builder {
 
   public default(): this {
     this._value = {
-      numberValue: 0,
-      stringValue: '',
+      numberValue: faker.number.int({ min: 100, max: 1000 }),
+      stringValue: faker.word.noun(),
       booleanValue: false,
     };
     return this;
