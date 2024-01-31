@@ -9,7 +9,6 @@ import { StateInterface } from '../../../src/iob/StateInterface';
 const automationSpecBuilder = new AutomationSpecInterfaceBuilder();
 const automationBuilder = new AutomationInterfaceBuilder();
 const instructionBuilder = new InstructionInterfaceBuilder();
-const mapValueBuilder = new MapValueInstructionBuilder();
 
 export const states: StateInterface[] = [
   new State('gjsm.0.automations.test_automation', {
@@ -25,7 +24,28 @@ export const states: StateInterface[] = [
               instructionBuilder
                 .defaultMapValueInstruction()
                 .withMapValue(
-                  mapValueBuilder.withJsonPathVal('$.numberValue').withTargetStateName('target_state_number').build(),
+                  new MapValueInstructionBuilder()
+                    .withJsonPathVal('$.numberValue')
+                    .withTargetStateName('target_state_number')
+                    .build(),
+                )
+                .build(),
+              instructionBuilder
+                .defaultMapValueInstruction()
+                .withMapValue(
+                  new MapValueInstructionBuilder()
+                    .withJsonPathVal('$.booleanValue')
+                    .withTargetStateName('target_state_boolean')
+                    .build(),
+                )
+                .build(),
+              instructionBuilder
+                .defaultMapValueInstruction()
+                .withMapValue(
+                  new MapValueInstructionBuilder()
+                    .withJsonPathVal('$.stringValue')
+                    .withTargetStateName('target_state_string')
+                    .build(),
                 )
                 .build(),
             ])

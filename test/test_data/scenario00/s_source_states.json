@@ -2,7 +2,9 @@
     {
         "test.0.test_folder.source_state": {
             "val": {
-                "numberValue": 1
+                "numberValue": 1,
+                "stringValue": "initial",
+                "booleanValue": true
             }
         }
     },

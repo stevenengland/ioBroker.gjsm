@@ -8,5 +8,15 @@
         "test.0.test_folder.target_state_number": {
             "val": 0
         }
+    },
+    {
+        "test.0.test_folder.target_state_boolean": {
+            "val": false
+        }
+    },
+    {
+        "test.0.test_folder.target_state_string": {
+            "val": "initial"
+        }
     }
 ]

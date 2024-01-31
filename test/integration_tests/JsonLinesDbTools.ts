@@ -12,10 +12,12 @@ export function readJsonlFile(filePath: string): Map<string, unknown> | null {
     }
     const fileContent: string = fs.readFileSync(filePath, 'utf-8');
     const lines: string[] = fileContent.split('\n');
+    let currentLine = 0;
 
     const resultMap = new Map<string, unknown>();
 
     lines.forEach((line: string) => {
+      currentLine++;
       if (line.trim() !== '') {
         try {
           const jsonData: JsonEntry = JSON.parse(line) as JsonEntry;
@@ -23,7 +25,7 @@ export function readJsonlFile(filePath: string): Map<string, unknown> | null {
             resultMap.set(jsonData.k, jsonData.v);
           }
         } catch (error) {
-          console.error('Error parsing JSON:', (error as Error).message);
+          console.error(`Error parsing JSON at line ${currentLine}:`, (error as Error).message);
         }
       }
     });

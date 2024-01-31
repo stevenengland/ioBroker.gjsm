@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { addEntryToMap, readJsonlFile, writeMapToJsonlFile } from './integration_tests/JsonLinesDbTools';
-import { cleanTestArtifactsFromNpmCache, getDbEntities } from './integration_tests/TestTools';
+import { applyCorrections, cleanTestArtifactsFromNpmCache, getDbEntities } from './integration_tests/TestTools';
 
 const config = {
   devServerProfile: '',
@@ -132,6 +132,8 @@ async function fillDatabase(): Promise<void> {
   for (const id of Object.keys(iobStates)) {
     addEntryToMap(statesMap, id, iobStates[id]);
   }
+
+  statesMap = applyCorrections(statesMap as Map<string, ioBroker.State>) as Map<string, unknown>;
 
   writeMapToJsonlFile(path.join(config.devServerProfileDir, 'iobroker-data', 'objects.jsonl'), objectsMap);
   writeMapToJsonlFile(path.join(config.devServerProfileDir, 'iobroker-data', 'states.jsonl'), statesMap);

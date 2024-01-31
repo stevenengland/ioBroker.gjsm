@@ -18,7 +18,7 @@ export async function waitForStateChange(harness: TestHarness, targetId: string,
     function stateChangedListener(id: string, state: ioBroker.State | null | undefined) {
       if (id === targetId) {
         console.log(`Received update for ${id}, checking conditions`);
-        if (expectation.newVal && state?.val === expectation.newVal) {
+        if (expectation.newVal !== undefined && state?.val === expectation.newVal) {
           console.log('Entities updated! -> resolve');
           harness.removeListener('stateChange', stateChangedListener);
           resolve(0);
@@ -73,7 +73,7 @@ export async function startAdapter(harness: TestHarness) {
 export function readTestStatesFromDir(directoryPath: string): Record<string, ioBroker.State> {
   const jsonFileNames: string[] = [];
   const tsFileNames: string[] = [];
-  const states: Record<string, ioBroker.State> = {};
+  let states: Record<string, ioBroker.State> = {};
 
   // JSON files
   fs.readdirSync(directoryPath).forEach((file) => {
@@ -116,16 +116,7 @@ export function readTestStatesFromDir(directoryPath: string): Record<string, ioB
   }
 
   // A few last corrections
-  for (const key in states) {
-    // Reset all alive states to false to avoid ADAPTER_ALREADY_RUNNING
-    if (key.startsWith('system.adapter.') && key.endsWith('.alive') && states[key].val === true) {
-      states[key].val = false;
-    }
-    // Stringify objects
-    if (typeof states[key].val === 'object') {
-      states[key].val = JSON.stringify(states[key].val);
-    }
-  }
+  states = applyCorrections(states) as Record<string, ioBroker.State>;
 
   return states;
 }
@@ -168,6 +159,35 @@ export async function prepareDbEntities(harness: TestHarness, req: NodeRequire) 
 
   await insertObjectsToDb(harness, iobObjects);
   await insertStatesToDb(harness, iobStates);
+}
+
+export function applyCorrections(
+  states: Record<string, ioBroker.State> | Map<string, ioBroker.State>,
+): Record<string, ioBroker.State> | Map<string, ioBroker.State> {
+  if (states instanceof Map) {
+    states.forEach((state, id) => {
+      state = correctState(id, state);
+    });
+  } else if (typeof states === 'object') {
+    for (const key in states) {
+      states[key] = correctState(key, states[key]);
+    }
+  }
+
+  return states;
+}
+
+function correctState(id: string, state: ioBroker.State): ioBroker.State {
+  // Reset all alive states to false to avoid ADAPTER_ALREADY_RUNNING
+  if (id.startsWith('system.adapter.') && id.endsWith('.alive') && state.val === true) {
+    state.val = false;
+  }
+  // Stringify objects
+  if (typeof state.val === 'object') {
+    state.val = JSON.stringify(state.val);
+  }
+
+  return state;
 }
 
 export function cleanTestArtifactsFromNpmCache() {

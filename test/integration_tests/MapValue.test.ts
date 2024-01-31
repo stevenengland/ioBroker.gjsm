@@ -29,24 +29,31 @@ export function runTests(suite: TestSuite) {
         await prepareDbEntities(harness, require('../test_data/scenario00') as NodeRequire);
         // Set value for a source state we know is subscribed and will be source for mapping.
         const sourceStateValue = TestStateValueInterfaceFactory.value();
-        const promise = waitForStateChange(harness, 'test.0.test_folder.target_state_number', {
-          newVal: sourceStateValue.numberValue,
-        } as StateChangeExpectation);
+        const promises = [
+          waitForStateChange(harness, 'test.0.test_folder.target_state_number', {
+            newVal: sourceStateValue.numberValue,
+          } as StateChangeExpectation),
+          waitForStateChange(harness, 'test.0.test_folder.target_state_boolean', {
+            newVal: sourceStateValue.booleanValue,
+          } as StateChangeExpectation),
+          waitForStateChange(harness, 'test.0.test_folder.target_state_string', {
+            newVal: sourceStateValue.stringValue,
+          } as StateChangeExpectation),
+        ];
         // WHEN
         await startAdapter(harness);
         await setStateAsync(harness, 'test.0.test_folder.source_state', {
           val: JSON.stringify(sourceStateValue),
         });
-        //await delay(5000);
-        await promise;
+        await Promise.all(promises);
         // THEN
         // Get the target state that should have received the mapped value
         const numberState = await getStateAsync(harness, 'test.0.test_folder.target_state_number');
         expect(numberState.val).to.equal(sourceStateValue.numberValue);
-        //const boolState = await getStateAsync(harness, 'test.0.test_folder.target_state_boolean');
-        //expect(boolState.val).to.equal(sourceStateValue.booleanValue);
-        //const stringState = await getStateAsync(harness, 'test.0.test_folder.target_state_string');
-        //expect(stringState.val).to.equal(sourceStateValue.stringValue);
+        const boolState = await getStateAsync(harness, 'test.0.test_folder.target_state_boolean');
+        expect(boolState.val).to.equal(sourceStateValue.booleanValue);
+        const stringState = await getStateAsync(harness, 'test.0.test_folder.target_state_string');
+        expect(stringState.val).to.equal(sourceStateValue.stringValue);
       });
     });
   });

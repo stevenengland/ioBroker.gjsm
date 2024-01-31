@@ -41,7 +41,6 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
 
   public async createSubscriptionsAndRepositoryForSourceStates(): Promise<void> {
     // Unset some internal states
-    this._logger.debug('Unsetting ready state.');
     this._autoRepository.deleteAllAutomations();
     await this._objectClient.setStateAsync(
       new State(
@@ -78,7 +77,6 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
         }
       }
     }
-    this._logger.debug('Unsetting ready state.');
     await this._objectClient.setStateAsync(
       new State(
         this._configProvider.config.infoNamespace +
