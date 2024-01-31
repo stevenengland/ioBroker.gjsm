@@ -1,9 +1,10 @@
 import { TestSuite } from '@iobroker/testing/build/tests/integration';
 import { TestHarness } from '@iobroker/testing/build/tests/integration/lib/harness';
+import path from 'path';
 import { delay } from './TestTools';
 
 export function runTests(suite: TestSuite) {
-  suite('Adapter startup', function (getHarness: () => TestHarness) {
+  suite(path.parse(__filename).name.split('.')[0], function (getHarness: () => TestHarness) {
     describe('', function () {
       this.timeout(5000);
 

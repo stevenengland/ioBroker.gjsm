@@ -1,7 +1,7 @@
-import { Instruction } from '../specification/instructions/Instruction';
+import { InstructionInterface } from '../specification/instructions/InstructionInterface';
 
 export interface AutomationRepositoryInterface {
-  addAutomations(stateId: string, instructions: Instruction[]): void;
-  getAutomations(stateId: string): Instruction[];
+  addAutomations(stateId: string, instructions: InstructionInterface[]): void;
+  getAutomations(stateId: string): InstructionInterface[];
   deleteAllAutomations(): void;
 }

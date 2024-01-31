@@ -2,6 +2,7 @@ import { unpackError } from '../error/ErrorHandling';
 import { ErrorParameterAdditionsInterface } from '../error/ErrorParameterAdditionsInterface';
 import { EventEmitter } from '../events/EventEmitter';
 import { ObjectClientInterface } from '../iob/ObjectClientInterface';
+import { State } from '../iob/State';
 import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
 import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
@@ -9,6 +10,7 @@ import { AutomationRepositoryInterface } from './automation_repository/Automatio
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
 import { AutomationSpecProcessorInterface } from './specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './specification/AutomationSpecProviderInterface';
+import { ExecutionResult } from './specification/instructions/ExecutionResult';
 
 export class GenericJsonStateManager implements GenericJsonStateManagerInterface {
   public errorEmitter: EventEmitter<GenericJsonStateMapperEventMap> =
@@ -18,7 +20,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   private readonly _configProvider: ConfigProviderInterface;
   private readonly _specProvider: AutomationSpecProviderInterface;
   private readonly _specProcessor: AutomationSpecProcessorInterface;
-  private readonly _onjectClient: ObjectClientInterface;
+  private readonly _objectClient: ObjectClientInterface;
   private readonly _autoRepository: AutomationRepositoryInterface;
 
   public constructor(
@@ -33,11 +35,22 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._configProvider = configProvider;
     this._specProvider = specProvider;
     this._specProcessor = specProcessor;
-    this._onjectClient = objectClient;
+    this._objectClient = objectClient;
     this._autoRepository = autoRepository;
   }
 
-  public async identifyAndSubscribeSourceStates(): Promise<void> {
+  public async createSubscriptionsAndRepositoryForSourceStates(): Promise<void> {
+    // Unset some internal states
+    this._autoRepository.deleteAllAutomations();
+    await this._objectClient.setStateAsync(
+      new State(
+        this._configProvider.config.infoNamespace +
+          '.' +
+          this._configProvider.config.infoStateProcessAutomationReadyness,
+        { val: false },
+      ),
+    );
+    // Create internal states
     for (const spec of this._specProvider.specifications) {
       if (spec.automations) {
         for (const automation of spec.automations) {
@@ -48,10 +61,11 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
               automation.sourceStateName,
             );
             this._logger.debug(
-              `Subscribing to ${statesToSubscribe.length} states for automation definition ${spec.id}.`,
+              `Subscribing to ${statesToSubscribe.length} states for automation definition ${spec.id} with a filter of "${spec.filterType}=${spec.groupFilter}".`,
             );
+            // TODO: Set status state of adapter and create integration test?
             for (const state of statesToSubscribe) {
-              await this._onjectClient.subscribeForeignStatesAsync(state.id);
+              await this._objectClient.subscribeForeignStatesAsync(state.id);
               this._logger.debug(`Subscribed to ${state.id}.`);
               for (const instruction of automation.instructions) {
                 this._autoRepository.addAutomations(state.id, [instruction]);
@@ -61,6 +75,58 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
             this.logWarning(`Error while processing automation spec ${spec.id}`, error);
           }
         }
+      }
+    }
+    await this._objectClient.setStateAsync(
+      new State(
+        this._configProvider.config.infoNamespace +
+          '.' +
+          this._configProvider.config.infoStateProcessAutomationReadyness,
+        { val: true },
+      ),
+    );
+  }
+
+  public async handleStateChange(id: string, state: State): Promise<void> {
+    if (
+      id.startsWith(
+        this._configProvider.config.instanceName +
+          '.' +
+          this._configProvider.config.instanceId +
+          '.' +
+          this._configProvider.config.automationNamespace,
+      )
+    ) {
+      this._logger.debug(`Changed configuration ${id} detected, reloading automation specification.`);
+      await this.loadAutomationDefinitions();
+      await this.createSubscriptionsAndRepositoryForSourceStates();
+      return;
+    }
+    const automations = this._autoRepository.getAutomations(id);
+    for (const automation of automations) {
+      const automationName = automation.name ?? 'unnamed';
+      // Try catch for single operation so that a failing execution does not prevent other automations from being executed
+      try {
+        this._logger.debug(`Executing automation ${automationName} for state ${id}`);
+        const execResult = await this._specProcessor.executeInstruction(state, automation);
+        switch (execResult) {
+          case ExecutionResult.success:
+            this._logger.debug(`Instruction ${automationName} for state ${id} executed.`);
+            break;
+          case ExecutionResult.instructionNotImplemented:
+            this._logger.warn(`Instruction ${automationName} for state ${id} is not implemented.`);
+            break;
+          case ExecutionResult.jsonPathNoMatch:
+            this._logger.warn(`Instruction ${automationName} for state ${id} found no JSON path match.`);
+            break;
+          case ExecutionResult.targetStateNotFound:
+            this._logger.warn(`Instruction ${automationName} for state ${id} found no target state.`);
+            break;
+          default:
+            this._logger.warn(`Instruction ${automationName}} for state ${id} returned an unexpected result.`);
+        }
+      } catch (error) {
+        this.logWarning(`Error while executing automation ${automationName} for state ${id}`, error);
       }
     }
   }
@@ -76,11 +142,10 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     }
 
     this._logger.debug('Config successfully loaded.');
+    this._logger.debug(JSON.stringify(this._configProvider.config, null, 2));
   }
 
   public async loadAutomationDefinitions(): Promise<void> {
-    this._autoRepository.deleteAllAutomations();
-
     try {
       await this._specProvider.loadSpecifications();
     } catch (error) {
@@ -105,8 +170,20 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   public async initialize(): Promise<void> {
     await this.loadConfig();
     // Subscribe to changes of the automation states
-    await this._onjectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
+    await this._objectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
     // TODO: Subcscribe to changes of the config object
+  }
+
+  public async terminate(): Promise<void> {
+    await this._objectClient.setStateAsync(
+      new State(
+        this._configProvider.config.infoNamespace +
+          '.' +
+          this._configProvider.config.infoStateProcessAutomationReadyness,
+        { val: false },
+      ),
+    );
+    this._logger.info('Adapter terminated successfully.');
   }
 
   private logError(message: string, error?: unknown): void {

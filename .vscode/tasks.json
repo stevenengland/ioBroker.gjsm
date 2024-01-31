@@ -24,6 +24,27 @@
       }
     },
     {
+      "type": "shell",
+      "label": "preLaunchTask_startDevServerIntegration",
+      "command": "npm run devserver:preparation -- --db_only=true --profile=integration && dev-server debug integration --wait",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": {
+        "pattern": {
+          // This is not needed but, required by the problemMatcher Object
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Using profile name",
+          "endsPattern": "Debugger is now waiting on process id"
+        }
+      }
+    },
+    {
       "label": "postDebug_KillChoice",
       "type": "process",
       "command": [

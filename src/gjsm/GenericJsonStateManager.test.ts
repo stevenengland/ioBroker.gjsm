@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ObjectClient } from '../iob/ObjectClient';
+import { State } from '../iob/State';
 import { StateFactory } from '../iob/State.Factory.test';
 import { Logger } from '../logger/Logger';
 import { nameof } from '../utils/NameOf';
@@ -12,6 +13,9 @@ import { AutomationSpecInterface } from './specification/AutomationSpecInterface
 import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecInterface.Factory.test';
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
 import { AutomationSpecProvider } from './specification/AutomationSpecProvider';
+import { ExecutionResult } from './specification/instructions/ExecutionResult';
+import { InstructionInterface } from './specification/instructions/InstructionInterface';
+import { InstructionInterfaceFactory } from './specification/instructions/InstructionInterface.Factory.test';
 
 describe(nameof(GenericJsonStateManager), () => {
   let sut: GenericJsonStateManager;
@@ -55,6 +59,25 @@ describe(nameof(GenericJsonStateManager), () => {
         await sut.initialize();
         // THEN
         expect(objectClientStub.subscribeStatesAsync).calledOnce;
+      });
+    },
+  );
+
+  describe(
+    nameof<GenericJsonStateManager>((g) => g.terminate),
+    () => {
+      it(`Should set info state`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.terminate();
+        // THEN
+        expect(objectClientStub.setStateAsync).calledWithMatch({
+          id:
+            configProviderStub.config.infoNamespace +
+            '.' +
+            configProviderStub.config.infoStateProcessAutomationReadyness,
+          val: false,
+        } as State);
       });
     },
   );
@@ -104,13 +127,6 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(specProviderStub.loadSpecifications).calledOnce;
         expect(loggerStub.warn).calledWithMatch(/No automation/); // Actually nothing to do, but we want to know
       });
-      it(`Should clear the repository`, async () => {
-        // GIVEN
-        // WHEN
-        await sut.loadAutomationDefinitions();
-        // THEN
-        expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
-      });
       it(`Should catch errors when spec loading throws`, async () => {
         // GIVEN
         specProviderStub.loadSpecifications.throws(new Error('test'));
@@ -135,14 +151,14 @@ describe(nameof(GenericJsonStateManager), () => {
   );
 
   describe(
-    nameof<GenericJsonStateManager>((g) => g.identifyAndSubscribeSourceStates),
+    nameof<GenericJsonStateManager>((g) => g.createSubscriptionsAndRepositoryForSourceStates),
     () => {
       it(`Should subscribe to states`, async () => {
         // GIVEN
         const states = StateFactory.statesWithPrefixedId(3, 'id_');
         specProcessorStub.getFilteredSourceStates.resolves(states);
         // WHEN
-        await sut.identifyAndSubscribeSourceStates();
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
         // THEN
         expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_0');
         expect(objectClientStub.subscribeForeignStatesAsync).calledWith('id_1');
@@ -153,9 +169,110 @@ describe(nameof(GenericJsonStateManager), () => {
         const states = StateFactory.statesWithPrefixedId(3, 'id_');
         specProcessorStub.getFilteredSourceStates.resolves(states);
         // WHEN
-        await sut.identifyAndSubscribeSourceStates();
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
         // THEN
         expect(autoRepositoryStub.addAutomations).called;
+      });
+      it(`Should log occuring exceptions`, async () => {
+        // GIVEN
+        specProcessorStub.getFilteredSourceStates.throws(new Error('test'));
+        // WHEN
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
+        // THEN
+        expect(loggerStub.warn).calledWithMatch(/test/);
+      });
+      it(`Should clear the repository`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
+        // THEN
+        expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
+      });
+      it(`Should set info state to false and true again`, async () => {
+        // GIVEN
+        const states = StateFactory.statesWithPrefixedId(3, 'id_');
+        specProcessorStub.getFilteredSourceStates.resolves(states);
+        // WHEN
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
+        // THEN
+        expect(objectClientStub.setStateAsync)
+          .calledWithMatch({
+            id:
+              configProviderStub.config.infoNamespace +
+              '.' +
+              configProviderStub.config.infoStateProcessAutomationReadyness,
+            val: false,
+          } as State)
+          .calledWithMatch({
+            id:
+              configProviderStub.config.infoNamespace +
+              '.' +
+              configProviderStub.config.infoStateProcessAutomationReadyness,
+            val: true,
+          } as State);
+      });
+    },
+  );
+  describe(
+    nameof<GenericJsonStateManager>((g) => g.handleStateChange),
+    () => {
+      it(`Should subscribe to states`, async () => {
+        // GIVEN
+        autoRepositoryStub.getAutomations.returns([
+          InstructionInterfaceFactory.createMapValueInstruction(),
+          InstructionInterfaceFactory.createMapValueInstruction(),
+        ]);
+        // WHEN
+        await sut.handleStateChange('test', StateFactory.state());
+        // THEN
+        expect(specProcessorStub.executeInstruction).calledTwice;
+      });
+      it(`Should log if exutoion of instruction fails`, async () => {
+        // GIVEN
+        autoRepositoryStub.getAutomations.returns([InstructionInterfaceFactory.createMapValueInstruction()]);
+        specProcessorStub.executeInstruction.throws(new Error('test'));
+        // WHEN
+        await sut.handleStateChange('test', StateFactory.state());
+        // THEN
+        expect(loggerStub.warn).calledWithMatch(/test/);
+      });
+      it(`Should reload automation definitions`, async () => {
+        // GIVEN
+        const states = StateFactory.statesWithPrefixedId(3, 'id_');
+        specProcessorStub.getFilteredSourceStates.resolves(states);
+        // WHEN
+        await sut.handleStateChange(
+          configProviderStub.config.instanceName +
+            '.' +
+            configProviderStub.config.instanceId +
+            '.' +
+            configProviderStub.config.automationNamespace,
+          StateFactory.state(),
+        );
+        // THEN
+        expect(specProviderStub.loadSpecifications).calledOnce;
+        expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
+        expect(autoRepositoryStub.addAutomations).called;
+      });
+      it(`Should handle execution results`, async () => {
+        // GIVEN
+        autoRepositoryStub.getAutomations.onCall(0).returns([{} as InstructionInterface]);
+        autoRepositoryStub.getAutomations.returns([InstructionInterfaceFactory.createMapValueInstruction()]);
+        specProcessorStub.executeInstruction.onCall(0).resolves(ExecutionResult.instructionNotImplemented);
+        specProcessorStub.executeInstruction.onCall(1).resolves(ExecutionResult.success);
+        specProcessorStub.executeInstruction.onCall(2).resolves(ExecutionResult.jsonPathNoMatch);
+        specProcessorStub.executeInstruction.onCall(3).resolves(ExecutionResult.targetStateNotFound);
+        // WHEN
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state()); // unexpected result
+        // THEN
+        expect(loggerStub.debug).calledWithMatch(/executed/);
+        expect(loggerStub.warn).calledWithMatch(/implemented/);
+        expect(loggerStub.warn).calledWithMatch(/JSON path/);
+        expect(loggerStub.warn).calledWithMatch(/target state/);
       });
     },
   );

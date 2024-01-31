@@ -9,14 +9,7 @@ describe(nameof(BaseError), () => {
       const sut = new BaseError('msg', { cause: new Error('cause') });
       // WHEN
       // THEN
-      expect(sut.cause?.message).to.equal('cause');
-    });
-    it(`Should set ${nameof<BaseError>((b) => b.isCritical)}`, () => {
-      // GIVEN
-      const sut = new BaseError('msg', { isCritical: true });
-      // WHEN
-      // THEN
-      expect(sut.isCritical).to.equal(true);
+      expect((sut.cause as Error).message).to.equal('cause');
     });
   });
 });

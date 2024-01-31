@@ -45,8 +45,8 @@ describe(nameof(AutomationSpecProvider), () => {
         const result = sut.specifications;
         // THEN
         expect(result.length).equals(2);
-        expect(result[0]!.errors![0]).to.contain('The data format of');
-        expect(result[0]!.id).to.contain('id');
+        expect(result[0].errors![0]).to.contain('The data format of');
+        expect(result[0].id).to.contain('id');
       });
       it(`Should load a config given a JSON document`, async () => {
         // GIVEN
@@ -57,7 +57,7 @@ describe(nameof(AutomationSpecProvider), () => {
         const result = sut.specifications;
         // THEN
         expect(result.length).to.equal(1);
-        expect(result[0]!.id).to.contain('id');
+        expect(result[0].id).to.contain('id');
       });
       it(`Should load a config given a YAML document`, async () => {
         // GIVEN
@@ -68,7 +68,7 @@ describe(nameof(AutomationSpecProvider), () => {
         const result = sut.specifications;
         // THEN
         expect(result.length).to.equal(1);
-        expect(result[0]!.id).to.contain('id');
+        expect(result[0].id).to.contain('id');
       });
     },
   );

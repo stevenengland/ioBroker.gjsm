@@ -1,0 +1,54 @@
+[
+    {
+        "_id": "test.0.test_folder.source_state",
+        "common": {
+            "name": "source_state",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder.source_state2",
+        "common": {
+            "name": "source_state2",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder_that_is_function_member_and_owns_states.source_state",
+        "common": {
+            "name": "source_state",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder_that_is_function_member_and_owns_states.source_state2",
+        "common": {
+            "name": "source_state2",
+            "role": "state",
+            "type": "json",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    }
+]

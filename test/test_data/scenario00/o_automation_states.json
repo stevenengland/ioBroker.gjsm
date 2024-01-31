@@ -1,0 +1,14 @@
+[
+    {
+        "_id": "gjsm.0.automations.test_automation",
+        "common": {
+            "name": "test_automation",
+            "role": "variable",
+            "type": "json",
+            "read": true,
+            "write": true
+        },
+        "type": "state",
+        "native": {}
+    }
+]

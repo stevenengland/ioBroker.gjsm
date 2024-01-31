@@ -32,7 +32,7 @@ export class Json implements DataFormatInterface {
 
   public async validateAgainstSchema(data: unknown, schema: object | string): Promise<void> {
     const ajv = new Ajv();
-    data = data as string;
+    data = this.parse(data);
     await ajv.validate(schema, data);
     if (ajv.errors?.length) {
       throw new DataFormatError('Invalid JSON content: ' + ajv.errorsText());

@@ -71,7 +71,7 @@ describe('YAML', () => {
         ],
       ] as [object | string][]
     ).forEach(([input]) => {
-      it(`should succeed when ${JSON.stringify(input)} is given`, () => {
+      it(`should succeed when ${JSON.stringify(input)} as object is given`, () => {
         // GIVEN
         const schema = {
           type: 'object',
@@ -85,6 +85,35 @@ describe('YAML', () => {
         // WHEN
         async function when() {
           await sut.validateAgainstSchema(input, schema);
+        }
+        // THEN
+        expect(when).to.not.throw();
+      });
+    });
+    (
+      [
+        [
+          {
+            foo: 1,
+            bar: 'abc',
+          },
+        ],
+      ] as [object | string][]
+    ).forEach(([input]) => {
+      it(`should succeed when ${JSON.stringify(input)} as string is given`, () => {
+        // GIVEN
+        const schema = {
+          type: 'object',
+          properties: {
+            foo: { type: 'integer' },
+            bar: { type: 'string' },
+          },
+          required: ['foo'],
+          additionalProperties: false,
+        };
+        // WHEN
+        async function when() {
+          await sut.validateAgainstSchema(JSON.stringify(input), schema);
         }
         // THEN
         expect(when).to.not.throw();

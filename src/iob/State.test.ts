@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { nameof } from '../utils/NameOf';
-import { State, StateValueType } from './State';
+import { State } from './State';
+import { StateValueType } from './StateValueType';
 
 describe('State', () => {
   describe(
@@ -17,7 +18,7 @@ describe('State', () => {
       ).forEach(([expected, input]) => {
         it(`should return ${expected} with state timestamp of ${input} given`, () => {
           // GIVEN
-          const state = new State({
+          const state = new State('test', {
             val: input,
           });
           // WHEN

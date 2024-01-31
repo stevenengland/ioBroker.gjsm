@@ -9,19 +9,29 @@
   {
     "id": "mapping automation",
     "groupFilter": "test",
-    "filterType": "Function",
+    "filterType": "function",
     "automations": [
       {
         "sourceStateName": "test1",
         "instructions": [
           {
-            "action": "map_value",
-            "targetStateName": "test1",
-            "jsonPathVal": "test2"
+            "name": "test with name",
+            "map_value": {
+              "targetStateName": "test1",
+              "jsonPathVal": "test2"
+            }
           },
           {
-            "action": "set_value",
-            "targetStateName": "test1"
+            "name": "test without name",
+            "map_value": {
+              "targetStateName": "test1",
+              "jsonPathVal": "test2"
+            }
+          },
+          {
+            "set_value": {
+              "targetStateName": "test1"
+            }
           }
         ]
       }

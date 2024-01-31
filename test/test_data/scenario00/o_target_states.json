@@ -1,0 +1,54 @@
+[
+    {
+        "_id": "test.0.test_folder.target_state_number",
+        "common": {
+            "name": "target_state_number",
+            "role": "state",
+            "type": "number",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder.target_state_boolean",
+        "common": {
+            "name": "target_state2",
+            "role": "state",
+            "type": "boolean",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder.target_state_string",
+        "common": {
+            "name": "target_state2",
+            "role": "state",
+            "type": "string",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    },
+    {
+        "_id": "test.0.test_folder_that_is_function_member_and_owns_states.target_state_number",
+        "common": {
+            "name": "target_state_number",
+            "role": "state",
+            "type": "number",
+            "read": true,
+            "write": true,
+            "def": ""
+        },
+        "type": "state",
+        "native": {}
+    }
+]

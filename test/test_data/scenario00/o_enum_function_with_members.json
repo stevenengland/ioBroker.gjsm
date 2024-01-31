@@ -1,0 +1,17 @@
+[
+    {
+        "_id": "enum.functions.test_function",
+        "type": "enum",
+        "common": {
+            "name": "test_function",
+            "enabled": true,
+            "color": false,
+            "desc": "",
+            "members": [
+                "test.0.test_folder.source_state",
+                "test.0.test_folder_that_is_function_member_and_owns_states"
+            ]
+        },
+        "native": {}
+    }
+]

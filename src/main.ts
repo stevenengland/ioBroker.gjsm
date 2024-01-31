@@ -18,6 +18,7 @@ import { Logger } from './logger/Logger';
 
 import { AwilixContainer, InjectionMode, asClass, asValue, createContainer } from 'awilix';
 import { DataFormatInterface } from './data_format/DataFormatInterface';
+import { BaseError } from './error/BaseError';
 import { unpackError } from './error/ErrorHandling';
 import { ErrorParameterAdditionsInterface } from './error/ErrorParameterAdditionsInterface';
 import { GenericJsonStateManagerInterface } from './gjsm/GenericJsonStateManagerInterface';
@@ -30,6 +31,9 @@ import { AutomationSpecProcessor } from './gjsm/specification/AutomationSpecProc
 import { AutomationSpecProcessorInterface } from './gjsm/specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './gjsm/specification/AutomationSpecProviderInterface';
 import { ObjectClientInterface } from './iob/ObjectClientInterface';
+import { State } from './iob/State';
+import { JsonPath } from './json_path/JsonPath';
+import { JsonPathInterface } from './json_path/JsonPathInterface';
 import { LoggerInterface } from './logger/LoggerInterface';
 
 interface IocContainerInterface {
@@ -40,6 +44,7 @@ interface IocContainerInterface {
   logger: LoggerInterface;
   yaml: DataFormatInterface;
   json: DataFormatInterface;
+  jsonPath: JsonPathInterface;
   configProvider: ConfigProviderInterface;
   specProvider: AutomationSpecProviderInterface;
   specProcessor: AutomationSpecProcessorInterface;
@@ -84,26 +89,50 @@ class Gjsm extends utils.Adapter {
           isCritical: true,
         });
       } else {
-        this.handleNotifiedError(new Error('The adapter could not be initialized: Unknown error'), {
+        this.handleNotifiedError(new Error('The adapter could not be initialized because of an unexpected error.'), {
           isCritical: true,
         });
       }
     }
 
     // Process the automation definitions
-    await this._gjsm?.loadAutomationDefinitions();
+    try {
+      await this._gjsm?.loadAutomationDefinitions();
+    } catch (error) {
+      this.handleNotifiedError(
+        new BaseError('The adapter could not load the automation definitions because of an unexpected error.', {
+          cause: error,
+        }),
+        {
+          isCritical: false,
+        },
+      );
+    }
+    try {
+      await this._gjsm?.createSubscriptionsAndRepositoryForSourceStates();
+    } catch (error) {
+      this.handleNotifiedError(
+        new BaseError('The adapter could not create state subscriptions and corresponding automation plans.', {
+          cause: error,
+        }),
+        {
+          isCritical: false,
+        },
+      );
+    }
   }
 
   /**
    * Is called when adapter shuts down - callback has to be called under any circumstances!
    */
-  private onUnload(callback: () => void): void {
+  private async onUnload(callback: () => void): Promise<void> {
     try {
       // Here you must clear all timeouts or intervals that may still be active
       // clearTimeout(timeout1);
       // clearTimeout(timeout2);
       // ...
       // clearInterval(interval1);
+      await this._gjsm?.terminate();
 
       callback();
     } catch (e) {
@@ -127,13 +156,24 @@ class Gjsm extends utils.Adapter {
   /**
    * Is called if a subscribed state changes
    */
-  private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
-    if (state) {
-      // The state was changed
-      this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-    } else {
-      // The state was deleted
-      this.log.info(`state ${id} deleted`);
+  private async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
+    try {
+      if (state) {
+        // The state was changed
+        await this._gjsm?.handleStateChange(id, new State(id, state));
+      } else {
+        // The state was deleted
+        this.log.debug(`Subscribed state ${id} was deleted`);
+      }
+    } catch (error) {
+      this.handleNotifiedError(
+        new BaseError(`The adapter could not handle the changed state for state ${id}.`, {
+          cause: error,
+        }),
+        {
+          isCritical: false,
+        },
+      );
     }
   }
 
@@ -190,6 +230,7 @@ class Gjsm extends utils.Adapter {
       logger: asClass(Logger).singleton(),
       yaml: asClass(Yaml).transient(),
       json: asClass(Json).transient(),
+      jsonPath: asClass(JsonPath).transient(),
       configProvider: asClass(ConfigProvider).singleton(),
       specProvider: asClass(AutomationSpecProvider).singleton(),
       specProcessor: asClass(AutomationSpecProcessor).singleton(),

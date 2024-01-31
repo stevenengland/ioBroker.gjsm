@@ -15,7 +15,7 @@ export const schema = {
     },
     filterType: {
       type: 'string',
-      enum: ['Function'],
+      enum: ['function'],
     },
     automations: {
       type: 'array',
@@ -29,25 +29,23 @@ export const schema = {
           instructions: {
             type: 'array',
             items: {
-              anyOf: [
+              type: 'object',
+              oneOf: [
                 {
-                  // Set value
-                  type: 'object',
-                  required: ['action', 'targetStateName'],
-                  properties: {
-                    action: { const: 'set_value' },
-                    targetStateName: {
-                      type: 'string',
-                    },
-                  },
-                  additionalProperties: false,
+                  required: ['map_value'],
                 },
                 {
-                  // Map value
+                  required: ['set_value'],
+                },
+              ],
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                map_value: {
                   type: 'object',
-                  required: ['action', 'targetStateName', 'jsonPathVal'],
+                  required: ['targetStateName', 'jsonPathVal'],
                   properties: {
-                    action: { const: 'map_value' },
                     targetStateName: {
                       type: 'string',
                     },
@@ -57,7 +55,18 @@ export const schema = {
                   },
                   additionalProperties: false,
                 },
-              ],
+                set_value: {
+                  type: 'object',
+                  required: ['targetStateName'],
+                  properties: {
+                    targetStateName: {
+                      type: 'string',
+                    },
+                  },
+                  additionalProperties: false,
+                },
+              },
+              additionalProperties: false,
             },
           },
         },

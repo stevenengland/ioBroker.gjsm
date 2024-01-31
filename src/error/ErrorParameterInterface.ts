@@ -1,4 +1,3 @@
 export interface ErrorParameterInterface {
-  cause?: Error;
-  isCritical?: boolean;
+  cause?: unknown;
 }

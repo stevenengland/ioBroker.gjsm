@@ -3,17 +3,6 @@
   "configurations": [
     {
       "type": "node",
-      "request": "launch",
-      "name": "Launch TypeScript Adapter",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/main.ts",
-      "args": ["--debug", "0"],
-      "preLaunchTask": "tsc: build - tsconfig.build.json",
-      "outFiles": ["${workspaceFolder}/build/**/*.js"],
-      "stopOnEntry": true
-    },
-    {
-      "type": "node",
       "request": "attach",
       "name": "Attach to ioBroker Adapter (1)",
       "address": "127.0.0.1",
@@ -42,6 +31,25 @@
         "../src/*": "${workspaceFolder}/src/*"
       },
       "preLaunchTask": "preLaunchTask_startDevServer", // Start dev server before attaching a debugger to it
+      "postDebugTask": "postDebug_KillAll", // Kill all tasks after debugging
+      "continueOnAttach": true // This is needed to prevent the debugger from stopping on the first line
+    },
+    {
+      "name": "Attach to ioBroker Adapter (Integration)",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        // only exclude node_modules from the workspace folder
+        // If we exclude node_modules from .dev-server/..., we don't get sourcemaps
+        "!${workspaceFolder}/node_modules/**"
+      ],
+      "sourceMapPathOverrides": {
+        "../src/*": "${workspaceFolder}/src/*"
+      },
+      "preLaunchTask": "preLaunchTask_startDevServerIntegration", // Start dev server before attaching a debugger to it
       "postDebugTask": "postDebug_KillAll", // Kill all tasks after debugging
       "continueOnAttach": true // This is needed to prevent the debugger from stopping on the first line
     }

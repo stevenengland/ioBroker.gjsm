@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import path from 'path';
 import { nameof } from './NameOf';
 
 class Test {
@@ -9,7 +10,7 @@ function testFunction() {
   return 1;
 }
 
-describe('nameof', () => {
+describe(path.parse(__filename).name.split('.')[0], () => {
   it(`Should tell string representation of class property`, () => {
     // GIVEN
     // WHEN

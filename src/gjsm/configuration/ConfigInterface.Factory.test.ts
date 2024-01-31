@@ -15,11 +15,14 @@ export class ConfigInterfaceBuilder implements Builder {
 
   public default(): this {
     this._config = {
+      automationNamespace: faker.helpers.fromRegExp(/adapter.[0-9]{1}.\*/),
       automationStatesPattern: faker.helpers.fromRegExp(/adapter.[0-9]{1}.\*/),
       functionsNamespace: faker.helpers.fromRegExp(/enum.functions/),
       createTargetStatesIfNotExist: faker.datatype.boolean(),
       instanceId: faker.datatype.number(),
       instanceName: faker.name.firstName(),
+      infoNamespace: faker.helpers.fromRegExp(/info/),
+      infoStateProcessAutomationReadyness: faker.helpers.fromRegExp(/processAutomationReadyness/),
     };
     return this;
   }
@@ -32,6 +35,6 @@ export class ConfigInterfaceBuilder implements Builder {
 export class ConfigInterfaceFactory {
   public static create(config?: ConfigInterface): ConfigInterface {
     const builder = typeof config !== 'undefined' ? new ConfigInterfaceBuilder(config) : new ConfigInterfaceBuilder();
-    return builder.build();
+    return builder.default().build();
   }
 }
