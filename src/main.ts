@@ -125,13 +125,14 @@ class Gjsm extends utils.Adapter {
   /**
    * Is called when adapter shuts down - callback has to be called under any circumstances!
    */
-  private onUnload(callback: () => void): void {
+  private async onUnload(callback: () => void): Promise<void> {
     try {
       // Here you must clear all timeouts or intervals that may still be active
       // clearTimeout(timeout1);
       // clearTimeout(timeout2);
       // ...
       // clearInterval(interval1);
+      await this._gjsm?.terminate();
 
       callback();
     } catch (e) {

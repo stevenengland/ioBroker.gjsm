@@ -48,12 +48,12 @@ export class ObjectClient implements ObjectClientInterface {
     return result;
   }
 
-  public async setForeignStateAsync(id: string, state: StateInterface): Promise<void> {
-    await this._adapter.setForeignStateAsync(id, {
-      val: state.val,
-      ack: state.ack,
-      ts: state.ts,
-    }); // Only transfer properties the original iobroker state type has
+  public async setStateAsync(state: StateInterface): Promise<void> {
+    await this._adapter.setStateAsync(state.id, this.mapState(state)); // Only transfer properties the original iobroker state type has
+  }
+
+  public async setForeignStateAsync(state: StateInterface): Promise<void> {
+    await this._adapter.setForeignStateAsync(state.id, this.mapState(state)); // Only transfer properties the original iobroker state type has
   }
 
   public async existsStateAsync(id: string): Promise<boolean> {
@@ -112,6 +112,15 @@ export class ObjectClient implements ObjectClientInterface {
       ts: state.ts,
       ack: state.ack,
     } as StateInterface;
+    return result;
+  }
+
+  private mapState(state: StateInterface): ioBroker.State {
+    const result = {
+      val: state.val,
+      ts: state.ts,
+      ack: state.ack,
+    } as ioBroker.State;
     return result;
   }
   //#endregion

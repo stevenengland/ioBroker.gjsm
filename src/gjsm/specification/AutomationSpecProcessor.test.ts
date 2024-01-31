@@ -113,7 +113,7 @@ describe(nameof(AutomationSpecProcessor), () => {
         );
         // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
         // THEN
-        expect(objectClientStub.setForeignStateAsync).calledOnceWithExactly(targetState.id, targetState);
+        expect(objectClientStub.setForeignStateAsync).calledOnceWithExactly(targetState);
         expect(result).to.equal(ExecutionResult.success);
       });
       it(`Should fail if instruction is not supported`, async () => {

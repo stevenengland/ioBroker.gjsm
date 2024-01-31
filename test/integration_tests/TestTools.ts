@@ -64,7 +64,7 @@ export async function startAdapter(harness: TestHarness) {
   console.log('Starting adapter...');
   const promises = [
     harness.startAdapterAndWait(),
-    // waitForStateChange(harness, 'gjsm.0.info.readyForAutomations', { newVal: true }),
+    waitForStateChange(harness, 'gjsm.0.info.readyForAutomations', { newVal: true }),
   ];
   await Promise.all(promises);
   console.log('Started adapter...');

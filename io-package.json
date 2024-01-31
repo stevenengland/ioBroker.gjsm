@@ -85,6 +85,26 @@
     "objects": [],
     "instanceObjects": [
         {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.readyForAutomations",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Adapter is ready to process automations",
+                "type": "boolean",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
             "_id": "automations",
             "type": "folder",
             "common": {

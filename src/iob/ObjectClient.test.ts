@@ -96,13 +96,24 @@ describe(nameof(ObjectClient), () => {
     },
   );
   describe(
+    nameof<ObjectClient>((s) => s.setStateAsync),
+    () => {
+      it(`Should set state`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.setStateAsync(StateFactory.state());
+        // THEN
+        expect(adapter.setStateAsync).to.be.calledOnce;
+      });
+    },
+  );
+  describe(
     nameof<ObjectClient>((s) => s.setForeignStateAsync),
     () => {
-      it(`Should return state`, async () => {
+      it(`Should set state`, async () => {
         // GIVEN
-        adapter.getForeignStateAsync.resolves(testRecord);
         // WHEN
-        await sut.setForeignStateAsync('*', StateFactory.state());
+        await sut.setForeignStateAsync(StateFactory.state());
         // THEN
         expect(adapter.setForeignStateAsync).to.be.calledOnce;
       });

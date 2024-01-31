@@ -108,7 +108,7 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
 
     targetState.ack = true;
 
-    await this._objectClient.setForeignStateAsync(targetState.id, targetState);
+    await this._objectClient.setForeignStateAsync(targetState);
 
     return ExecutionResult.success;
   }

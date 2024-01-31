@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ObjectClient } from '../iob/ObjectClient';
+import { State } from '../iob/State';
 import { StateFactory } from '../iob/State.Factory.test';
 import { Logger } from '../logger/Logger';
 import { nameof } from '../utils/NameOf';
@@ -58,6 +59,25 @@ describe(nameof(GenericJsonStateManager), () => {
         await sut.initialize();
         // THEN
         expect(objectClientStub.subscribeStatesAsync).calledOnce;
+      });
+    },
+  );
+
+  describe(
+    nameof<GenericJsonStateManager>((g) => g.terminate),
+    () => {
+      it(`Should set info state`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.terminate();
+        // THEN
+        expect(objectClientStub.setStateAsync).calledWithMatch({
+          id:
+            configProviderStub.config.infoNamespace +
+            '.' +
+            configProviderStub.config.infoStateProcessAutomationReadyness,
+          val: false,
+        } as State);
       });
     },
   );
@@ -167,6 +187,29 @@ describe(nameof(GenericJsonStateManager), () => {
         await sut.createSubscriptionsAndRepositoryForSourceStates();
         // THEN
         expect(autoRepositoryStub.deleteAllAutomations).calledOnce;
+      });
+      it(`Should set info state to false and true again`, async () => {
+        // GIVEN
+        const states = StateFactory.statesWithPrefixedId(3, 'id_');
+        specProcessorStub.getFilteredSourceStates.resolves(states);
+        // WHEN
+        await sut.createSubscriptionsAndRepositoryForSourceStates();
+        // THEN
+        expect(objectClientStub.setStateAsync)
+          .calledWithMatch({
+            id:
+              configProviderStub.config.infoNamespace +
+              '.' +
+              configProviderStub.config.infoStateProcessAutomationReadyness,
+            val: false,
+          } as State)
+          .calledWithMatch({
+            id:
+              configProviderStub.config.infoNamespace +
+              '.' +
+              configProviderStub.config.infoStateProcessAutomationReadyness,
+            val: true,
+          } as State);
       });
     },
   );

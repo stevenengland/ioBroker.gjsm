@@ -40,7 +40,18 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   }
 
   public async createSubscriptionsAndRepositoryForSourceStates(): Promise<void> {
+    // Unset some internal states
+    this._logger.debug('Unsetting ready state.');
     this._autoRepository.deleteAllAutomations();
+    await this._objectClient.setStateAsync(
+      new State(
+        this._configProvider.config.infoNamespace +
+          '.' +
+          this._configProvider.config.infoStateProcessAutomationReadyness,
+        { val: false },
+      ),
+    );
+    // Create internal states
     for (const spec of this._specProvider.specifications) {
       if (spec.automations) {
         for (const automation of spec.automations) {
@@ -67,6 +78,15 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
         }
       }
     }
+    this._logger.debug('Unsetting ready state.');
+    await this._objectClient.setStateAsync(
+      new State(
+        this._configProvider.config.infoNamespace +
+          '.' +
+          this._configProvider.config.infoStateProcessAutomationReadyness,
+        { val: true },
+      ),
+    );
   }
 
   public async handleStateChange(id: string, state: State): Promise<void> {
@@ -154,6 +174,18 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     // Subscribe to changes of the automation states
     await this._objectClient.subscribeStatesAsync(this._configProvider.config.automationStatesPattern);
     // TODO: Subcscribe to changes of the config object
+  }
+
+  public async terminate(): Promise<void> {
+    await this._objectClient.setStateAsync(
+      new State(
+        this._configProvider.config.infoNamespace +
+          '.' +
+          this._configProvider.config.infoStateProcessAutomationReadyness,
+        { val: false },
+      ),
+    );
+    this._logger.info('Adapter terminated successfully.');
   }
 
   private logError(message: string, error?: unknown): void {

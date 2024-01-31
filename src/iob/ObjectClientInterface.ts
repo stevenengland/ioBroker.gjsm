@@ -5,7 +5,8 @@ export interface ObjectClientInterface {
   getStatesAsync(pattern: string): Promise<StateInterface[]>;
   getForeignStatesAsync(pattern: string): Promise<StateInterface[]>;
   getForeignStateAsync(id: string): Promise<StateInterface | null>;
-  setForeignStateAsync(id: string, state: StateInterface): Promise<void>;
+  setStateAsync(state: StateInterface): Promise<void>;
+  setForeignStateAsync(state: StateInterface): Promise<void>;
   existsStateAsync(id: string): Promise<boolean>;
   subscribeStatesAsync(pattern: string): Promise<void>;
   subscribeForeignStatesAsync(pattern: string): Promise<void>;

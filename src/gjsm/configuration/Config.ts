@@ -4,6 +4,8 @@ export const config = {
   automationNamespace: 'automations',
   automationStatesPattern: '',
   functionsNamespace: 'enum.functions',
+  infoNamespace: 'info',
+  infoStateProcessAutomationReadyness: 'readyForAutomations',
 } as PrivateConfigInterface;
 
 function setVars(): void {

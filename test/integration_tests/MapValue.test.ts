@@ -6,7 +6,6 @@ import path from 'path';
 import { TestStateValueInterfaceFactory } from '../test_data/test_state_value/TestStateValueInterface.Factory.test';
 import {
   StateChangeExpectation,
-  delay,
   getStateAsync,
   prepareDbEntities,
   setStateAsync,
@@ -35,7 +34,6 @@ export function runTests(suite: TestSuite) {
         } as StateChangeExpectation);
         // WHEN
         await startAdapter(harness);
-        await delay(1000);
         await setStateAsync(harness, 'test.0.test_folder.source_state', {
           val: JSON.stringify(sourceStateValue),
         });

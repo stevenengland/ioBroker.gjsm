@@ -23,6 +23,8 @@ function cleanTmpDir() {
   if (fs.existsSync(tmpDir)) {
     console.log('Deleting ' + tmpDir);
     fs.rmSync(tmpDir, { recursive: true, force: true });
+  } else {
+    console.log('Nothing to delete at ' + tmpDir);
   }
 }
 

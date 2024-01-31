@@ -21,6 +21,8 @@ export class ConfigInterfaceBuilder implements Builder {
       createTargetStatesIfNotExist: faker.datatype.boolean(),
       instanceId: faker.datatype.number(),
       instanceName: faker.name.firstName(),
+      infoNamespace: faker.helpers.fromRegExp(/info/),
+      infoStateProcessAutomationReadyness: faker.helpers.fromRegExp(/processAutomationReadyness/),
     };
     return this;
   }
@@ -33,6 +35,6 @@ export class ConfigInterfaceBuilder implements Builder {
 export class ConfigInterfaceFactory {
   public static create(config?: ConfigInterface): ConfigInterface {
     const builder = typeof config !== 'undefined' ? new ConfigInterfaceBuilder(config) : new ConfigInterfaceBuilder();
-    return builder.build();
+    return builder.default().build();
   }
 }
