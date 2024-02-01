@@ -7,10 +7,12 @@ name: Release Publishing
       - main
 
 jobs:
-  release:
+  create_tag:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    outputs:
+      version_tag: ${{ steps.check-version.outputs.tag }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -39,23 +41,49 @@ jobs:
           version-command: |
             node -p 'require("./package.json").version'
 
-      - name: Deploy the adapter
-        if: steps.check-version.outputs.tag != ''
-        uses: ioBroker/testing-action-deploy@v1
+  create_releases:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    needs: create_tag
+    if: needs.create_tag.outputs.version_tag != ''
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Load environment vars
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.4
+        with:
+          path: .github/workflows/env_vars.txt
+          log-variables: true
+          keys-case: bypass
+
+      - name: Use Node.js ${{ steps.dotenv.outputs.NODE_VERSION }}
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ steps.dotenv.outputs.NODE_VERSION }}
-          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-          # install-command: 'npm install'
-          build: true
-          npm-token: ${{ secrets.NPM_TOKEN }}
-          github-token: ${{ secrets.WORKFLOW_GENERAL_RW }}
+
+      - name: Install Dependencies
+        shell: bash
+        run: 'npm ci'
+
+      - name: Build the adapter
+        shell: bash
+        run: 'npm run build'
+
+      - name: Publish package to npm
+        shell: bash
+        run: |
+          npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm whoami
+          npm publish ${{ needs.create_tag.outputs.version_tag }}
 
       - name: Publish the release notes
-        if: steps.check-version.outputs.tag != ''
         uses: release-drafter/release-drafter@v5.22.0
         with:
-          publish: ${{ steps.check-version.outputs.tag != '' }}
-          tag: ${{ steps.check-version.outputs.tag }}
+          publish: ${{ needs.create_tag.outputs.version_tag != '' }}
+          tag: ${{ needs.create_tag.outputs.version_tag }}
           config-name: release_drafting_config.yml
           disable-autolabeler: true
         env:
