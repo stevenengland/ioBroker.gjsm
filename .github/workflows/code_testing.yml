@@ -1,5 +1,5 @@
 ---
-name: Test and Release
+name: Code Testing
 
 'on':
   pull_request:
