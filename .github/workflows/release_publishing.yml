@@ -1,0 +1,73 @@
+---
+name: Release Publishing
+
+'on':
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Last two commits for salsify/action-detect-and-tag-new-version
+
+      - name: Load environment vars
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.4
+        with:
+          path: .github/workflows/env_vars.txt
+          log-variables: true
+          keys-case: bypass
+
+      - name: Check if there is a parent commit
+        id: check-parent-commit
+        run: |
+          echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
+
+      - name: Detect and tag new version
+        id: check-version
+        if: steps.check-parent-commit.outputs.sha
+        uses: salsify/action-detect-and-tag-new-version@v2
+        with:
+          tag-template: 'v{VERSION}'
+          version-command: |
+            node -p 'require("./package.json").version'
+
+      - name: Deploy the adapter
+        if: steps.check-version.outputs.tag != ''
+        uses: ioBroker/testing-action-deploy@v1
+        with:
+          node-version: ${{ steps.dotenv.outputs.NODE_VERSION }}
+          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
+          # install-command: 'npm install'
+          build: true
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          github-token: ${{ secrets.WORKFLOW_GENERAL_RW }}
+
+      - name: Publish the release notes
+        if: steps.check-version.outputs.tag != ''
+        uses: release-drafter/release-drafter@v5.22.0
+        with:
+          publish: ${{ steps.check-version.outputs.tag != '' }}
+          tag: ${{ steps.check-version.outputs.tag }}
+          config-name: release_drafting_config.yml
+          disable-autolabeler: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_GENERAL_RW }}
+#          # When using Sentry for error reporting, Sentry can be informed about new releases
+#          # To enable create a API-Token in Sentry (User settings, API keys)
+#          # Enter this token as a GitHub secret (with name SENTRY_AUTH_TOKEN) in the repository options
+#          # Then uncomment and customize the following block:
+#          sentry: true
+#          sentry-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+#          sentry-project: "iobroker-gjsm"
+#          sentry-version-prefix: "iobroker.gjsm"
+#          sentry-sourcemap-paths: "build/"
+#          # If your sentry project is linked to a GitHub repository, you can enable the following option
+#          # sentry-github-integration: true
