@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "gjsm",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "news": {
+            "0.0.2": {
+                "en": "This is the first release.\nBasic mapping from JSON source states to string|boolean|number target states.",
+                "de": "Dies ist die erste Veröffentlichung.\nGrundlegende Zuordnung von JSON-Quellzuständen zu Zielzuständen vom Typ „string|boolean|number“.",
+                "ru": "Это первый выпуск.\nБазовое сопоставление исходных состояний JSON со строковыми|логическими|числовыми целевыми состояниями.",
+                "pt": "Este é o primeiro lançamento.\nMapeamento básico de estados de origem JSON para estados de destino string|boolean|number.",
+                "nl": "Dit is de eerste uitgave.\nBasistoewijzing van JSON-bronstatussen naar string|boolean|number doelstatussen.",
+                "fr": "Il s'agit de la première version.\nMappage de base des états sources JSON vers les états cibles string|boolean|number.",
+                "it": "Questa è la prima versione.\nMappatura di base dagli stati di origine JSON agli stati di destinazione string|boolean|number.",
+                "es": "Este es el primer lanzamiento.\nMapeo básico de estados de origen JSON a estados de destino de cadena|booleano|número.",
+                "pl": "To jest pierwsze wydanie.\nPodstawowe mapowanie ze stanów źródłowych JSON na stany docelowe typu string|boolean|liczba.",
+                "uk": "Це перший випуск.\nБазове відображення вихідних станів JSON у рядок|логічне|цільове число.",
+                "zh-cn": "这是第一个版本。\n从 JSON 源状态到 string|boolean|number 目标状态的基本映射。"
+            },
             "0.0.1": {
                 "en": "initial release",
                 "de": "Erstveröffentlichung",
