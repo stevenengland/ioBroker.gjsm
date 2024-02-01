@@ -1,17 +1,21 @@
+---
 name: Test and Release
 
-# Run this job on all pushes and pull requests
-# as well as tags with a semantic version
-on:
-  push:
+'on':
+  pull_request:
     branches:
-      - 'main'
-    tags:
-      # normal versions
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-      # pre-releases
-      - 'v[0-9]+.[0-9]+.[0-9]+-**'
-  pull_request: {}
+      - main
+    paths-ignore:
+      - '*.md'
+      - '*version.txt'
+      - 'vscode/**'
+      - 'docs/**'
+      - '.github/**'
+      - '!.github/**/*test*.yml'
+      - '!.github/**/*env*.txt'
+      # - "!.github/**/*release*.yml"
+  schedule:
+    - cron: '0 7 * * 5' # At 07 AM on Friday
 
 # Cancel previous PR/branch runs when a new commit is pushed
 concurrency:
@@ -29,9 +33,6 @@ jobs:
       NODE_VERSION_MAX: ${{ steps.dotenv.outputs.NODE_VERSION_MAX }}
     steps:
       - name: Checkout to repository
-        uses: actions/checkout@v4
-
-      - name: Check out the repository
         uses: actions/checkout@v4
 
       - name: Load environment vars
@@ -120,54 +121,3 @@ jobs:
         run: npm run test:integration -- --controller-version=${{ matrix.js-controller-version }}
         env:
           DEBUG: 'testing:*'
-# TODO: To enable automatic npm releases, create a token on npmjs.org
-# Enter this token as a GitHub secret (with name NPM_TOKEN) in the repository options
-# Then uncomment the following block:
-
-#  # Deploys the final package to NPM
-#  deploy:
-#    needs: [check_lint_unit-test, adapter-tests]
-#
-#    # Trigger this step only when a commit on any branch is tagged with a version number
-#    if: |
-#      contains(github.event.head_commit.message, '[skip ci]') == false &&
-#      github.event_name == 'push' &&
-#      startsWith(github.ref, 'refs/tags/v')
-#
-#    runs-on: ubuntu-latest
-#
-#    # Write permissions are required to create Github releases
-#    permissions:
-#      contents: write
-#
-#    steps:
-#      - name: Check out the repository
-#        uses: actions/checkout@v4
-#
-#      - name: Load environment vars
-#        id: dotenv
-#        uses: falti/dotenv-action@v1.0.4
-#        with:
-#          path: .github/workflows/env_vars.txt
-#          log-variables: true
-#
-#      - uses: ioBroker/testing-action-deploy@v1
-#        with:
-#          node-version: ${{ steps.dotenv.outputs.NODE_VERSION }}
-#          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-#          # install-command: 'npm install'
-#          build: true
-#          npm-token: ${{ secrets.NPM_TOKEN }}
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
-#
-#          # When using Sentry for error reporting, Sentry can be informed about new releases
-#          # To enable create a API-Token in Sentry (User settings, API keys)
-#          # Enter this token as a GitHub secret (with name SENTRY_AUTH_TOKEN) in the repository options
-#          # Then uncomment and customize the following block:
-#          sentry: true
-#          sentry-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
-#          sentry-project: "iobroker-gjsm"
-#          sentry-version-prefix: "iobroker.gjsm"
-#          sentry-sourcemap-paths: "build/"
-#          # If your sentry project is linked to a GitHub repository, you can enable the following option
-#          # sentry-github-integration: true
