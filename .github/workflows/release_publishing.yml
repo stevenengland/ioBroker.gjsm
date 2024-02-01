@@ -101,9 +101,13 @@ jobs:
       - name: Publish package to npm
         shell: bash
         run: |
+          tag=latest
+          if [[ "${{ needs.create_tag.outputs.version_tag }}" == *"-"* ]] ; then
+            tag=unstable
+          fi
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm whoami
-          npm publish ${{ needs.create_tag.outputs.version_tag }}
+          npm publish --tag $tag
 
       - name: Publish the release notes
         uses: release-drafter/release-drafter@v5.22.0
