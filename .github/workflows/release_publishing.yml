@@ -37,7 +37,7 @@ jobs:
         with:
           tag-template: '{VERSION}'
           version-command: |
-            cat current-version.txt
+            node -p 'require("./package.json").version'
 
       - name: Deploy the adapter
         if: steps.check-version.outputs.tag != ''
