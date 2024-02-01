@@ -12,7 +12,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     outputs:
-      version_tag: ${{ steps.check-version.outputs.tag }}
+      version_tag: ${{ steps.set-release-tag.outputs.version_tag }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -40,6 +40,31 @@ jobs:
           tag-template: 'v{VERSION}'
           version-command: |
             node -p 'require("./package.json").version'
+
+      - name: Set release tag
+        id: set-release-tag
+        # Trigger this step only when a commit on any branch is tagged with a version number
+        run: |
+          echo "Checking if a new tag is available..."
+          if [ -z "${{ steps.check-version.outputs.tag }}" ]; then
+            echo "No tag found!"
+            echo "Checking if current version is available..."
+            if [  ! -z "${{ steps.check-version.outputs.current-version }}" ]; then
+              echo "Current version is available!"
+              echo "Checking if forcing re-release flag is set..."
+              if [[ ${{ github.event.head_commit.message }} =~ .*"[re-release]".* ]]; then
+                echo "Forcing re-release flag is set!"
+                echo "version_tag=${{ steps.check-version.outputs.current-version }}" >> $GITHUB_OUTPUT
+              else
+                echo "Forcing re-release flag is not set!"
+              fi
+            else
+              echo "Current version is not available!"
+            fi
+          else
+            echo "New tag found: ${{ steps.check-version.outputs.tag }}"
+            echo "version_tag=${{ steps.check-version.outputs.tag }}" >> $GITHUB_OUTPUT
+          fi
 
   create_releases:
     permissions:
