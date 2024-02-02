@@ -85,6 +85,18 @@ jobs:
           log-variables: true
           keys-case: bypass
 
+      # Publish the release notes first, because in case of an accident this can be deleted and the release can be re-created
+      - name: Publish the release notes
+        uses: release-drafter/release-drafter@v5.22.0
+        with:
+          publish: ${{ needs.create_tag.outputs.version_tag != '' }}
+          tag: ${{ needs.create_tag.outputs.version_tag }}
+          config-name: release_drafting_config.yml
+          disable-autolabeler: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_GENERAL_RW }}
+
+      # Now create the release on npm
       - name: Use Node.js ${{ steps.dotenv.outputs.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
@@ -109,15 +121,6 @@ jobs:
           npm whoami
           npm publish --tag $tag
 
-      - name: Publish the release notes
-        uses: release-drafter/release-drafter@v5.22.0
-        with:
-          publish: ${{ needs.create_tag.outputs.version_tag != '' }}
-          tag: ${{ needs.create_tag.outputs.version_tag }}
-          config-name: release_drafting_config.yml
-          disable-autolabeler: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_GENERAL_RW }}
 #          # When using Sentry for error reporting, Sentry can be informed about new releases
 #          # To enable create a API-Token in Sentry (User settings, API keys)
 #          # Enter this token as a GitHub secret (with name SENTRY_AUTH_TOKEN) in the repository options
