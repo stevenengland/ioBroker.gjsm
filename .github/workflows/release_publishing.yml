@@ -54,8 +54,8 @@ jobs:
               echo "Checking if forcing re-release flag is set..."
               if [[ "${{ github.event.head_commit.message }}" =~ .*"[re-release]".* ]]; then
                 echo "Forcing re-release flag is set!"
-                echo "Setting version tag ${{ steps.check-version.outputs.current-version }} ..."
-                echo "version_tag=${{ steps.check-version.outputs.current-version }}" >> $GITHUB_OUTPUT
+                echo "Setting version tag v${{ steps.check-version.outputs.current-version }} ..."
+                echo "version_tag=v${{ steps.check-version.outputs.current-version }}" >> $GITHUB_OUTPUT
               else
                 echo "Forcing re-release flag is not set!"
               fi
