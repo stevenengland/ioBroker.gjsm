@@ -47,6 +47,7 @@
     "c8": "^9.1.0",
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.1",
+    "cheerio": "^1.0.0-rc.12",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
@@ -85,14 +86,15 @@
     "lint:src": "eslint --ext .ts,.js src/",
     "lint:test": "eslint --ext .ts test/",
     "lint": "npm run lint:src && npm run lint:test",
+    "maintenance": "node tools/CheckTranslations.js",
     "prettier-format": "prettier --config .prettierrc.js 'src/**/*.ts' --write",
-    "pre-push": "npm run check && npm run build && npm run lint && npm run coverage && npm run test:package && npm run test:integration",
+    "pre-push": "npm run check && npm run maintenance && npm run build && npm run lint && npm run coverage && npm run test:package && npm run test:integration",
     "release": "release-script",
     "test:ts": "mocha --config .mocharc.json",
     "test:package": "mocha --no-config --require ts-node/register test/package.ts --exit",
     "test:integration": "npm run prebuild && npm run build && mocha --no-config --require test/mocha.setup.js --require ts-node/register test/integration.ts --exit",
     "test": "npm run test:ts && npm run test:package",
-    "translate": "translate-adapter"
+    "translate": "translate-adapter all"
   },
   "bugs": {
     "url": "https://github.com/stevenengland/ioBroker.gjsm/issues"

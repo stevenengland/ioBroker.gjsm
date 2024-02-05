@@ -143,13 +143,24 @@ class Gjsm extends utils.Adapter {
   /**
    * Is called if a subscribed object changes
    */
-  private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
-    if (obj) {
-      // The object was changed
-      this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    } else {
-      // The object was deleted
-      this.log.info(`object ${id} deleted`);
+  private async onObjectChange(id: string, obj: ioBroker.Object | null | undefined): Promise<void> {
+    try {
+      if (obj) {
+        // The state was changed
+        await this._gjsm?.handleObjectChange(id, obj);
+      } else {
+        // The state was deleted
+        this.log.debug(`Subscribed object ${id} was deleted`);
+      }
+    } catch (error) {
+      this.handleNotifiedError(
+        new BaseError(`The adapter could not handle the changed object ${id}.`, {
+          cause: error,
+        }),
+        {
+          isCritical: false,
+        },
+      );
     }
   }
 
@@ -167,7 +178,7 @@ class Gjsm extends utils.Adapter {
       }
     } catch (error) {
       this.handleNotifiedError(
-        new BaseError(`The adapter could not handle the changed state for state ${id}.`, {
+        new BaseError(`The adapter could not handle the changed state ${id}.`, {
           cause: error,
         }),
         {

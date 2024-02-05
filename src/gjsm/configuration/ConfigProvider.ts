@@ -32,21 +32,27 @@ export class ConfigProvider implements ConfigProviderInterface {
     return this._config;
   }
 
-  public async loadConfig(): Promise<void> {
-    const publicConfigObj = await this._objectClient.getForeignObjectAsync(
-      `system.adapter.${this._instanceConfig.instanceName}.${this._instanceConfig.instanceId}`,
-    );
-    if (!publicConfigObj) {
-      throw new ConfigError(
-        `Could not load adapter config for instance ${this._instanceConfig.instanceName}.${this._instanceConfig.instanceId}`,
+  public async loadConfig(config?: PublicConfigInterface): Promise<void> {
+    if (config) {
+      this._publicConfig = config;
+    } else {
+      const publicConfigObj = await this._objectClient.getForeignObjectAsync(
+        `system.adapter.${this._instanceConfig.instanceName}.${this._instanceConfig.instanceId}`,
       );
+      if (!publicConfigObj) {
+        throw new ConfigError(
+          `Could not load adapter config for instance ${this._instanceConfig.instanceName}.${this._instanceConfig.instanceId}`,
+        );
+      }
+      this._publicConfig = publicConfigObj.native as PublicConfigInterface;
     }
-    this._publicConfig = publicConfigObj.native as PublicConfigInterface;
+
     const unvalidatedConfig: ConfigInterface = {
       ...privateConfig,
       ...this._publicConfig,
       ...this._instanceConfig,
     } as ConfigInterface;
+
     await this._json.validateAgainstSchema(unvalidatedConfig, schema);
     this._config = unvalidatedConfig;
   }

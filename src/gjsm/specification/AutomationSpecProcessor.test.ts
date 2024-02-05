@@ -57,19 +57,25 @@ describe(nameof(AutomationSpecProcessor), () => {
       });
       it(`Should return filtered (duplicate free) states when filter type Function is given`, async () => {
         // GIVEN
-        const finalStates = StateFactory.statesWithId(3, 'xyz.testName');
+        // Setting up the states by function gathering
+        const finalStates = StateFactory.statesWithId(3, 'xyz.testName'); // --> not a state path
+        const finalState = StateFactory.statesWithId(1, 'xyz.123.testName')[0]; // --> state path
         finalStates.push(StateFactory.state());
         finalStates.push(StateFactory.statesWithId(1, 'xyz.testName2')[0]);
-        objectClientStub.getForeignObjectAsync.resolves({ common: { members: ['test'] } } as ObjectInterface);
+        objectClientStub.getForeignObjectAsync.resolves({ common: { members: ['test', 'test2'] } } as ObjectInterface);
+        objectClientStub.isObjectOfTypeState.onCall(0).resolves(false);
+        objectClientStub.isObjectOfTypeState.onCall(1).resolves(true);
+        objectClientStub.getForeignStateAsync.resolves(finalState);
         objectClientStub.getForeignStatesAsync.resolves(finalStates);
-        objectClientStub.getStateName.onCall(0).returns('testName');
+        // Setting up the filter by source state name
+        objectClientStub.getStateName.onCall(0).returns('testName'); // --> Call for state xyz.testName
+        objectClientStub.getStateName.onCall(3).returns('testName'); // --> Call for state xyz.123.testName
         // WHEN
         const result = await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
         // THEN
-        expect(result.length).to.equal(1);
-        result.forEach((state) => {
-          expect(state.id).to.equal('xyz.testName');
-        });
+        expect(result.length).to.equal(2);
+        expect(result[0].id).to.equal('xyz.testName');
+        expect(result[1].id).to.equal('xyz.123.testName');
       });
     },
   );

@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ObjectClient } from '../iob/ObjectClient';
+import { ObjectInterface } from '../iob/ObjectInterface';
 import { State } from '../iob/State';
 import { StateFactory } from '../iob/State.Factory.test';
 import { Logger } from '../logger/Logger';
@@ -9,6 +10,7 @@ import { GenericJsonStateManager } from './GenericJsonStateManager';
 import { AutomationRepository } from './automation_repository/AutomationRepository';
 import { ConfigInterfaceFactory } from './configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from './configuration/ConfigProvider';
+import { PublicConfigInterface } from './configuration/PublicConfigInterface';
 import { AutomationSpecInterface } from './specification/AutomationSpecInterface';
 import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecInterface.Factory.test';
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
@@ -53,12 +55,23 @@ describe(nameof(GenericJsonStateManager), () => {
         // THEN
         expect(configProviderStub.loadConfig).calledOnce;
       });
-      it(`Should subscribe to config states`, async () => {
+      it(`Should subscribe to automation states`, async () => {
         // GIVEN
         // WHEN
         await sut.initialize();
         // THEN
-        expect(objectClientStub.subscribeStatesAsync).calledOnce;
+        expect(objectClientStub.subscribeStatesAsync).calledOnceWithExactly(
+          configProviderStub.config.automationStatesPattern,
+        );
+      });
+      it(`Should subscribe to config objects`, async () => {
+        // GIVEN
+        // WHEN
+        await sut.initialize();
+        // THEN
+        expect(objectClientStub.subscribeForeignObjectsAsync).calledOnceWithExactly(
+          'system.adapter.' + configProviderStub.config.instanceName + '.' + configProviderStub.config.instanceId,
+        );
       });
     },
   );
@@ -273,6 +286,22 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(loggerStub.warn).calledWithMatch(/implemented/);
         expect(loggerStub.warn).calledWithMatch(/JSON path/);
         expect(loggerStub.warn).calledWithMatch(/target state/);
+      });
+    },
+  );
+  describe(
+    nameof<GenericJsonStateManager>((g) => g.handleObjectChange),
+    () => {
+      it(`Should load config`, async () => {
+        // GIVEN
+        const config = { createTargetStatesIfNotExist: true } as PublicConfigInterface;
+        // WHEN
+        await sut.handleObjectChange(
+          'system.adapter.' + configProviderStub.config.instanceName + '.' + configProviderStub.config.instanceId,
+          { native: config } as ObjectInterface,
+        );
+        // THEN
+        expect(configProviderStub.loadConfig).calledOnceWithExactly(config);
       });
     },
   );

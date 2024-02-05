@@ -1,5 +1,4 @@
 {
-    "gjsm adapter settings": "Ustawienia adaptera dla gjsm",
-    "option1": "opcja 1",
-    "option2": "Opcja 2"
+    "$CONFIG_CREATE_STATE_IF_NOT_EXISTS_LABEL": "Czy stany docelowe powinny zostać utworzone automatycznie, jeśli jeszcze nie istnieją?",
+    "$PANEL_GLOBAL_SETTINGS_LABEL": "Ustawienia ogólne"
 }
