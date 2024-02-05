@@ -80,6 +80,11 @@ export class ObjectClient implements ObjectClientInterface {
     const result = obj as ObjectInterface;
     return result;
   }
+
+  public async subscribeForeignObjectsAsync(pattern: string): Promise<void> {
+    await this._adapter.subscribeForeignObjectsAsync(pattern);
+  }
+
   //#endregion
 
   //#region state helper
@@ -108,7 +113,7 @@ export class ObjectClient implements ObjectClientInterface {
   private mapIoBrokerState(id: string, state: ioBroker.State): StateInterface {
     const result = {
       id: id,
-      val: state.val ?? null,
+      val: state.val /* c8 ignore next */ ?? null,
       ts: state.ts,
       ack: state.ack,
     } as StateInterface;

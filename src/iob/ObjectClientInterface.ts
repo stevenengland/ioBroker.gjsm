@@ -11,6 +11,7 @@ export interface ObjectClientInterface {
   subscribeStatesAsync(pattern: string): Promise<void>;
   subscribeForeignStatesAsync(pattern: string): Promise<void>;
   getForeignObjectAsync(id: string): Promise<ObjectInterface | null>;
+  subscribeForeignObjectsAsync(pattern: string): Promise<void>;
   getStateName(stateId: string): string;
   getStateParentId(stateId: string): string;
   getStateSiblingsIds(stateId: string): Promise<string[]>;

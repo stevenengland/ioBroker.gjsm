@@ -80,6 +80,10 @@ jobs:
         shell: bash
         run: npm run coverage
 
+      - name: Run maintenance checks
+        shell: bash
+        run: npm run maintenance
+
   # Runs adapter tests on all supported node versions and OSes
   adapter-integration-tests:
     if: contains(github.event.head_commit.message, '[skip ci]') == false

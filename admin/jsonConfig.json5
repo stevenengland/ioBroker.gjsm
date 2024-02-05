@@ -1,0 +1,21 @@
+{
+  type: 'tabs',
+  i18n: true,
+  items: {
+    // Global Settings
+    testTab: {
+      type: 'panel',
+      label: '$PANEL_GLOBAL_SETTINGS_LABEL',
+      items: {
+        createTargetStatesIfNotExist: {
+          newLine: true,
+          type: 'checkbox',
+          label: '$CONFIG_CREATE_STATE_IF_NOT_EXISTS_LABEL',
+          sm: 12,
+          md: 6,
+          lg: 2,
+        },
+      },
+    },
+  },
+}

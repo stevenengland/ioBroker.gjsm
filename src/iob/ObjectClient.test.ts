@@ -184,6 +184,21 @@ describe(nameof(ObjectClient), () => {
     },
   );
   describe(
+    nameof<ObjectClient>((s) => s.subscribeForeignObjectsAsync),
+    () => {
+      it(`Should not throw`, async () => {
+        // GIVEN
+        // WHEN
+        async function when() {
+          await sut.subscribeForeignObjectsAsync('*');
+        }
+        // THEN
+        await expect(when()).not.to.be.rejected;
+        expect(adapter.subscribeForeignObjectsAsync).to.be.calledOnce;
+      });
+    },
+  );
+  describe(
     nameof<ObjectClient>((s) => s.subscribeStatesAsync),
     () => {
       it(`Should not throw`, async () => {
@@ -194,6 +209,7 @@ describe(nameof(ObjectClient), () => {
         }
         // THEN
         await expect(when()).not.to.be.rejected;
+        expect(adapter.subscribeStatesAsync).to.be.calledOnce;
       });
     },
   );
@@ -208,6 +224,7 @@ describe(nameof(ObjectClient), () => {
         }
         // THEN
         await expect(when()).not.to.be.rejected;
+        expect(adapter.subscribeForeignStatesAsync).to.be.calledOnce;
       });
     },
   );
