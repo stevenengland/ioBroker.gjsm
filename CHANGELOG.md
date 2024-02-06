@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.1.0 - 2024-02-06
+
+### ioBroker GJSM Adapter 0.1.0
+
+#### Features
+
+- feat: add instance config UI + option to create target states @stevenengland ([#66](https://github.com/stevenengland/ioBroker.gjsm/pull/66))
+- feat: subscribe to config objects and enable admin config @stevenengland ([#63](https://github.com/stevenengland/ioBroker.gjsm/pull/63))
+
+#### Bug Fixes
+
+- fix(deps): bump actions/setup-node from 3 to 4 @dependabot ([#50](https://github.com/stevenengland/ioBroker.gjsm/pull/50))
+
+#### Documentation
+
+- docs(changelog): update changelog @github-actions ([#61](https://github.com/stevenengland/ioBroker.gjsm/pull/61))
+
+#### Dependencies
+
+- fix(deps): bump actions/setup-node from 3 to 4 @dependabot ([#50](https://github.com/stevenengland/ioBroker.gjsm/pull/50))
+
+**Full Changelog**: https://github.com/stevenengland/ioBroker.gjsm/compare/v0.0.2...0.1.0
+
 ## v0.0.2 - 2024-02-02
 
 ### ioBroker GJSM Adapter 0.0.2
@@ -31,10 +54,8 @@
 - ci: move c8 from prod to dev deps @stevenengland ([#14](https://github.com/stevenengland/ioBroker.gjsm/pull/14))
 - ci: fix and improve coverage @stevenengland ([#12](https://github.com/stevenengland/ioBroker.gjsm/pull/12))
 - ci: add custom commands for lint/test @stevenengland ([#11](https://github.com/stevenengland/ioBroker.gjsm/pull/11))
-
 </details>
 #### Dependencies
-
 <details>
 <summary>6 changes</summary>
 - fix(deps): bump jsonpath-plus from 7.2.0 to 8.0.0 @dependabot ([#40](https://github.com/stevenengland/ioBroker.gjsm/pull/40))
@@ -43,6 +64,5 @@
 - chore(deps-dev): bump typescript from 5.0.4 to 5.3.3 @dependabot ([#3](https://github.com/stevenengland/ioBroker.gjsm/pull/3))
 - chore(deps-dev): bump @<!---->typescript-eslint/eslint-plugin from 6.16.0 to 6.17.0 @dependabot ([#4](https://github.com/stevenengland/ioBroker.gjsm/pull/4))
 - chore(deps-dev): bump @<!---->typescript-eslint/parser from 6.16.0 to 6.17.0 @dependabot ([#2](https://github.com/stevenengland/ioBroker.gjsm/pull/2))
-
 </details>
 **Full Changelog**: https://github.com/stevenengland/ioBroker.gjsm/compare/...0.0.2
