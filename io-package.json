@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "gjsm",
-        "version": "0.0.2",
+        "version": "0.1.0",
         "news": {
+            "0.1.0": {
+                "en": "Added a configuration page (instance settings)\nAdded a configuration option that tells the adapter if a target state that does not exist shall automatically be created.",
+                "de": "Eine Konfigurationsseite hinzugefügt (Instanzeinstellungen)\nEs wurde eine Konfigurationsoption hinzugefügt, die dem Adapter mitteilt, ob automatisch ein nicht vorhandener Zielstatus erstellt werden soll.",
+                "ru": "Добавлена ​​страница конфигурации (настройки экземпляра)\nДобавлен параметр конфигурации, который сообщает адаптеру, должно ли автоматически создаваться несуществующее целевое состояние.",
+                "pt": "Adicionada uma página de configuração (configurações de instância)\nAdicionada uma opção de configuração que informa ao adaptador se um estado de destino que não existe deverá ser criado automaticamente.",
+                "nl": "Een configuratiepagina toegevoegd (instance-instellingen)\nEen configuratieoptie toegevoegd die de adapter vertelt of er automatisch een doelstatus moet worden aangemaakt die niet bestaat.",
+                "fr": "Ajout d'une page de configuration (paramètres de l'instance)\nAjout d'une option de configuration qui indique à l'adaptateur si un état cible qui n'existe pas doit être automatiquement créé.",
+                "it": "Aggiunta una pagina di configurazione (impostazioni dell'istanza)\nAggiunta un'opzione di configurazione che indica all'adattatore se verrà creato automaticamente uno stato di destinazione che non esiste.",
+                "es": "Se agregó una página de configuración (configuraciones de instancia)\nSe agregó una opción de configuración que le indica al adaptador si se creará automáticamente un estado de destino que no existe.",
+                "pl": "Dodano stronę konfiguracyjną (ustawienia instancji)\nDodano opcję konfiguracji, która informuje adapter, czy automatycznie zostanie utworzony stan docelowy, który nie istnieje.",
+                "uk": "Додано сторінку конфігурації (налаштування екземпляра)\nДодано опцію конфігурації, яка повідомляє адаптеру, чи потрібно автоматично створити цільовий стан, якого не існує.",
+                "zh-cn": "添加了配置页面（实例设置）\n添加了一个配置选项，告诉适配器是否应自动创建不存在的目标状态。"
+            },
             "0.0.2": {
                 "en": "This is the first release.\nBasic mapping from JSON source states to string|boolean|number target states.",
                 "de": "Dies ist die erste Veröffentlichung.\nGrundlegende Zuordnung von JSON-Quellzuständen zu Zielzuständen vom Typ „string|boolean|number“.",

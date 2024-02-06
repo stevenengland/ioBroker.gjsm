@@ -1,6 +1,6 @@
 {
   "name": "iobroker.gjsm",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Handle JSON states in a generic and configurative way without programming knowledge",
   "author": {
     "name": "StEn",
