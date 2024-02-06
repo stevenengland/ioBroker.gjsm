@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import ioPackage from '../../../io-package.json';
 import { Json } from '../../data_format/Json';
 import { ObjectClient } from '../../iob/ObjectClient';
+import { ObjectType } from '../../iob/types/ObjectType';
 import { nameof } from '../../utils/NameOf';
 import { ConfigError } from './ConfigError';
 import { ConfigProvider } from './ConfigProvider';
@@ -34,7 +35,7 @@ describe(nameof(ConfigProvider), () => {
     () => {
       it(`Should load and validate config`, async () => {
         // GIVEN
-        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} });
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} } as ObjectType);
         sut = new ConfigProvider(new Json(), instanceConfig, objectClientStub);
         // WHEN
         await sut.loadConfig();
@@ -56,7 +57,7 @@ describe(nameof(ConfigProvider), () => {
       });
       it(`Should throw if config is invalid`, async () => {
         // GIVEN
-        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} });
+        objectClientStub.getForeignObjectAsync.resolves({ native: publicConfig, common: {} } as ObjectType);
         jsonStub.validateAgainstSchema.throws(new Error('Invalid (JSON) syntax'));
         sut = new ConfigProvider(jsonStub, instanceConfig, objectClientStub);
         // WHEN

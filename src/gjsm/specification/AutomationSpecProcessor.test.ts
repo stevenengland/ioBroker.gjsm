@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ObjectClient } from '../../iob/ObjectClient';
-import { ObjectInterface } from '../../iob/ObjectInterface';
-import { StateFactory } from '../../iob/State.Factory.test';
+import { ObjectType } from '../../iob/types/ObjectType';
+import { StateFactory } from '../../iob/types/State.Factory.test';
 import { JsonPath } from '../../json_path/JsonPath';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterfaceFactory } from '../configuration/ConfigInterface.Factory.test';
@@ -49,7 +49,7 @@ describe(nameof(AutomationSpecProcessor), () => {
       });
       it(`Should return zero states when function object has no members`, async () => {
         // GIVEN
-        objectClientStub.getForeignObjectAsync.resolves({ common: {} } as ObjectInterface);
+        objectClientStub.getForeignObjectAsync.resolves({ common: {} } as ObjectType);
         // WHEN
         const when = async () => await sut.getFilteredSourceStates(FilterType.function, 'groupFilter', 'testName');
         // THEN
@@ -62,7 +62,7 @@ describe(nameof(AutomationSpecProcessor), () => {
         const finalState = StateFactory.statesWithId(1, 'xyz.123.testName')[0]; // --> state path
         finalStates.push(StateFactory.state());
         finalStates.push(StateFactory.statesWithId(1, 'xyz.testName2')[0]);
-        objectClientStub.getForeignObjectAsync.resolves({ common: { members: ['test', 'test2'] } } as ObjectInterface);
+        objectClientStub.getForeignObjectAsync.resolves({ common: { members: ['test', 'test2'] } } as ObjectType);
         objectClientStub.isObjectOfTypeState.onCall(0).resolves(false);
         objectClientStub.isObjectOfTypeState.onCall(1).resolves(true);
         objectClientStub.getForeignStateAsync.resolves(finalState);
@@ -82,8 +82,28 @@ describe(nameof(AutomationSpecProcessor), () => {
   describe(
     nameof<AutomationSpecProcessor>((s) => s.executeInstruction),
     () => {
+      it(`Should create an state's object`, async () => {
+        // GIVEN
+        objectClientStub.getStateParentId.returns('test.0.test');
+        jsonPathStub.getValues.returns(['testValue']);
+        configProviderStub.config.createTargetStatesIfNotExist = true;
+        const instruction = InstructionInterfaceFactory.createMapValueInstruction();
+        // WHEN
+        await sut.executeInstruction(StateFactory.state(), instruction);
+        // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
+        // THEN
+        expect(objectClientStub.setForeignObjectNotExistsAsync).calledWithMatch(
+          'test.0.test.' + instruction.map_value?.targetStateName,
+          {
+            _id: 'test.0.test.' + instruction.map_value?.targetStateName,
+            type: 'state',
+          },
+        );
+      });
       it(`Should fail if target state is not found`, async () => {
         // GIVEN
+        jsonPathStub.getValues.returns(['testValue']);
+        configProviderStub.config.createTargetStatesIfNotExist = false;
         // WHEN
         const result = await sut.executeInstruction(
           StateFactory.state(),
@@ -92,6 +112,33 @@ describe(nameof(AutomationSpecProcessor), () => {
         // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
         // THEN
         expect(result).to.equal(ExecutionResult.targetStateNotFound);
+      });
+      it(`Should fail if target state is an alias`, async () => {
+        // GIVEN
+        objectClientStub.getStateParentId.returns('alias.');
+        jsonPathStub.getValues.returns(['testValue']);
+        configProviderStub.config.createTargetStatesIfNotExist = true;
+        // WHEN
+        const result = await sut.executeInstruction(
+          StateFactory.state(),
+          InstructionInterfaceFactory.createMapValueInstruction(),
+        );
+        // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
+        // THEN
+        expect(result).to.equal(ExecutionResult.targetStateCreateAliasNotSupported);
+      });
+      it(`Should fail if source value type is not supported`, async () => {
+        // GIVEN
+        objectClientStub.getForeignStateAsync.resolves(StateFactory.state());
+        jsonPathStub.getValues.returns([{ test: 'testValueAsNotSupportedObject' }]);
+        // WHEN
+        const result = await sut.executeInstruction(
+          StateFactory.state(),
+          InstructionInterfaceFactory.createMapValueInstruction(),
+        );
+        // const result = await sut.executeInstruction(StateFactory.state(), new MapValueInstruction());
+        // THEN
+        expect(result).to.equal(ExecutionResult.sourceValueFormatNotSupported);
       });
       it(`Should fail if jsonpath for target value does not match`, async () => {
         // GIVEN

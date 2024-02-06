@@ -1,8 +1,8 @@
 import * as utils from '@iobroker/adapter-core';
 import { ObjectClientInterface } from './ObjectClientInterface';
-import { ObjectInterface } from './ObjectInterface';
-import { State } from './State';
-import { StateInterface } from './StateInterface';
+import { ObjectType } from './types/ObjectType';
+import { State } from './types/State';
+import { StateInterface } from './types/StateInterface';
 
 export class ObjectClient implements ObjectClientInterface {
   private readonly _adapter: utils.AdapterInstance;
@@ -71,13 +71,13 @@ export class ObjectClient implements ObjectClientInterface {
   //#endregion
 
   //#region object retrieval
-  public async getForeignObjectAsync(id: string): Promise<ObjectInterface | null> {
+  public async getForeignObjectAsync(id: string): Promise<ObjectType | null> {
     const obj = await this._adapter.getForeignObjectAsync(id, {});
     if (!obj) {
       // throw new IobError(`Object with ${id} not found`);
       return null;
     }
-    const result = obj as ObjectInterface;
+    const result = obj as ObjectType;
     return result;
   }
 
@@ -85,6 +85,9 @@ export class ObjectClient implements ObjectClientInterface {
     await this._adapter.subscribeForeignObjectsAsync(pattern);
   }
 
+  public async setForeignObjectNotExistsAsync(id: string, obj: ObjectType): Promise<void> {
+    await this._adapter.setForeignObjectNotExistsAsync(id, obj);
+  }
   //#endregion
 
   //#region state helper

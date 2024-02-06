@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ObjectClient } from '../iob/ObjectClient';
-import { ObjectInterface } from '../iob/ObjectInterface';
-import { State } from '../iob/State';
-import { StateFactory } from '../iob/State.Factory.test';
+import { ObjectType } from '../iob/types/ObjectType';
+import { State } from '../iob/types/State';
+import { StateFactory } from '../iob/types/State.Factory.test';
 import { Logger } from '../logger/Logger';
 import { nameof } from '../utils/NameOf';
 import { GenericJsonStateManager } from './GenericJsonStateManager';
@@ -275,7 +275,11 @@ describe(nameof(GenericJsonStateManager), () => {
         specProcessorStub.executeInstruction.onCall(1).resolves(ExecutionResult.success);
         specProcessorStub.executeInstruction.onCall(2).resolves(ExecutionResult.jsonPathNoMatch);
         specProcessorStub.executeInstruction.onCall(3).resolves(ExecutionResult.targetStateNotFound);
+        specProcessorStub.executeInstruction.onCall(4).resolves(ExecutionResult.targetStateCreateAliasNotSupported);
+        specProcessorStub.executeInstruction.onCall(5).resolves(ExecutionResult.sourceValueFormatNotSupported);
         // WHEN
+        await sut.handleStateChange('test', StateFactory.state());
+        await sut.handleStateChange('test', StateFactory.state());
         await sut.handleStateChange('test', StateFactory.state());
         await sut.handleStateChange('test', StateFactory.state());
         await sut.handleStateChange('test', StateFactory.state());
@@ -285,7 +289,9 @@ describe(nameof(GenericJsonStateManager), () => {
         expect(loggerStub.debug).calledWithMatch(/executed/);
         expect(loggerStub.warn).calledWithMatch(/implemented/);
         expect(loggerStub.warn).calledWithMatch(/JSON path/);
-        expect(loggerStub.warn).calledWithMatch(/target state/);
+        expect(loggerStub.warn).calledWithMatch(/found no target state/);
+        expect(loggerStub.warn).calledWithMatch(/alias/);
+        expect(loggerStub.warn).calledWithMatch(/format/);
       });
     },
   );
@@ -298,7 +304,7 @@ describe(nameof(GenericJsonStateManager), () => {
         // WHEN
         await sut.handleObjectChange(
           'system.adapter.' + configProviderStub.config.instanceName + '.' + configProviderStub.config.instanceId,
-          { native: config } as ObjectInterface,
+          { native: config } as ObjectType,
         );
         // THEN
         expect(configProviderStub.loadConfig).calledOnceWithExactly(config);

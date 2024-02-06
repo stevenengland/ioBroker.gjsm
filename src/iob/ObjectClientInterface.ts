@@ -1,5 +1,5 @@
-import { ObjectInterface } from './ObjectInterface';
-import { StateInterface } from './StateInterface';
+import { ObjectType } from './types/ObjectType';
+import { StateInterface } from './types/StateInterface';
 
 export interface ObjectClientInterface {
   getStatesAsync(pattern: string): Promise<StateInterface[]>;
@@ -10,8 +10,9 @@ export interface ObjectClientInterface {
   existsStateAsync(id: string): Promise<boolean>;
   subscribeStatesAsync(pattern: string): Promise<void>;
   subscribeForeignStatesAsync(pattern: string): Promise<void>;
-  getForeignObjectAsync(id: string): Promise<ObjectInterface | null>;
+  getForeignObjectAsync(id: string): Promise<ObjectType | null>;
   subscribeForeignObjectsAsync(pattern: string): Promise<void>;
+  setForeignObjectNotExistsAsync(id: string, obj: ObjectType): Promise<void>;
   getStateName(stateId: string): string;
   getStateParentId(stateId: string): string;
   getStateSiblingsIds(stateId: string): Promise<string[]>;

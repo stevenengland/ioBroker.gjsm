@@ -3,4 +3,6 @@ export enum ExecutionResult {
   instructionNotImplemented,
   jsonPathNoMatch,
   targetStateNotFound,
+  targetStateCreateAliasNotSupported,
+  sourceValueFormatNotSupported,
 }

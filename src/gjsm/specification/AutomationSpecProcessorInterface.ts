@@ -1,5 +1,5 @@
-import { State } from '../../iob/State';
-import { StateInterface } from '../../iob/StateInterface';
+import { State } from '../../iob/types/State';
+import { StateInterface } from '../../iob/types/StateInterface';
 import { FilterType } from './FilterType';
 import { ExecutionResult } from './instructions/ExecutionResult';
 import { InstructionInterface } from './instructions/InstructionInterface';

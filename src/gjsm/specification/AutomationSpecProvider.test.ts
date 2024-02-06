@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { Json } from '../../data_format/Json';
 import { Yaml } from '../../data_format/Yaml';
 import { ObjectClient } from '../../iob/ObjectClient';
-import { StateFactory } from '../../iob/State.Factory.test';
+import { StateFactory } from '../../iob/types/State.Factory.test';
 import { nameof } from '../../utils/NameOf';
 import { ConfigInterface } from '../configuration/ConfigInterface';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
