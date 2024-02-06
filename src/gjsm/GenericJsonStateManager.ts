@@ -2,8 +2,8 @@ import { unpackError } from '../error/ErrorHandling';
 import { ErrorParameterAdditionsInterface } from '../error/ErrorParameterAdditionsInterface';
 import { EventEmitter } from '../events/EventEmitter';
 import { ObjectClientInterface } from '../iob/ObjectClientInterface';
-import { ObjectInterface } from '../iob/ObjectInterface';
-import { State } from '../iob/State';
+import { ObjectType } from '../iob/types/ObjectType';
+import { State } from '../iob/types/State';
 import { LoggerInterface } from '../logger/LoggerInterface';
 import { GenericJsonStateManagerInterface } from './GenericJsonStateManagerInterface';
 import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
@@ -147,6 +147,16 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
           case ExecutionResult.targetStateNotFound:
             this._logger.warn(`Instruction ${automationName} for state ${id} found no target state.`);
             break;
+          case ExecutionResult.targetStateCreateAliasNotSupported:
+            this._logger.warn(
+              `Instruction ${automationName} for state ${id} cannot create the target state because alias creation is not supported.`,
+            );
+            break;
+          case ExecutionResult.sourceValueFormatNotSupported:
+            this._logger.warn(
+              `Instruction ${automationName} for state ${id} cannot process the source value because the format is not supported (neither string, boolean nor number).`,
+            );
+            break;
           default:
             this._logger.warn(`Instruction ${automationName}} for state ${id} returned an unexpected result.`);
         }
@@ -156,7 +166,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     }
   }
 
-  public async handleObjectChange(id: string, obj: ObjectInterface): Promise<void> {
+  public async handleObjectChange(id: string, obj: ObjectType): Promise<void> {
     if (
       id ==
       'system.adapter.' + this._configProvider.config.instanceName + '.' + this._configProvider.config.instanceId

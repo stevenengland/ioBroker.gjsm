@@ -19,8 +19,8 @@ export class ConfigInterfaceBuilder implements Builder {
       automationStatesPattern: faker.helpers.fromRegExp(/adapter.[0-9]{1}.\*/),
       functionsNamespace: faker.helpers.fromRegExp(/enum.functions/),
       createTargetStatesIfNotExist: faker.datatype.boolean(),
-      instanceId: faker.datatype.number(),
-      instanceName: faker.name.firstName(),
+      instanceId: faker.number.int(),
+      instanceName: faker.person.firstName(),
       infoNamespace: faker.helpers.fromRegExp(/info/),
       infoStateProcessAutomationReadyness: faker.helpers.fromRegExp(/processAutomationReadyness/),
     };

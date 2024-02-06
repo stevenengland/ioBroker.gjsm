@@ -31,7 +31,8 @@ import { AutomationSpecProcessor } from './gjsm/specification/AutomationSpecProc
 import { AutomationSpecProcessorInterface } from './gjsm/specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './gjsm/specification/AutomationSpecProviderInterface';
 import { ObjectClientInterface } from './iob/ObjectClientInterface';
-import { State } from './iob/State';
+import { ObjectType } from './iob/types/ObjectType';
+import { State } from './iob/types/State';
 import { JsonPath } from './json_path/JsonPath';
 import { JsonPathInterface } from './json_path/JsonPathInterface';
 import { LoggerInterface } from './logger/LoggerInterface';
@@ -147,7 +148,7 @@ class Gjsm extends utils.Adapter {
     try {
       if (obj) {
         // The state was changed
-        await this._gjsm?.handleObjectChange(id, obj);
+        await this._gjsm?.handleObjectChange(id, obj as ObjectType);
       } else {
         // The state was deleted
         this.log.debug(`Subscribed object ${id} was deleted`);

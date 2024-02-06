@@ -1,6 +1,6 @@
 import { EventEmitter } from '../events/EventEmitter';
-import { ObjectInterface } from '../iob/ObjectInterface';
-import { State } from '../iob/State';
+import { ObjectType } from '../iob/types/ObjectType';
+import { State } from '../iob/types/State';
 import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap';
 import { PublicConfigInterface } from './configuration/PublicConfigInterface';
 
@@ -12,5 +12,5 @@ export interface GenericJsonStateManagerInterface {
   loadAutomationDefinitions(): Promise<void>;
   createSubscriptionsAndRepositoryForSourceStates(): Promise<void>;
   handleStateChange(id: string, state: State): Promise<void>;
-  handleObjectChange(id: string, obj: ObjectInterface): Promise<void>;
+  handleObjectChange(id: string, obj: ObjectType): Promise<void>;
 }

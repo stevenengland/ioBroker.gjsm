@@ -1,7 +1,8 @@
 import { ObjectClientInterface } from '../../iob/ObjectClientInterface';
-import { State } from '../../iob/State';
-import { StateInterface } from '../../iob/StateInterface';
-import { StateValueType } from '../../iob/StateValueType';
+import { State } from '../../iob/types/State';
+import { StateCommonInterface } from '../../iob/types/StateCommonInterface';
+import { StateInterface } from '../../iob/types/StateInterface';
+import { StateValueType } from '../../iob/types/StateValueType';
 import { JsonPathInterface } from '../../json_path/JsonPathInterface';
 import { ConfigProviderInterface } from '../configuration/ConfigProviderInterface';
 import { AutomationError } from './AutomationError';
@@ -89,13 +90,8 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
   }
 
   private async mapValue(sourceState: State, instruction: MapValueInterface): Promise<ExecutionResult> {
-    const targetState = await this._objectClient.getForeignStateAsync(
-      this._objectClient.getStateParentId(sourceState.id) + '.' + instruction.targetStateName,
-    );
-    if (!targetState) {
-      // TODO: If create state is allowed, create the state. Before creating the state, check if the object exists.
-      return ExecutionResult.targetStateNotFound;
-    }
+    const targetStateId = this._objectClient.getStateParentId(sourceState.id) + '.' + instruction.targetStateName;
+    let targetState = await this._objectClient.getForeignStateAsync(targetStateId);
 
     // Get and test target value
     const targetValues = this._jsonPath.getValues(instruction.jsonPathVal, sourceState.val as string);
@@ -103,9 +99,38 @@ export class AutomationSpecProcessor implements AutomationSpecProcessorInterface
       return ExecutionResult.jsonPathNoMatch;
     }
 
-    // TODO: Target value validation.
-    targetState.val = targetValues[0] as StateValueType;
+    const targetStateType = typeof targetValues[0];
+    if (
+      typeof targetValues[0] !== 'string' &&
+      typeof targetValues[0] !== 'number' &&
+      typeof targetValues[0] !== 'boolean'
+    ) {
+      return ExecutionResult.sourceValueFormatNotSupported;
+    }
 
+    if (!targetState) {
+      targetState = { id: targetStateId } as StateInterface;
+      if (!this._configProvider.config.createTargetStatesIfNotExist) {
+        return ExecutionResult.targetStateNotFound;
+      }
+      if (targetStateId.startsWith('alias.')) {
+        return ExecutionResult.targetStateCreateAliasNotSupported;
+      }
+
+      await this._objectClient.setForeignObjectNotExistsAsync(targetStateId, {
+        _id: targetStateId,
+        type: 'state',
+        native: {},
+        common: {
+          role: 'state',
+          read: true,
+          write: true,
+          type: targetStateType,
+        } as StateCommonInterface,
+      });
+    }
+
+    targetState.val = targetValues[0] as StateValueType;
     targetState.ack = true;
 
     await this._objectClient.setForeignStateAsync(targetState);

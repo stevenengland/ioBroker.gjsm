@@ -2,7 +2,7 @@ import { TestHarness } from '@iobroker/testing/build/tests/integration/lib/harne
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import os from 'os';
-import { StateInterface } from '../../src/iob/StateInterface';
+import { StateInterface } from '../../src/iob/types/StateInterface';
 
 export function delay(time: number | undefined) {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -10,6 +10,13 @@ export function delay(time: number | undefined) {
 
 export interface StateChangeExpectation {
   newVal?: unknown;
+}
+
+export async function changeAdapterConfigVars(harness: TestHarness, config: unknown, adapterName?: string) {
+  if (adapterName === undefined) {
+    adapterName = harness.adapterName;
+  }
+  await harness.changeAdapterConfig(adapterName, { native: config });
 }
 
 export async function waitForStateChange(harness: TestHarness, targetId: string, expectation: StateChangeExpectation) {
@@ -44,6 +51,11 @@ export async function setStateAsync(
 ): Promise<StateInterface> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   return await harness.states.setStateAsync(id, state, ack);
+}
+
+export async function getObjectAsync(harness: TestHarness, id: string): Promise<ioBroker.Object> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  return await harness.objects.getObjectAsync(id);
 }
 
 export async function insertObjectsToDb(harness: TestHarness, objects: ioBroker.Object[]) {

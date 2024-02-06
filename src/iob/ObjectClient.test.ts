@@ -5,8 +5,9 @@ import sinon from 'sinon';
 import { delay } from '../../test/integration_tests/TestTools';
 import { nameof } from '../utils/NameOf';
 import { ObjectClient } from './ObjectClient';
-import { State } from './State';
-import { StateFactory } from './State.Factory.test';
+import { ObjectType } from './types/ObjectType';
+import { State } from './types/State';
+import { StateFactory } from './types/State.Factory.test';
 
 describe(nameof(ObjectClient), () => {
   let sut: ObjectClient;
@@ -180,6 +181,24 @@ describe(nameof(ObjectClient), () => {
         const result = await sut.getForeignObjectAsync('*');
         // THEN
         expect(result).to.equal(null);
+      });
+    },
+  );
+  describe(
+    nameof<ObjectClient>((s) => s.setForeignObjectNotExistsAsync),
+    () => {
+      it(`Should call adapter with predefined object`, async () => {
+        // GIVEN
+        const record: ObjectType = {
+          _id: 'system.adapter.test.0',
+          type: 'state',
+          common: { name: 'test', read: true, write: true, role: 'value', type: 'number' },
+          native: {},
+        };
+        // WHEN
+        await sut.setForeignObjectNotExistsAsync('*', record as ObjectType);
+        // THEN
+        expect(adapter.setForeignObjectNotExistsAsync).to.be.calledOnceWithExactly('*', record);
       });
     },
   );

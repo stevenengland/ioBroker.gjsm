@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { nameof } from '../utils/NameOf';
+import { nameof } from '../../utils/NameOf';
 import { State } from './State';
 import { StateValueType } from './StateValueType';
 
