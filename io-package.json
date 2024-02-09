@@ -91,7 +91,26 @@
         "connectionType": "local",
         "dataSource": "push",
         "adminUI": {
-            "config": "json"
+            "config": "json",
+            "tab": "materialize"
+        },
+        "adminTab": {
+            "singleton": false,
+            "name": {
+                "en": "GJSM",
+                "de": "GJSM",
+                "ru": "GJSM",
+                "pt": "GJSM",
+                "nl": "GJSM",
+                "fr": "GJSM",
+                "it": "GJSM",
+                "es": "GJSM",
+                "pl": "GJSM",
+                "uk": "GJSM",
+                "zh-cn": "GJSM"
+            },
+            "link": "",
+            "fa-icon": "info"
         },
         "dependencies": [
             {

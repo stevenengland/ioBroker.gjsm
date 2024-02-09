@@ -10,6 +10,12 @@ nbproject
 # ioBroker artifacts
 build/
 
+# test artifacts
+test/integration_tests_ui/screenshots/
+
+# NYC coverage files
+coverage
+
 # special to this repo
 news.txt
 
@@ -17,9 +23,6 @@ news.txt
 iobroker.*.tgz
 
 Thumbs.db
-
-# NYC coverage files
-coverage
 
 # i18n intermediate files
 admin/i18n/flat.txt

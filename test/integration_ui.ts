@@ -1,10 +1,16 @@
 import { v2 as compose } from 'docker-compose';
+import fs from 'fs';
 import { describe } from 'mocha';
 import path from 'path';
 import { Browser, Builder, By, WebDriver, until } from 'selenium-webdriver';
 
 const shutUpDownTimeout = 600000; // 10 minutes
 const stdTestTimeout = 60000; // 1 minute
+
+const screenShotDir = './test/integration_tests_ui/screenshots/';
+fs.mkdir(screenShotDir, { recursive: true }, (err) => {
+  if (err) throw err;
+});
 
 describe('UI Tests', function () {
   let driver: WebDriver;
@@ -72,7 +78,7 @@ describe('UI Tests', function () {
     driver = await new Builder().usingServer(server).forBrowser(browser).build();
   }
 
-  async function checkWebSiteAvailable(url: string, maxTime = 5): Promise<void> {
+  async function checkWebSiteAvailable(url: string, maxTime = 5, log = false): Promise<void> {
     let attempts = 0;
     while (attempts < maxTime) {
       try {
@@ -81,19 +87,27 @@ describe('UI Tests', function () {
           console.log(`Webpage ${url} is available!`);
           return;
         }
-      } catch (error) {}
+      } catch (error) {
+        if (log) {
+          console.log(`Attempt ${attempts} to check the availability of ${url} ...`);
+          console.log('Error: ', error as Error);
+        }
+      }
       attempts++;
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     console.log(`Webpage ${url} is not available!`);
   }
 
-  afterEach(async () => {
+  afterEach(async function () {
     // close browser
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (driver) {
-      // Take a screenshot of the result page
-      // [..]
+      console.log('Taking screenshot of the result ...');
+      const screenShotName = `${screenShotDir}/after_${this.currentTest?.title}.png`;
+      await driver.takeScreenshot().then(function (image) {
+        fs.writeFileSync(screenShotName, image, 'base64');
+      });
 
       // Close the browser
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -111,5 +125,11 @@ describe('UI Tests', function () {
     const title = await driver.getTitle();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     console.log('Title: ', title);
+
+    /*
+    <h2 class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-ohyacs" id=":re:">You have unread news!</h2>
+    <button class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium css-1vannuk" tabindex="0" type="button"><span class="MuiButton-startIcon MuiButton-iconSizeMedium css-6xugel"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckIcon"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg></span>Acknowledge<span class="MuiTouchRipple-root css-w0pj6f"></span></button>
+    <div style="cursor: move; opacity: 1;" draggable="true" data-handler-id="T18"><a type="box" href="/#tab-gjsm-0" style="cursor: move; opacity: 1; color: inherit; text-decoration: none;" data-handler-id="T18"><div style="display: flex; align-items: center;"><div class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1gqh6g9" tabindex="0" role="button"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 iob40 css-11hlwqc" aria-label=""><div class="MuiGrid-root MuiGrid-item css-1wxaqej"><div class="MuiListItemIcon-root css-5n5rd1" style="min-width: 0px;"><span class="MuiBadge-root css-1rzb3uu"><img class="iob19 iconOwn" src="adapter/gjsm/gjsm.png" alt=""><span class="MuiBadge-badge MuiBadge-standard MuiBadge-invisible MuiBadge-anchorOriginTopRight MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorPrimary css-aava0t">0</span></span></div></div><div class="MuiGrid-root MuiGrid-item css-1wxaqej"><div class="MuiListItemText-root css-1tsvksn"><span class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-yb0lig"><span class="MuiBadge-root css-1rzb3uu">GJSM<span class="MuiBadge-badge MuiBadge-standard MuiBadge-invisible MuiBadge-anchorOriginTopRight MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorPrimary css-aava0t">0</span></span></span></div></div></div><span class="MuiTouchRipple-root css-w0pj6f"></span></div></div></a></div>
+     */
   });
 });
