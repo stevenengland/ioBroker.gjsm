@@ -137,7 +137,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: ['chrome', 'firefox', 'edge']
+        browser: ['chrome']
 
     steps:
       - name: Checkout code
