@@ -38,6 +38,10 @@ npm cache ls | grep gjsm | xargs npm cache clean && npm run build && dev-server 
 `npm run devserver:preparation -- --db_only=true --profile=integration`: Prepare a dev-server scenario for integration testing - but only prepare the db.
 `dev-server watch integration`: Start a watch mode server for the integration scenario.
 
+### UI tests
+
+`BROWSER=firefox npm run test:ui`: Run the UI tests with a specific browser
+
 ## Pattern
 
 ### Catching errors
