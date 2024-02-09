@@ -53,19 +53,12 @@ describe('UI Tests', function () {
     let browser = process.env.BROWSER;
     switch (browser) {
       case 'chrome':
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         browser = Browser.CHROME;
         break;
       case 'firefox':
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         browser = Browser.FIREFOX;
         break;
-      // case 'edge':
-      //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      //   browser = Browser.EDGE;
-      //   break;
       default:
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         browser = Browser.CHROME;
     }
 
@@ -74,7 +67,6 @@ describe('UI Tests', function () {
 
   async function setDriver(browser: string): Promise<void> {
     const server = 'http://localhost:4444/';
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     driver = await new Builder().usingServer(server).forBrowser(browser).build();
   }
 
@@ -100,30 +92,22 @@ describe('UI Tests', function () {
   }
 
   afterEach(async function () {
-    // close browser
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (driver) {
-      console.log('Taking screenshot of the result ...');
-      const screenShotName = `${screenShotDir}/after_${this.currentTest?.title}.png`;
-      await driver.takeScreenshot().then(function (image) {
-        fs.writeFileSync(screenShotName, image, 'base64');
-      });
+    console.log('Taking screenshot of the result ...');
+    const screenShotName = `${screenShotDir}/after_${this.currentTest?.title}.png`;
+    await driver.takeScreenshot().then(function (image) {
+      fs.writeFileSync(screenShotName, image, 'base64');
+    });
 
-      // Close the browser
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await driver.quit();
-    }
+    // Close the browser
+    await driver.quit();
   });
 
   it('should open the app and check the title', async () => {
     // Open the app
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await driver.get('http://iobroker-dev-server:8081');
     await driver.wait(until.elementLocated(By.xpath('/html')), 20000);
     // Check the title
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
     const title = await driver.getTitle();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     console.log('Title: ', title);
 
     /*
