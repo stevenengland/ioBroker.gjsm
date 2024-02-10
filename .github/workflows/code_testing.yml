@@ -60,7 +60,7 @@ jobs:
         with:
           node-version: ${{ needs.configure.outputs.NODE_VERSION }}
 
-      - name: Install Dependencies
+      - name: Install Node Dependencies
         shell: bash
         run: 'npm ci'
 
@@ -112,7 +112,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Dependencies
+      - name: Install Node Dependencies
         shell: bash
         run: npm ci
 
@@ -125,3 +125,49 @@ jobs:
         run: npm run test:integration -- --controller-version=${{ matrix.js-controller-version }}
         env:
           DEBUG: 'testing:*'
+
+  # Runs adapter UI tests
+  adapter-ui-tests:
+    if: contains(github.event.head_commit.message, '[skip ci]') == false
+
+    needs: [configure, check_lint_unit-test]
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ['chrome', 'firefox']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ needs.configure.outputs.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.configure.outputs.NODE_VERSION }}
+
+      - name: Install system packages
+        shell: bash
+        run: sudo apt install -y docker-compose
+
+      - name: Install Node Dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Create a clean build
+        shell: bash
+        run: npm run build
+
+      - name: Login to Docker Hub (via docker login command)
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN_RO }}
+
+      - name: Run ui tests
+        shell: bash
+        run: npm run test:ui
+        env:
+          BROWSER: ${{ matrix.browser }}
