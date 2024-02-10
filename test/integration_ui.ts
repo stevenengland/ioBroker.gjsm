@@ -2,24 +2,29 @@ import { v2 as compose } from 'docker-compose';
 import fs from 'fs';
 import { describe } from 'mocha';
 import path from 'path';
-import { Browser, Builder, By, WebDriver, until } from 'selenium-webdriver';
+import { By, WebDriver, until } from 'selenium-webdriver';
+import { checkPortAvailable, checkWebSiteAvailable, setDriver } from './integration_tests_ui/UiTestTools';
 
 const shutUpDownTimeout = 600000; // 10 minutes
 const stdTestTimeout = 60000; // 1 minute
+
+const controlServer = 'localhost';
+const controlServerPort = 4444;
 
 const screenShotDir = './test/integration_tests_ui/screenshots/';
 fs.mkdir(screenShotDir, { recursive: true }, (err) => {
   if (err) throw err;
 });
 
-describe('UI Tests', function () {
-  let driver: WebDriver;
-  const config: compose.IDockerComposeOptions = {
-    cwd: path.join(__dirname),
-    config: '../docker/dev-server_ui_tests/dev-server_and_selenium-grid.yml',
-    log: true,
-  };
+let driver: WebDriver; // To save resources always use just one WebDriver instance
 
+const config: compose.IDockerComposeOptions = {
+  cwd: path.join(__dirname),
+  config: '../docker/dev-server_ui_tests/dev-server_and_selenium-grid.yml',
+  log: true,
+};
+
+describe('UI Tests', function () {
   this.timeout(stdTestTimeout);
 
   before(async function () {
@@ -33,8 +38,15 @@ describe('UI Tests', function () {
     console.log('Out: ', upResult.out);
     console.log('Err: ', upResult.err);
 
-    console.log('Waiting for the server to be available ...');
-    await checkWebSiteAvailable('http://localhost:8081', shutUpDownTimeout / 1000);
+    console.log('(-) Waiting for the server to be available ...');
+    console.log('(1) Checking availabiliy of control server ...');
+    await checkPortAvailable(controlServerPort, controlServer, 30);
+    console.log('(2) Setting driver ...');
+    driver = await setDriver(controlServer, controlServerPort, 60);
+    console.log('(3) Checking availabiliy of the web site ...');
+    await checkWebSiteAvailable(driver, 'http://iobroker-dev-server:8081', shutUpDownTimeout / 1000);
+    console.log('The server is now available!');
+    await driver.quit();
   });
 
   after(async function () {
@@ -49,47 +61,8 @@ describe('UI Tests', function () {
   });
 
   beforeEach(async () => {
-    // setup browser
-    let browser = process.env.BROWSER;
-    switch (browser) {
-      case 'chrome':
-        browser = Browser.CHROME;
-        break;
-      case 'firefox':
-        browser = Browser.FIREFOX;
-        break;
-      default:
-        browser = Browser.CHROME;
-    }
-
-    await setDriver(browser);
+    driver = await setDriver(controlServer, controlServerPort);
   });
-
-  async function setDriver(browser: string): Promise<void> {
-    const server = 'http://localhost:4444/';
-    driver = await new Builder().usingServer(server).forBrowser(browser).build();
-  }
-
-  async function checkWebSiteAvailable(url: string, maxTime = 5, log = false): Promise<void> {
-    let attempts = 0;
-    while (attempts < maxTime) {
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          console.log(`Webpage ${url} is available!`);
-          return;
-        }
-      } catch (error) {
-        if (log) {
-          console.log(`Attempt ${attempts} to check the availability of ${url} ...`);
-          console.log('Error: ', error as Error);
-        }
-      }
-      attempts++;
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-    console.log(`Webpage ${url} is not available!`);
-  }
 
   afterEach(async function () {
     console.log('Taking screenshot of the result ...');
