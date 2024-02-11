@@ -1,11 +1,23 @@
+// Specialized tsconfig for the admin directory,
+// includes DOM typings and configures the admin build
 {
-    "extends": "../tsconfig.json",
-    "include": [
-        "./admin.d.ts",
-        "./**/*.js",
-        // Include the adapter-config definition if it exists.
-        // It should be at either on of these paths:
-        "../lib/adapter-config.d.ts", // JS
-        "../src/lib/adapter-config.d.ts" // TS
-    ]
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./build",
+    "sourceMap": true,
+    "sourceRoot": "./src",
+    "noImplicitAny": false,
+    "lib": ["ES2018", "DOM"]
+  },
+  "include": [
+    "./admin.d.ts",
+    // "./**/*.js", // We don't want to check/build JS files in the admin directory
+    "./**/*.ts",
+    // Include the adapter-config definition if it exists.
+    // It should be at either on of these paths:
+    "../lib/adapter-config.d.ts", // JS
+    "../src/lib/adapter-config.d.ts" // TS
+  ],
+  "exclude": ["./**/*.test.ts"]
 }

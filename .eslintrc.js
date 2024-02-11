@@ -12,7 +12,7 @@ module.exports = {
     'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
   plugins: [],
-  ignorePatterns: ['tools/**/*.js'],
+  ignorePatterns: ['tools/**/*.js', 'admin/admin.d.ts'],
   rules: {
     '@typescript-eslint/naming-convention': [
       'error',
