@@ -78,7 +78,7 @@
   "scripts": {
     "prebuild": "npm run prebuild:ts && npm run prebuild:ui",
     "prebuild:ts": "rimraf build",
-    "prebuild:ui": "rimraf build admin/build",
+    "prebuild:ui": "rimraf admin/build",
     "build": "npm run build:ts && npm run build:ui",
     "watch": "build-adapter ts --watch",
     "build:ts": "build-adapter ts",
