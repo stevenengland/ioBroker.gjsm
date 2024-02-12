@@ -95,7 +95,7 @@
     "lint": "npm run lint:src && npm run lint:test && npm run lint:ui",
     "maintenance": "node tools/CheckTranslations.js",
     "prettier-format": "prettier --config .prettierrc.js 'src/**/*.ts' --write",
-    "pre-push": "npm run check && npm run maintenance && npm run build && npm run lint && npm run coverage && npm run test:package && npm run test:integration",
+    "pre-push": "npm run check && npm run maintenance && npm run build && npm run lint && npm run coverage && npm run test:package && npm run test:integration && npm run test:ui",
     "release": "release-script",
     "test:ts": "mocha --config .mocharc.json",
     "test:package": "mocha --no-config --require ts-node/register test/package.ts --exit",
