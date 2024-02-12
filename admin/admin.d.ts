@@ -40,7 +40,11 @@ interface ioBrokerSocket {
     options: ioBroker.GetObjectViewParams,
     callback: (err: string | undefined, result?: any) => void | Promise<void>,
   ): void;
-  emit(event: 'getStates', callback: (err: string | undefined, result?: Record<string, any>) => void): void;
+  emit(
+    event: 'getStates',
+    pattern: string,
+    callback: (err: string | undefined, result?: Record<string, any>) => void,
+  ): void;
   emit(event: 'getState', id: string, callback: (err: string | undefined, result?: ioBroker.State) => void): void;
   emit(event: 'setState', id: string, state: unknown, callback: (err: string | undefined, result?: any) => void): void;
 
