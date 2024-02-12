@@ -11,6 +11,7 @@ import { AutomationRepository } from './automation_repository/AutomationReposito
 import { ConfigInterfaceFactory } from './configuration/ConfigInterface.Factory.test';
 import { ConfigProvider } from './configuration/ConfigProvider';
 import { PublicConfigInterface } from './configuration/PublicConfigInterface';
+import { CommandProcessor } from './message_api/CommandProcessor';
 import { AutomationSpecInterface } from './specification/AutomationSpecInterface';
 import { AutomationSpecInterfaceFactory } from './specification/AutomationSpecInterface.Factory.test';
 import { AutomationSpecProcessor } from './specification/AutomationSpecProcessor';
@@ -27,6 +28,7 @@ describe(nameof(GenericJsonStateManager), () => {
   const configProviderStub = sinon.createStubInstance(ConfigProvider); // When class contains no methods: "Error: Found no methods on object to which we could apply mutations";
   const objectClientStub = sinon.createStubInstance(ObjectClient);
   const autoRepositoryStub = sinon.createStubInstance(AutomationRepository);
+  const commandProcessorStub = sinon.createStubInstance(CommandProcessor);
 
   beforeEach(() => {
     sinon.stub(configProviderStub, 'config').value(ConfigInterfaceFactory.create());
@@ -38,6 +40,7 @@ describe(nameof(GenericJsonStateManager), () => {
       specProcessorStub,
       objectClientStub,
       autoRepositoryStub,
+      commandProcessorStub,
     );
   });
 
@@ -308,6 +311,28 @@ describe(nameof(GenericJsonStateManager), () => {
         );
         // THEN
         expect(configProviderStub.loadConfig).calledOnceWithExactly(config);
+      });
+    },
+  );
+  describe(
+    nameof<GenericJsonStateManager>((g) => g.handleMessage),
+    () => {
+      it(`Should return error if processing command throws`, async () => {
+        // GIVEN
+        commandProcessorStub.processCommand.throws(new Error('test'));
+        // WHEN
+        const result = await sut.handleMessage('getAutomationNames');
+        // THEN
+        expect(result.error).to.contain('test');
+      });
+      it(`Should return automation state names`, async () => {
+        // GIVEN
+        const payload = ['test'];
+        commandProcessorStub.processCommand.resolves({ payload: payload });
+        // WHEN
+        const result = await sut.handleMessage('getAutomationNames');
+        // THEN
+        expect(result.payload).to.equal(payload);
       });
     },
   );

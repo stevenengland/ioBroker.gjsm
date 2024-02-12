@@ -77,7 +77,12 @@
             "json",
             "state"
         ],
+        "licenseInformation": {
+            "link": "https://opensource.org/licenses/MIT",
+            "type": "free"
+        },
         "license": "MIT",
+        "messagebox": true,
         "platform": "Javascript/Node.js",
         "main": "build/main.js",
         "icon": "gjsm.png",
