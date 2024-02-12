@@ -52,6 +52,20 @@
       "preLaunchTask": "preLaunchTask_startDevServerIntegration", // Start dev server before attaching a debugger to it
       "postDebugTask": "postDebug_KillAll", // Kill all tasks after debugging
       "continueOnAttach": true // This is needed to prevent the debugger from stopping on the first line
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to ioBroker Adapter (Integration 2)",
+      "address": "127.0.0.1",
+      "port": 9229,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "${workspaceFolder}/.dev-server/integration/node_modules/iobroker.gjsm/",
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "preLaunchTask_startDevServerIntegration", // Start dev server before attaching a debugger to it
+      "postDebugTask": "postDebug_KillAll", // Kill all tasks after debugging
+      "continueOnAttach": true // This is needed to prevent the debugger from stopping on the first line
     }
   ]
 }
