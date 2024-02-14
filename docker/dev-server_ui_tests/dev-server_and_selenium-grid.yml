@@ -33,6 +33,7 @@ services:
       - '8081:8081'
     volumes:
       - ../../src:/iobroker-adapter/src
+      - ../../admin:/iobroker-adapter/admin
       - ../../test:/iobroker-adapter/test
     # command: >
     #   sh -c "npm run devserver:preparation -- --reset_env=true --profile=$$IOB_DEVSERVER_PROFILE --tests-from=$$IOB_DEVSERVER_TESTS_FROM &&
