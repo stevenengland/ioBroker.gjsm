@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css" />
@@ -7,6 +8,13 @@
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
     <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.3/dist/quasar.prod.css" rel="stylesheet" type="text/css" />
 
     <script type="text/javascript" src="words.js"></script>
     <style>
@@ -20,31 +28,54 @@
   </head>
 
   <body>
-    <div class="m adapter-container">
-      <div class="row">
-        <!-- Forms are the standard way to receive user inputted data.
-			 Learn more http://materializecss.com/forms.html-->
-        <div class="row">
-          <div class="input-field col s6">
-            <img src="gjsm.png" class="logo" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s3">
-            <ul class="collection">
-              <li class="collection-item">Item 1</li>
-              <li class="collection-item">Item 2</li>
-              <li class="collection-item">Item 3</li>
-            </ul>
-          </div>
-          <div class="input-field col s9">
-            <textarea id="textarea1" class="materialize-textarea"></textarea>
-            <label for="textarea1">Textarea</label>
-          </div>
-        </div>
-      </div>
+    <!-- example of injection point where you write your app template -->
+    <div id="q-app">
+      <q-layout view="hHh lpR fFf">
+        <q-header elevated class="bg-primary text-white">
+          <q-toolbar>
+            <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+
+            <q-toolbar-title>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+              </q-avatar>
+              Title
+            </q-toolbar-title>
+          </q-toolbar>
+        </q-header>
+
+        <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
+          <!-- drawer content -->
+        </q-drawer>
+
+        <q-page-container>
+          <router-view />
+        </q-page-container>
+      </q-layout>
     </div>
 
-    <script type="text/javascript" src="build/tab_m.js"></script>
+    <!-- Add the following at the end of your body tag -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.14.3/dist/quasar.umd.prod.js"></script>
+    <script>
+      /*
+        Example kicking off the UI. Obviously, adapt this to your specific needs.
+        Assumes you have a <div id="q-app"></div> in your <body> above
+       */
+      const app = Vue.createApp({
+        setup() {
+          const leftDrawerOpen = Vue.ref(false);
+          return {
+            leftDrawerOpen,
+            toggleLeftDrawer() {
+              leftDrawerOpen.value = !leftDrawerOpen.value;
+            },
+          };
+        },
+      });
+
+      app.use(Quasar);
+      app.mount('#q-app');
+    </script>
   </body>
 </html>
