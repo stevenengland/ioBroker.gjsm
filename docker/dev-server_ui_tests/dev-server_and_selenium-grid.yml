@@ -31,10 +31,28 @@ services:
       - IOB_DEVSERVER_TESTS_FROM=scenario00
     ports:
       - '8081:8081'
-    volumes:
-      - ../../src:/iobroker-adapter/src
-      - ../../admin:/iobroker-adapter/admin
-      - ../../test:/iobroker-adapter/test
+    develop:
+      watch:
+        - action: sync
+          path: ../../src
+          target: /iobroker-adapter/src
+        - action: sync
+          path: ../../admin
+          target: /iobroker-adapter/admin
+          ignore:
+            - ../../admin/build/
+        - action: sync
+          path: ../../test
+          target: /iobroker-adapter/test
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: io-package.json
+    # Instead of bind mounts nowadays we can make use of watch
+    # volumes:
+    #   - ../../src:/iobroker-adapter/src
+    #   - ../../admin:/iobroker-adapter/admin
+    #   - ../../test:/iobroker-adapter/test
     # command: >
     #   sh -c "npm run devserver:preparation -- --reset_env=true --profile=$$IOB_DEVSERVER_PROFILE --tests-from=$$IOB_DEVSERVER_TESTS_FROM &&
     #          npx dev-server watch $$IOB_DEVSERVER_PROFILE"
