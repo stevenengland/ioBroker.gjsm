@@ -22,6 +22,10 @@ fs.mkdir(screenShotDir, { recursive: true }, (err) => {
   if (err) throw err;
 });
 
+fs.mkdir(pageSourceDir, { recursive: true }, (err) => {
+  if (err) throw err;
+});
+
 let driver: WebDriver; // To save resources always use just one WebDriver instance
 
 const config: compose.IDockerComposeOptions = {
