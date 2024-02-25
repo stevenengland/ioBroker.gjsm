@@ -45,9 +45,9 @@ services:
           path: ../../test
           target: /iobroker-adapter/test
         - action: rebuild
-          path: package.json
+          path: ../../package.json
         - action: rebuild
-          path: io-package.json
+          path: ../../io-package.json
     # Instead of bind mounts nowadays we can make use of watch
     # volumes:
     #   - ../../src:/iobroker-adapter/src
