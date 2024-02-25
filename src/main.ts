@@ -201,7 +201,7 @@ class Gjsm extends utils.Adapter {
     if (typeof obj === 'object' && obj.command) {
       try {
         const messageProcessingResult = await this._gjsm?.handleMessage(obj.command);
-        if (obj.callback) this.sendTo(obj.from, obj.command, messageProcessingResult, obj.callback);
+        this.sendTo(obj.from, obj.command, messageProcessingResult, obj.callback);
       } catch (error) {
         this.handleNotifiedError(
           new BaseError(

@@ -2,6 +2,7 @@
     "common": {
         "name": "gjsm",
         "version": "0.1.0",
+        "eraseOnUpload": true,
         "news": {
             "0.1.0": {
                 "en": "Added a configuration page (instance settings)\nAdded a configuration option that tells the adapter if a target state that does not exist shall automatically be created.",

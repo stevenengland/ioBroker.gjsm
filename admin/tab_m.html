@@ -1,90 +1,13 @@
-<!doctype html>
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css" />
-    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
-
-    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="../../js/translate.js"></script>
-    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
-
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.3/dist/quasar.prod.css" rel="stylesheet" type="text/css" />
-
-    <script type="text/javascript" src="words.js"></script>
-    <style>
-      .m .col .select-wrapper + label {
-        top: -26px;
-      }
-      .m span {
-        font-size: 0.9em;
-      }
-    </style>
   </head>
 
   <body>
-    <!-- example of injection point where you write your app template -->
-    <div id="q-app">
-      <q-layout view="hHh lpR fFf">
-        <q-header elevated class="bg-primary text-white">
-          <q-toolbar>
-            <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+    <!-- this is where the React components are loaded into -->
+    <div class="m adapter-container" id="root"></div>
 
-            <q-toolbar-title>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-              </q-avatar>
-              Title
-            </q-toolbar-title>
-          </q-toolbar>
-        </q-header>
-
-        <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-          <!-- drawer content -->
-        </q-drawer>
-
-        <q-page-container>
-          <router-view />
-        </q-page-container>
-      </q-layout>
-    </div>
-
-    <script type="importmap">
-      {
-        "imports": {
-          "vue": "https://cdn.jsdelivr.net/npm/vue@3.4.19/dist/vue.esm-browser.prod.js",
-          "@vue/compiler-dom": "https://cdn.jsdelivr.net/npm/@vue/compiler-dom@3.4.19/dist/compiler-dom.esm-browser.js",
-          "quasar": "https://cdn.jsdelivr.net/npm/quasar@2.14.3/dist/quasar.esm.prod.js"
-        }
-      }
-    </script>
-    <!-- Add the following at the end of your body tag -->
-    <script type="module">
-      import { createApp, ref } from 'vue';
-      import { Quasar } from 'quasar';
-      /*
-        Example kicking off the UI. Obviously, adapt this to your specific needs.
-        Assumes you have a <div id="q-app"></div> in your <body> above
-       */
-      const app = createApp({
-        setup() {
-          const leftDrawerOpen = ref(false);
-          return {
-            leftDrawerOpen,
-            toggleLeftDrawer() {
-              leftDrawerOpen.value = !leftDrawerOpen.value;
-            },
-          };
-        },
-      });
-
-      app.use(Quasar);
-      app.mount('#q-app');
-    </script>
+    <!-- load compiled React scripts -->
+    <script type="text/javascript" src="build/tab.js"></script>
   </body>
 </html>
