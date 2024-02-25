@@ -1,9 +1,10 @@
 import React from 'react';
-import { Theme, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
 
-import GenericApp from '@iobroker/adapter-react/GenericApp';
-import { GenericAppProps, GenericAppSettings } from '@iobroker/adapter-react/types';
-import { StyleRules } from '@material-ui/core/styles';
+import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
+import { GenericAppProps, GenericAppSettings } from '@iobroker/adapter-react-v5/types';
+import { StyleRules } from '@mui/styles/withStyles';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const styles = (_theme: Theme): StyleRules => ({
@@ -35,7 +36,8 @@ class TabApp extends GenericApp {
         es: require('../i18n/es/translations.json') as Record<string, string>,
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         pl: require('../i18n/pl/translations.json') as Record<string, string>,
-        // uk: require('../i18n/uk/translations.json') as Record<string, string>,
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        uk: require('../i18n/uk/translations.json') as Record<string, string>,
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         'zh-cn': require('../i18n/zh-cn/translations.json') as Record<string, string>,
       },
