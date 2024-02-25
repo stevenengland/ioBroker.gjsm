@@ -27,6 +27,8 @@ import { AutomationRepositoryInterface } from './gjsm/automation_repository/Auto
 import { ConfigProviderInterface } from './gjsm/configuration/ConfigProviderInterface';
 import { InstanceConfigInterface } from './gjsm/configuration/InstanceConfigInterface';
 import { PublicConfigInterface } from './gjsm/configuration/PublicConfigInterface';
+import { CommandProcessor } from './gjsm/message_api/CommandProcessor';
+import { CommandProcessorInterface } from './gjsm/message_api/CommandProcessorInterface';
 import { AutomationSpecProcessor } from './gjsm/specification/AutomationSpecProcessor';
 import { AutomationSpecProcessorInterface } from './gjsm/specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './gjsm/specification/AutomationSpecProviderInterface';
@@ -50,6 +52,7 @@ interface IocContainerInterface {
   specProvider: AutomationSpecProviderInterface;
   specProcessor: AutomationSpecProcessorInterface;
   autoRepository: AutomationRepositoryInterface;
+  commandProcessor: CommandProcessorInterface;
   gjsm: GenericJsonStateManagerInterface;
 }
 
@@ -193,13 +196,24 @@ class Gjsm extends utils.Adapter {
    * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
    * Using this method requires "common.messagebox" property to be set to true in io-package.json
    */
-  private onMessage(obj: ioBroker.Message): void {
-    if (typeof obj === 'object' && obj.message) {
-      if (obj.command === 'send') {
-        // e.g. send email or pushover or whatever
-        this.log.info('send command');
-        // Send response in callback if required
-        if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+  private async onMessage(obj: ioBroker.Message): Promise<void> {
+    console.log(JSON.stringify(obj));
+    if (typeof obj === 'object' && obj.command) {
+      try {
+        const messageProcessingResult = await this._gjsm?.handleMessage(obj.command);
+        this.sendTo(obj.from, obj.command, messageProcessingResult, obj.callback);
+      } catch (error) {
+        this.handleNotifiedError(
+          new BaseError(
+            `The adapter could not handle the received message from ${obj.from} (command: ${obj.command}).`,
+            {
+              cause: error,
+            },
+          ),
+          {
+            isCritical: false,
+          },
+        );
       }
     }
   }
@@ -247,6 +261,7 @@ class Gjsm extends utils.Adapter {
       specProvider: asClass(AutomationSpecProvider).singleton(),
       specProcessor: asClass(AutomationSpecProcessor).singleton(),
       autoRepository: asClass(AutomationRepository).singleton(),
+      commandProcessor: asClass(CommandProcessor).transient(),
       gjsm: asClass(GenericJsonStateManager).singleton(),
     });
   }

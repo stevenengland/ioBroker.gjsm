@@ -10,6 +10,9 @@ import { GenericJsonStateMapperEventMap } from './GenericJsonStateMapperEventMap
 import { AutomationRepositoryInterface } from './automation_repository/AutomationRepositoryInterface';
 import { ConfigProviderInterface } from './configuration/ConfigProviderInterface';
 import { PublicConfigInterface } from './configuration/PublicConfigInterface';
+import { Command } from './message_api/Command';
+import { CommandProcessorInterface } from './message_api/CommandProcessorInterface';
+import { CommandResultInterface } from './message_api/CommandResultInterface';
 import { AutomationSpecProcessorInterface } from './specification/AutomationSpecProcessorInterface';
 import { AutomationSpecProviderInterface } from './specification/AutomationSpecProviderInterface';
 import { ExecutionResult } from './specification/instructions/ExecutionResult';
@@ -25,6 +28,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
   private readonly _specProcessor: AutomationSpecProcessorInterface;
   private readonly _objectClient: ObjectClientInterface;
   private readonly _autoRepository: AutomationRepositoryInterface;
+  private readonly _commandProcessor: CommandProcessorInterface;
 
   public constructor(
     logger: LoggerInterface,
@@ -33,6 +37,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     specProcessor: AutomationSpecProcessorInterface,
     objectClient: ObjectClientInterface,
     autoRepository: AutomationRepositoryInterface,
+    commandProcessor: CommandProcessorInterface,
   ) {
     this._logger = logger;
     this._configProvider = configProvider;
@@ -40,6 +45,7 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
     this._specProcessor = specProcessor;
     this._objectClient = objectClient;
     this._autoRepository = autoRepository;
+    this._commandProcessor = commandProcessor;
   }
 
   public async createSubscriptionsAndRepositoryForSourceStates(): Promise<void> {
@@ -176,6 +182,19 @@ export class GenericJsonStateManager implements GenericJsonStateManagerInterface
       await this.loadConfig(obj.native as PublicConfigInterface);
       return;
     }
+  }
+  public async handleMessage(command: string): Promise<CommandResultInterface> {
+    this._logger.debug(`Received command: ${command}`);
+    if (!Object.values(Command).includes(command as Command))
+      return { error: 'An unknown command was recognized: ' + command, payload: null } as CommandResultInterface;
+    let result = { payload: null } as CommandResultInterface;
+    try {
+      result = await this._commandProcessor.processCommand(Command[command as keyof typeof Command]);
+    } catch (error) {
+      this.logError(`Error while handling a incoming command/message (command: ${command})`, error);
+      result.error = (error as Error).message;
+    }
+    return result;
   }
 
   public async loadConfig(config?: PublicConfigInterface): Promise<void> {

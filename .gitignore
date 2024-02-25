@@ -12,6 +12,7 @@ build/
 
 # test artifacts
 test/integration_tests_ui/screenshots/
+test/integration_tests_ui/page_sources/
 
 # NYC coverage files
 coverage

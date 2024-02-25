@@ -5,9 +5,11 @@
         "source-map-support/register"
     ],
     "watch-files": [
-        "src/**/*.test.ts"
+        "src/**/*.test.ts",
+        "admin/**/*.test.ts"
     ],
     "spec": [
-        "src/**/*!(.int).test.ts"
+        "src/**/*!(.int).test.ts",
+        "admin/**/*!(.int).test.ts"
     ]
 }

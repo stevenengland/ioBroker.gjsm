@@ -28,6 +28,7 @@ RUN groupadd -g "${GID}" -r ${IOB_USER} && \
     chown ${IOB_USER} -R '/iobroker-adapter'
 
 COPY --chown=${IOB_USER} ./src/ ./src/
+COPY --chown=${IOB_USER} ./admin/ ./admin/
 COPY --chown=${IOB_USER} ./test/ ./test/
 
 COPY --chown=${IOB_USER} [ \

@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { v2 as compose } from 'docker-compose';
 import fs from 'fs';
 import { describe } from 'mocha';
@@ -11,8 +12,17 @@ const stdTestTimeout = 60000; // 1 minute
 const controlServer = 'localhost';
 const controlServerPort = 4444;
 
+const testServer = 'http://iobroker-dev-server';
+const testServerPort = 8081;
+
 const screenShotDir = './test/integration_tests_ui/screenshots/';
+const pageSourceDir = './test/integration_tests_ui/page_sources/';
+
 fs.mkdir(screenShotDir, { recursive: true }, (err) => {
+  if (err) throw err;
+});
+
+fs.mkdir(pageSourceDir, { recursive: true }, (err) => {
   if (err) throw err;
 });
 
@@ -65,10 +75,15 @@ describe('UI Tests', function () {
   });
 
   afterEach(async function () {
-    console.log('Taking screenshot of the result ...');
     const screenShotName = `${screenShotDir}/after_${this.currentTest?.title}.png`;
+    const pageSourceName = `${pageSourceDir}/after_${this.currentTest?.title}.html`;
+
     await driver.takeScreenshot().then(function (image) {
       fs.writeFileSync(screenShotName, image, 'base64');
+    });
+
+    await driver.getPageSource().then(function (source) {
+      fs.writeFileSync(pageSourceName, source);
     });
 
     // Close the browser
@@ -77,7 +92,7 @@ describe('UI Tests', function () {
 
   it('should open the app and check the title', async () => {
     // Open the app
-    await driver.get('http://iobroker-dev-server:8081');
+    await driver.get(`${testServer}:${testServerPort}`);
     await driver.wait(until.elementLocated(By.xpath('/html')), 20000);
     // Check the title
     const title = await driver.getTitle();
@@ -88,5 +103,29 @@ describe('UI Tests', function () {
     <button class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium css-1vannuk" tabindex="0" type="button"><span class="MuiButton-startIcon MuiButton-iconSizeMedium css-6xugel"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckIcon"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg></span>Acknowledge<span class="MuiTouchRipple-root css-w0pj6f"></span></button>
     <div style="cursor: move; opacity: 1;" draggable="true" data-handler-id="T18"><a type="box" href="/#tab-gjsm-0" style="cursor: move; opacity: 1; color: inherit; text-decoration: none;" data-handler-id="T18"><div style="display: flex; align-items: center;"><div class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-1gqh6g9" tabindex="0" role="button"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 iob40 css-11hlwqc" aria-label=""><div class="MuiGrid-root MuiGrid-item css-1wxaqej"><div class="MuiListItemIcon-root css-5n5rd1" style="min-width: 0px;"><span class="MuiBadge-root css-1rzb3uu"><img class="iob19 iconOwn" src="adapter/gjsm/gjsm.png" alt=""><span class="MuiBadge-badge MuiBadge-standard MuiBadge-invisible MuiBadge-anchorOriginTopRight MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorPrimary css-aava0t">0</span></span></div></div><div class="MuiGrid-root MuiGrid-item css-1wxaqej"><div class="MuiListItemText-root css-1tsvksn"><span class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-yb0lig"><span class="MuiBadge-root css-1rzb3uu">GJSM<span class="MuiBadge-badge MuiBadge-standard MuiBadge-invisible MuiBadge-anchorOriginTopRight MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorPrimary css-aava0t">0</span></span></span></div></div></div><span class="MuiTouchRipple-root css-w0pj6f"></span></div></div></a></div>
      */
+  });
+  it('should open the instance 0 settings and check the content is loading', async () => {
+    // Open the app
+    await driver.manage().setTimeouts({ implicit: 20000 });
+    await driver.get(`${testServer}:${testServerPort}/#tab-instances/config/system.adapter.gjsm.0`);
+    const buttons = await driver.findElements(By.xpath("//button[@role='tab']"));
+    const globalSettingsButton = buttons.find(
+      async (button) => (await button.getText()).toLowerCase() === 'global settings',
+    );
+
+    const buttonText = await globalSettingsButton?.getText();
+
+    expect(buttonText?.toLowerCase()).to.equal('global settings');
+  });
+
+  it('should open the tab and check the content is loading', async () => {
+    // Open the app
+    await driver.manage().setTimeouts({ implicit: 20000 });
+    await driver.get(`${testServer}:${testServerPort}/#tab-gjsm-0`);
+    const frame = await driver.findElement(By.xpath("//iframe[contains(@title,'tab-gjsm')]"));
+    await driver.switchTo().frame(frame);
+    const appText = await driver.findElement(By.className('App')).getText();
+
+    expect(appText.toLowerCase()).to.equal('test tab');
   });
 });

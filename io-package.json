@@ -2,6 +2,7 @@
     "common": {
         "name": "gjsm",
         "version": "0.1.0",
+        "eraseOnUpload": true,
         "news": {
             "0.1.0": {
                 "en": "Added a configuration page (instance settings)\nAdded a configuration option that tells the adapter if a target state that does not exist shall automatically be created.",
@@ -77,7 +78,12 @@
             "json",
             "state"
         ],
+        "licenseInformation": {
+            "link": "https://opensource.org/licenses/MIT",
+            "type": "free"
+        },
         "license": "MIT",
+        "messagebox": true,
         "platform": "Javascript/Node.js",
         "main": "build/main.js",
         "icon": "gjsm.png",
