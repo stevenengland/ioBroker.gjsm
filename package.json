@@ -24,7 +24,7 @@
     "avj": "^0.0.0",
     "awilix": "^10.0.1",
     "jsonpath-plus": "^8.0.0",
-    "yaml": "^2.3.4"
+    "yaml": "^2.4.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.7.0",
