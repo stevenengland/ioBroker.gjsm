@@ -40,7 +40,7 @@ npm cache ls | grep gjsm | xargs npm cache clean && npm run build && dev-server 
 
 ### UI tests
 
-`BROWSER=firefox npm run test:admin`: Run the UI tests with a specific browser
+`BROWSER=firefox npm run test:react`: Run the UI tests with a specific browser
 
 ## Pattern
 

@@ -1,4 +1,5 @@
 {
     "$CONFIG_CREATE_STATE_IF_NOT_EXISTS_LABEL": "¿Se crearán automáticamente estados objetivo si aún no existen?",
-    "$PANEL_GLOBAL_SETTINGS_LABEL": "Ajustes globales"
+    "$PANEL_GLOBAL_SETTINGS_LABEL": "Ajustes globales",
+    "$TAB_LIST_HEADER": "Automatizaciones"
 }

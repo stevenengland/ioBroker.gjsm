@@ -1,15 +1,22 @@
-import React from 'react';
-import { withStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
+import { withStyles } from '@mui/styles';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import { GenericAppProps, GenericAppSettings } from '@iobroker/adapter-react-v5/types';
 import { StyleRules } from '@mui/styles/withStyles';
+import { AwilixContainer, InjectionMode, asClass, createContainer } from 'awilix';
+import React from 'react';
+import MainLayout from './components/MainLayout';
+import { ContainerContext } from './contexts/ContainerContext';
+import { IocContainerInterface } from './ioc/IocContainerInterface';
+import { Translation } from './translation/Translation';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const styles = (_theme: Theme): StyleRules => ({
   root: {},
 });
+
+let iocContainer: AwilixContainer<IocContainerInterface>;
 
 class TabApp extends GenericApp {
   public constructor(props: GenericAppProps) {
@@ -54,13 +61,34 @@ class TabApp extends GenericApp {
       return super.render();
     }
 
+    this.prepareIocContainer();
+
     return (
-      <div className="App">
-        TEST TAB
-        {this.renderError()}
-        {this.renderToast()}
+      <div
+        className="App"
+        style={{
+          background: this.state.theme.palette.background.default,
+          color: this.state.theme.palette.text.primary,
+        }}
+      >
+        <ContainerContext.Provider value={iocContainer}>
+          <MainLayout />
+          {this.renderError()}
+          {this.renderToast()}
+        </ContainerContext.Provider>
       </div>
     );
+  }
+
+  private prepareIocContainer(): void {
+    iocContainer = createContainer<IocContainerInterface>({
+      injectionMode: InjectionMode.CLASSIC,
+      strict: false,
+    });
+
+    iocContainer.register({
+      i18n: asClass(Translation).transient(),
+    });
   }
 }
 

@@ -1,12 +1,15 @@
 {
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "admin/**/*.ts?(x)"
     ],
     "exclude": [
-        "src/**/*.test.ts"
+        "src/**/*.test.ts",
+        "admin/**/*.test.ts?(x)"
     ],
     "extension": [
-        ".ts"
+        ".ts",
+        ".tsx"
     ],
     "require": [
         "ts-node/register"

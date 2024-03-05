@@ -1,10 +1,15 @@
+import DraftLog from 'draftlog';
 import net from 'net';
 import { Browser, Builder, WebDriver } from 'selenium-webdriver';
 
+DraftLog(console);
+
 export async function checkPortAvailable(port: number, host: string, maxTime = 5): Promise<boolean> {
   let attempts = 0;
+  const update = console.draft();
   while (attempts < maxTime) {
     try {
+      update(`Checking port #${attempts} ...`);
       const client = new net.Socket();
       await new Promise<void>((resolve, reject) => {
         client.once('connect', () => {
@@ -41,8 +46,10 @@ export async function setDriver(controlServer: string, controlServerPort: number
   }
 
   let attempts = 0;
+  const update = console.draft();
   while (attempts < maxTime) {
     try {
+      update(`Setting driver #${attempts} ...`);
       const driver = await new Builder()
         .usingServer(`http://${controlServer}:${controlServerPort}/`)
         .forBrowser(browser)
@@ -63,9 +70,10 @@ export async function checkWebSiteAvailable(
   logProgress = false,
 ): Promise<void> {
   let attempts = 0;
+  const update = console.draft();
   while (attempts < maxTime) {
     try {
-      console.log(`Checking ${url} #${attempts} ...`);
+      update(`Checking ${url} #${attempts} ...`);
       await driver.get(url);
       console.log(`Webpage ${url} is now available!`);
       return;

@@ -103,6 +103,33 @@ function getKeysFromHtmlFiles() {
   return translationsKeys;
 }
 
+function getKeysFromComponents() {
+  const directory = 'admin/src/components';
+  const matches = [];
+  const files = fs.readdirSync(directory);
+  files.forEach((file) => {
+    const filePath = path.join(directory, file);
+    const stats = fs.statSync(filePath);
+    if (stats.isDirectory()) {
+      matches.push(...scanDirectory(filePath));
+    } else {
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const regex = /i18n\.translate\('(\$.*?)'\)/gm;
+      const fileMatches = fileContent.match(regex);
+      if (fileMatches) {
+        fileMatches.forEach((match) => {
+          const regex = /i18n\.translate\('(\$.*?)'\)/;
+          const capturingGroupMatch = match.match(regex);
+          if (capturingGroupMatch) {
+            matches.push(capturingGroupMatch[1]);
+          }
+        });
+      }
+    }
+  });
+  return matches;
+}
+
 module.exports = {
   getKeyFromAdapterConfigDTs,
   getKeysFromIOPackage,
@@ -111,4 +138,5 @@ module.exports = {
   getKeysFromEnTranslations,
   getKeysFromHtmlFiles,
   getItemsFromJsonConfig,
+  getKeysFromComponents,
 };

@@ -8,6 +8,11 @@
       "source.organizeImports": "explicit"
     }
   },
+  "[typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
   "json.schemas": [
     {
       "fileMatch": ["io-package.json"],

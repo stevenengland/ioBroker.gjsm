@@ -2,14 +2,15 @@
     "require": [
         "test/mocha.setup.js",
         "ts-node/register",
-        "source-map-support/register"
+        "source-map-support/register",
+        "global-jsdom/register"
     ],
     "watch-files": [
         "src/**/*.test.ts",
-        "admin/**/*.test.ts"
+        "admin/**/*.test.ts?(x)"
     ],
     "spec": [
         "src/**/*!(.int).test.ts",
-        "admin/**/*!(.int).test.ts"
+        "admin/**/*!(.int).test.ts?(x)"
     ]
 }

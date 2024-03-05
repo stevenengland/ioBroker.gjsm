@@ -1,13 +1,16 @@
 import { expect } from 'chai';
+import childProcess from 'child_process';
 import { v2 as compose } from 'docker-compose';
 import fs from 'fs';
 import { describe } from 'mocha';
 import path from 'path';
 import { By, WebDriver, until } from 'selenium-webdriver';
+import { runCommandAsyncInBackground } from './GeneralTestTools';
 import { checkPortAvailable, checkWebSiteAvailable, setDriver } from './integration_tests_ui/UiTestTools';
 
 const shutUpDownTimeout = 600000; // 10 minutes
-const stdTestTimeout = 60000; // 1 minute
+const overallTestTimeout = 900000; // 15 minutes
+const singleTestTimeout = 60000; // 1 minute
 
 const controlServer = 'localhost';
 const controlServerPort = 4444;
@@ -17,6 +20,8 @@ const testServerPort = 8081;
 
 const screenShotDir = './test/integration_tests_ui/screenshots/';
 const pageSourceDir = './test/integration_tests_ui/page_sources/';
+
+const composeFile = '../docker/dev-server_ui_tests/dev-server_and_selenium-grid.yml';
 
 fs.mkdir(screenShotDir, { recursive: true }, (err) => {
   if (err) throw err;
@@ -30,29 +35,36 @@ let driver: WebDriver; // To save resources always use just one WebDriver instan
 
 const config: compose.IDockerComposeOptions = {
   cwd: path.join(__dirname),
-  config: '../docker/dev-server_ui_tests/dev-server_and_selenium-grid.yml',
+  config: composeFile,
   log: true,
 };
 
+let composeWatchProc: childProcess.ChildProcessWithoutNullStreams | null = null;
+
 describe('UI Tests', function () {
-  this.timeout(stdTestTimeout);
+  this.timeout(overallTestTimeout);
 
   before(async function () {
     this.timeout(shutUpDownTimeout);
 
     // setup docker
     console.log('Docker containers are about to start...');
-    const upResult = await compose.upAll(config);
-    console.log('Starting result:');
-    console.log('Exit Code: ', upResult.exitCode);
-    console.log('Out: ', upResult.out);
-    console.log('Err: ', upResult.err);
+    composeWatchProc = runCommandAsyncInBackground('docker', ['compose', '-f', composeFile, 'watch'], {
+      cwd: path.join(__dirname),
+      log: false,
+    });
+
+    // const upResult = await compose.upAll(config);
+    // console.log('Starting result:');
+    // console.log('Exit Code: ', upResult.exitCode);
+    // console.log('Out: ', upResult.out);
+    // console.log('Err: ', upResult.err);
 
     console.log('(-) Waiting for the server to be available ...');
     console.log('(1) Checking availabiliy of control server ...');
-    await checkPortAvailable(controlServerPort, controlServer, 30);
+    await checkPortAvailable(controlServerPort, controlServer, 120);
     console.log('(2) Setting driver ...');
-    driver = await setDriver(controlServer, controlServerPort, 60);
+    driver = await setDriver(controlServer, controlServerPort, 120);
     console.log('(3) Checking availabiliy of the web site ...');
     await checkWebSiteAvailable(driver, 'http://iobroker-dev-server:8081', shutUpDownTimeout / 1000);
     console.log('The server is now available!');
@@ -62,6 +74,10 @@ describe('UI Tests', function () {
   after(async function () {
     this.timeout(shutUpDownTimeout);
 
+    // End watching
+    composeWatchProc?.kill();
+
+    // End docker containers
     console.log('Docker containers are about to shut down...');
     const downResult = await compose.down(config);
     console.log('Shutdown result:');
@@ -118,14 +134,15 @@ describe('UI Tests', function () {
     expect(buttonText?.toLowerCase()).to.equal('global settings');
   });
 
-  it('should open the tab and check the content is loading', async () => {
+  it('should open the tab and check the content is loading', async function () {
+    this.timeout(singleTestTimeout + singleTestTimeout);
     // Open the app
-    await driver.manage().setTimeouts({ implicit: 20000 });
+    await driver.manage().setTimeouts({ implicit: singleTestTimeout + singleTestTimeout });
     await driver.get(`${testServer}:${testServerPort}/#tab-gjsm-0`);
     const frame = await driver.findElement(By.xpath("//iframe[contains(@title,'tab-gjsm')]"));
     await driver.switchTo().frame(frame);
     const appText = await driver.findElement(By.className('App')).getText();
 
-    expect(appText.toLowerCase()).to.equal('test tab');
+    expect(appText.toLowerCase()).to.contain('automations');
   });
 });

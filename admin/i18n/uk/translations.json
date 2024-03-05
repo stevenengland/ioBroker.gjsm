@@ -1,4 +1,5 @@
 {
     "$CONFIG_CREATE_STATE_IF_NOT_EXISTS_LABEL": "Чи повинні автоматично створюватися цільові штати, якщо вони ще не існують?",
-    "$PANEL_GLOBAL_SETTINGS_LABEL": "Глобальні налаштування"
+    "$PANEL_GLOBAL_SETTINGS_LABEL": "Глобальні налаштування",
+    "$TAB_LIST_HEADER": "Автоматизації"
 }

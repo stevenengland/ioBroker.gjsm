@@ -8,6 +8,7 @@ const {
   getKeysFromEnTranslations,
   getKeysFromHtmlFiles,
   getItemsFromJsonConfig,
+  getKeysFromComponents,
 } = require('./utils/TranslationKeyCollector');
 
 const { printRed, printGreen } = require('./utils/PrintHelper');
@@ -22,6 +23,7 @@ function main() {
   const words = getKeysFromWords();
   const enTranslations = getKeysFromEnTranslations();
   const htmlKeys = getKeysFromHtmlFiles();
+  const componentKeys = getKeysFromComponents();
 
   console.log('ADAPTER-CONFIG:  src/lib/adapter-config.d.ts');
   console.log(adapterConfigDTsKeys);
@@ -44,6 +46,9 @@ function main() {
   console.log('HTML-KEYS:       admin/*.html');
   console.log(htmlKeys);
   checkForDuplicates(htmlKeys);
+  console.log('COMPONENT-KEYS:       admin/src/components/**/*');
+  console.log(componentKeys);
+  checkForDuplicates(componentKeys);
 
   let allItemsAreGood = [];
   console.log('Check equalty of WORDS and I18N-EN'); // Overall words and I18N-EN must be equal
@@ -58,8 +63,8 @@ function main() {
   allItemsAreGood.push(compareArraysForSub(labels, enTranslations));
   console.log('Check if HTML-KEYS are contained in I18N-EN');
   allItemsAreGood.push(compareArraysForSub(htmlKeys, enTranslations));
-  console.log('Check equalty of (JSON-LABELS + HTML-KEYS) and I18N-EN');
-  allItemsAreGood.push(compareArraysForEqualty(labels.concat(htmlKeys), enTranslations));
+  console.log('Check equalty of (JSON-LABELS + HTML-KEYS + COMPONENT-KEYS) and I18N-EN');
+  allItemsAreGood.push(compareArraysForEqualty(labels.concat(htmlKeys).concat(componentKeys), enTranslations));
 
   for (let i = 0; i < allItemsAreGood.length; i++) {
     if (!allItemsAreGood[i]) {

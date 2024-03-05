@@ -14,6 +14,7 @@ module.exports = {
     'plugin:@typescript-eslint/stylistic-type-checked', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
     'plugin:react/recommended', // Supports React JSX
+    'plugin:react-hooks/recommended', // This ESLint plugin enforces the Rules of Hooks
   ],
   plugins: ['react'],
   settings: {

@@ -3,13 +3,13 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "noEmit": false,
+    "noEmit": true,
     "outDir": "./build",
     "sourceMap": true,
     "sourceRoot": "./src",
-    "noImplicitAny": false,
-    "lib": ["ES2018", "DOM"],
-    "jsx": "react"
+    "noImplicitAny": false
+    // "lib": ["ES2018", "DOM"] -> Moved to parent tsconfig so that test runners can pick up tsx files
+    // "jsx": "react" // -> Moved to parent tsconfig so that test runners can pick up tsx files
   },
   "include": [
     // "./**/*.js", // We don't want to check/build JS files in the admin directory
@@ -21,5 +21,5 @@
     "../src/lib/adapter-config.d.ts", // TS
     "../node_modules/@iobroker/types/build/shared.d.ts"
   ],
-  "exclude": ["./**/*.test.ts", "./**/*.test.tsx"]
+  "exclude": ["./build/**"]
 }

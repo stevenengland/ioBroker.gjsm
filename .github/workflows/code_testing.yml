@@ -168,6 +168,6 @@ jobs:
 
       - name: Run ui tests
         shell: bash
-        run: npm run test:admin
+        run: npm run test:react
         env:
           BROWSER: ${{ matrix.browser }}

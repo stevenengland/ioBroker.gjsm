@@ -31,6 +31,9 @@
     // Uncomment this if you want the old behavior of catch variables being `any`
     // "useUnknownInCatchVariables": false,
 
+    "jsx": "react", // -> Moved to here so that test runners can pick up tsx files
+    "lib": ["ES2018", "DOM"], // -> Moved to parent tsconfig so that test runners can pick up tsx files
+
     "sourceMap": true,
     "inlineSourceMap": false
   },
