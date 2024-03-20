@@ -334,6 +334,15 @@ describe(nameof(GenericJsonStateManager), () => {
         // THEN
         expect(result.payload).to.equal(payload);
       });
+      it(`Should return automations`, async () => {
+        // GIVEN
+        const payload = ['test'];
+        commandProcessorStub.processCommand.resolves({ payload: payload });
+        // WHEN
+        const result = await sut.handleMessage('getAutomations');
+        // THEN
+        expect(result.payload).to.equal(payload);
+      });
     },
   );
 });

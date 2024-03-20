@@ -25,13 +25,23 @@ describe(nameof(CommandProcessor), function () {
   describe(
     nameof<CommandProcessor>((c) => c.processCommand),
     function () {
-      it('should return a CommandResultInterface', async function () {
+      it(`should process ${Command.getAutomationNames}`, async function () {
         // GIVEN
         objectClientStub.getStatesAsync.resolves(StateFactory.statesWithPrefixedId(3, 'id_'));
         // WHEN
         const result = await sut.processCommand(Command.getAutomationNames);
         // THEN
         expect((result.payload as string[]).length).to.equal(3);
+      });
+      it(`should process ${Command.getAutomations}`, async function () {
+        // GIVEN
+        const states = StateFactory.statesWithPrefixedId(3, 'id_');
+        objectClientStub.getStatesAsync.resolves(states);
+        // WHEN
+        const result = (await sut.processCommand(Command.getAutomations)) as { payload: Record<string, string> };
+        // THEN
+        expect(Object.keys(result.payload).length).to.equal(3);
+        expect(result.payload[states[0].id]).to.equal(states[0].val);
       });
     },
   );

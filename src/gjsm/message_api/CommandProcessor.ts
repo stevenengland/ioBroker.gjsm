@@ -19,6 +19,10 @@ export class CommandProcessor implements CommandProcessorInterface {
     switch (command) {
       case Command.getAutomationNames:
         result.payload = await this.getAutomationNames();
+        break;
+      case Command.getAutomations:
+        result.payload = await this.getAutomations();
+        break;
     }
 
     return result;
@@ -29,5 +33,16 @@ export class CommandProcessor implements CommandProcessorInterface {
       this._configProvider.config.automationStatesPattern,
     );
     return instructionSetStates.map((state) => this._objectClient.getStateName(state.id));
+  }
+
+  private async getAutomations(): Promise<Record<string, string>> {
+    const instructionSetStates = await this._objectClient.getStatesAsync(
+      this._configProvider.config.automationStatesPattern,
+    );
+    const automations = {} as Record<string, string>;
+    for (const state of instructionSetStates) {
+      automations[state.id] = state.val as string;
+    }
+    return automations;
   }
 }
