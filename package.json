@@ -22,7 +22,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.6",
     "avj": "^0.0.0",
-    "awilix": "^10.0.1",
+    "awilix": "^10.0.2",
     "jsonpath-plus": "^8.1.0",
     "yaml": "^2.4.1"
   },
