@@ -20,7 +20,7 @@
     "node": ">= 18"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.0.6",
+    "@iobroker/adapter-core": "^3.1.4",
     "avj": "^0.0.0",
     "awilix": "^10.0.1",
     "jsonpath-plus": "^8.1.0",
